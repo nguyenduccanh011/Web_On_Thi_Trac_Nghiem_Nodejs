@@ -1,0 +1,33 @@
+{
+  "name": "web_on_thi_trac_nghiem_nodejs",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nguyenduccanh011/Web_On_Thi_Trac_Nghiem_Nodejs.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nguyenduccanh011/Web_On_Thi_Trac_Nghiem_Nodejs/issues"
+  },
+  "homepage": "https://github.com/nguyenduccanh011/Web_On_Thi_Trac_Nghiem_Nodejs#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "express-validator": "^7.2.1",
+    "helmet": "^8.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "morgan": "^1.10.0",
+    "mysql2": "^3.13.0",
+    "sequelize": "^6.37.6"
+  }
+}
