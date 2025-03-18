@@ -4,7 +4,19 @@ const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
-const { testConnection } = require('./src/config/database');
+const { sequelize, testConnection } = require('./src/config/database'); // Import sequelize
+
+// Import tất cả các models
+require('./src/models/user.model');
+require('./src/models/exam.model');
+require('./src/models/exam_category.model');
+require('./src/models/exam_attempt.model.js');
+require('./src/models/exam_question.model.js');
+require('./src/models/forum_post.model.js');
+require('./src/models/forum_topic.model.js');
+require('./src/models/leaderboard.model.js');
+require('./src/models/user_answer.model.js');
+require('./src/models/question.model');
 
 const authRoutes = require('./src/routes/auth.routes');
 
@@ -24,9 +36,20 @@ testConnection();
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
-  res.send('Welcome to the English Exam API!');
+    res.send('Welcome to the English Exam API!');
 });
 
-app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
-});
+
+// Đồng bộ hóa models với database
+sequelize.sync({ force: false }) // Thêm đoạn này
+    .then(() => {
+        console.log('Database synced');
+
+        // Khởi chạy server sau khi đồng bộ hóa thành công
+        app.listen(port, () => {
+            console.log(`Server is running on port ${port}`);
+        });
+    })
+    .catch((err) => {
+        console.error('Error syncing database:', err);
+    });

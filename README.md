@@ -28,18 +28,96 @@ Dự án này là một ứng dụng web được xây dựng bằng Node.js, cu
 
 ## Cơ sở dữ liệu
 
-* **Hệ quản trị cơ sở dữ liệu:** [Điền tên hệ quản trị CSDL bạn sử dụng, ví dụ: MySQL, PostgreSQL, MongoDB]
-* **Các bảng chính:**
-    * `users`: Lưu thông tin người dùng (ID, tên đăng nhập, mật khẩu, email, vai trò, ...).
-    * `questions`: Lưu trữ các câu hỏi trắc nghiệm (ID, nội dung, đáp án đúng, các lựa chọn, danh mục, độ khó, ...).
-    * `exam_categories`: Lưu trữ thông tin về các danh mục đề thi (ID, tên danh mục, mô tả).
-    * `exams`: Lưu trữ thông tin về các đề thi (ID, tên đề thi, danh mục).
-    * `exam_questions`: Bảng quan hệ nhiều-nhiều giữa `exams` và `questions` để xác định câu hỏi nào thuộc đề thi nào.
-    * `exam_attempts`: Lưu trữ thông tin về các lần thi của người dùng (ID, người dùng, đề thi, thời điểm bắt đầu/kết thúc, điểm số, ...).
-    * `user_answers`: Lưu trữ chi tiết câu trả lời của người dùng trong mỗi lần thi.
-    * `leaderboard`: Lưu trữ thông tin bảng xếp hạng người dùng.
-    * `forum_topics`: Lưu trữ các chủ đề thảo luận trên diễn đàn.
-    * `forum_posts`: Lưu trữ các bài viết trong từng chủ đề thảo luận.
+* **Hệ quản trị cơ sở dữ liệu:** [Điền tên hệ quản trị CSDL bạn sử dụng, ví dụ: MySQL]
+
+* **Các bảng:**
+
+    * **`users`:** Lưu thông tin người dùng
+        * `user_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `username` (`VARCHAR(50)`, UNIQUE, NOT NULL)
+        * `password` (`VARCHAR(255)`, NOT NULL)
+        * `email` (`VARCHAR(100)`, UNIQUE, NOT NULL)
+        * `full_name` (`VARCHAR(100)`)
+        * `registration_date` (`TIMESTAMP`)
+        * `last_login` (`TIMESTAMP`)
+        * `role` (`ENUM('user', 'admin')`)
+        * `profile_picture` (`VARCHAR(255)`)
+
+    * **`questions`:** Lưu trữ các câu hỏi trắc nghiệm
+        * `question_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `question_text` (`TEXT`, NOT NULL)
+        * `correct_answer` (`VARCHAR(255)`, NOT NULL)
+        * `option_a` (`VARCHAR(255)`, NOT NULL)
+        * `option_b` (`VARCHAR(255)`, NOT NULL)
+        * `option_c` (`VARCHAR(255)`)
+        * `option_d` (`VARCHAR(255)`)
+        * `category_id` (`INT`, FOREIGN KEY `exam_categories`)
+        * `difficulty` (`ENUM('easy', 'medium', 'hard')`)
+        * `explanation` (`TEXT`)
+        * `created_at` (`TIMESTAMP`)
+        * `updated_at` (`TIMESTAMP`)
+
+    * **`exam_categories`:** Lưu trữ thông tin về các danh mục đề thi
+        * `category_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `category_name` (`VARCHAR(100)`, UNIQUE, NOT NULL)
+        * `description` (`TEXT`)
+        * `created_at` (`TIMESTAMP`)
+        * `updated_at` (`TIMESTAMP`)
+
+    * **`exams`:** Lưu trữ thông tin về các đề thi
+        * `exam_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `exam_name` (`VARCHAR(100)`, NOT NULL)
+        * `description` (`TEXT`)
+        * `category_id` (`INT`, FOREIGN KEY `exam_categories`)
+        * `created_at` (`TIMESTAMP`)
+        * `updated_at` (`TIMESTAMP`)
+
+    * **`exam_questions`:** Quan hệ nhiều-nhiều giữa `exams` và `questions`
+        * `exam_question_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `exam_id` (`INT`, FOREIGN KEY `exams`)
+        * `question_id` (`INT`, FOREIGN KEY `questions`)
+        * `question_order` (`INT`)
+
+    * **`exam_attempts`:** Lưu trữ thông tin về các lần thi của người dùng
+        * `attempt_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `user_id` (`INT`, FOREIGN KEY `users`)
+        * `exam_id` (`INT`, FOREIGN KEY `exams`)
+        * `start_time` (`TIMESTAMP`)
+        * `end_time` (`TIMESTAMP`)
+        * `score` (`DECIMAL(5, 2)`)
+        * `total_questions` (`INT`)
+        * `correct_answers` (`INT`)
+        * `incorrect_answers` (`INT`)
+
+    * **`user_answers`:** Lưu trữ chi tiết câu trả lời của người dùng trong mỗi lần thi
+        * `user_answer_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `attempt_id` (`INT`, FOREIGN KEY `exam_attempts`)
+        * `question_id` (`INT`, FOREIGN KEY `questions`)
+        * `selected_answer` (`VARCHAR(255)`)
+        * `is_correct` (`BOOLEAN`)
+
+    * **`leaderboard`:** Lưu trữ thông tin bảng xếp hạng người dùng
+        * `leaderboard_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `user_id` (`INT`, FOREIGN KEY `users`)
+        * `score` (`DECIMAL(10, 2)`)
+        * `rank` (`INT`)
+        * `last_attempt_date` (`TIMESTAMP`)
+
+    * **`forum_topics`:** Lưu trữ các chủ đề thảo luận trên diễn đàn
+        * `topic_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `user_id` (`INT`, FOREIGN KEY `users`)
+        * `title` (`VARCHAR(255)`, NOT NULL)
+        * `created_at` (`TIMESTAMP`)
+        * `updated_at` (`TIMESTAMP`)
+
+    * **`forum_posts`:** Lưu trữ các bài viết trong từng chủ đề thảo luận
+        * `post_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `topic_id` (`INT`, FOREIGN KEY `forum_topics`)
+        * `user_id` (`INT`, FOREIGN KEY `users`)
+        * `content` (`TEXT`, NOT NULL)
+        * `created_at` (`TIMESTAMP`)
+        * `updated_at` (`TIMESTAMP`)
+        
 
 ## Giao diện người dùng (dự kiến)
 
