@@ -7,6 +7,7 @@ exports.register = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+
   try {
     const { username, password, email, full_name } = req.body;
     const newUser = await authService.registerUser(username, password, email, full_name);
@@ -21,11 +22,12 @@ exports.login = async (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
+
   try {
     const { username, password } = req.body;
     const token = await authService.loginUser(username, password);
     res.json({ message: 'Login successful', token });
   } catch (error) {
-    res.status(401).json({ message: error.message });
+    res.status(401).json({ message: error.message }); // 401 Unauthorized
   }
 };
