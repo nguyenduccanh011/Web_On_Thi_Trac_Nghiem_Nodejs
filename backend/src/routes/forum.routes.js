@@ -2,7 +2,6 @@
 const express = require('express');
 const forumController = require('../controllers/forum.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
-const adminMiddleware = require('../middlewares/admin.middleware');
 
 const router = express.Router();
 
@@ -33,7 +32,7 @@ router.delete('/topics/:id', authMiddleware.verifyToken, forumController.deleteT
 // Update post (cần xác thực)
 router.put('/posts/:postId', authMiddleware.verifyToken, forumController.updatePost);
 
-// Delete post(cần xác thực)
+// Delete post (cần xác thực)
 router.delete('/posts/:postId', authMiddleware.verifyToken, forumController.deletePost);
 
 module.exports = router;

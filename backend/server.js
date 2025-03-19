@@ -26,16 +26,29 @@ const questionRoutes = require('./src/routes/question.routes');
 const userRoutes = require('./src/routes/user.routes');
 const examAttemptRoutes = require('./src/routes/exam_attempt.routes');
 const examCategoryRoutes = require('./src/routes/exam_category.routes');
-const forumRoutes = require('./src/routes/forum.routes');
+const forumRoutes = require('./src/routes/forum.routes.js');
 
 // Import admin routes
-const adminAuthRoutes = require('./src/routes/admin/admin_auth.routes');
-const adminExamRoutes = require('./src/routes/admin/admin_exam.routes');
-const adminQuestionRoutes = require('./src/routes/admin/admin_question.routes');
-const adminUserRoutes = require('./src/routes/admin/admin_user.routes');
-const adminExamCategoryRoutes = require('./src/routes/admin/admin_exam_category.routes');
+const adminAuthRoutes = require('./src/routes/admin/admin_auth.routes.js');
+const adminExamRoutes = require('./src/routes/admin/admin_exam.routes.js');
+const adminQuestionRoutes = require('./src/routes/admin/admin_question.routes.js');
+const adminUserRoutes = require('./src/routes/admin/admin_user.routes.js');
+const adminExamCategoryRoutes = require('./src/routes/admin/admin_exam_category.routes.js');
 
-// Sử dụng các routes với prefix
+
+const app = express(); // KHAI BÁO APP Ở ĐÂY
+const port = process.env.PORT || 3000;
+
+// Middleware
+app.use(cors());
+app.use(helmet());
+app.use(morgan('dev'));
+app.use(express.json());
+
+// Kiểm tra kết nối database
+testConnection();
+
+// Sử dụng các routes với prefix (SAU KHI khai báo app)
 app.use('/api/auth', authRoutes);
 app.use('/api/exams', examRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
@@ -52,25 +65,9 @@ app.use('/api/admin/questions', adminQuestionRoutes);
 app.use('/api/admin/users', adminUserRoutes);
 app.use('/api/admin/categories', adminExamCategoryRoutes);
 
-const app = express();
-const port = process.env.PORT || 3000;
-
-// Middleware
-app.use(cors());
-app.use(helmet());
-app.use(morgan('dev'));
-app.use(express.json());
-
-// Kiểm tra kết nối database
-testConnection();
-
-// Routes
-app.use('/api/auth', authRoutes);
-
 app.get('/', (req, res) => {
     res.send('Welcome to the English Exam API!');
 });
-
 
 // Đồng bộ hóa models với database
 sequelize.sync({ force: false }) // Thêm đoạn này
