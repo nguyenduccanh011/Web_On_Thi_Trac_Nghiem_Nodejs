@@ -10,9 +10,11 @@ router.get('/:id', questionController.getQuestionById);
 router.get('/search', questionController.searchQuestions); // Route tìm kiếm
 
 //Các route cần xác thực và phân quyền admin
-router.post('/', authMiddleware.verifyToken, adminMiddleware.isAdmin, questionController.createQuestion);
+//router.post('/', authMiddleware.verifyToken, adminMiddleware.isAdmin, questionController.createQuestion);
+router.post('/', questionController.createQuestion);
 router.put('/:id', authMiddleware.verifyToken, adminMiddleware.isAdmin, questionController.updateQuestion);
-router.delete('/:id', authMiddleware.verifyToken, adminMiddleware.isAdmin, questionController.deleteQuestion);
+//router.delete('/:id', authMiddleware.verifyToken, adminMiddleware.isAdmin, questionController.deleteQuestion);
+router.delete('/:id', questionController.deleteQuestion);
 
 
 module.exports = router;

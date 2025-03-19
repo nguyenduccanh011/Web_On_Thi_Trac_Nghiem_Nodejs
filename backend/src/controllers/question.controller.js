@@ -12,11 +12,13 @@ exports.getAllQuestions = async (req, res) => {
 
 exports.getQuestionById = async (req, res) => {
     try {
-        const questionId = req.params.id;
-        const question = await questionService.getQuestionById(questionId);
+        const question = await questionService.getQuestionById(req.params.id);
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
         res.json(question);
     } catch (error) {
-        res.status(404).json({ message: error.message });
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -29,25 +31,32 @@ exports.createQuestion = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
-
 exports.updateQuestion = async (req, res) => {
     try {
-        const questionId = req.params.id;
-        const questionData = req.body;
-        const updatedQuestion = await questionService.updateQuestion(questionId, questionData);
-        res.json(updatedQuestion);
+        const question = await questionService.updateQuestion(req.params.id, req.body);
+         if (!question) {
+                return res.status(404).json({ message: 'Question not found' }); // Hoặc xử lý tùy theo logic của bạn
+         }
+        res.json(question);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        res.status(400).json({ message: error.message });
     }
 };
 
 exports.deleteQuestion = async (req, res) => {
     try {
-        const questionId = req.params.id;
-        await questionService.deleteQuestion(questionId);
-        res.status(204).send();
+        const result = await questionService.deleteQuestion(req.params.id);
+          if (result.message === 'Question not found') {
+                return res.status(404).json({ message: result.message });
+            }
+        res.status(204).send();  // 204 No Content (thành công, không có nội dung trả về)
     } catch (error) {
-        res.status(500).json({ message: error.message });
+         if (error.message === 'Cannot delete question because it is associated with one or more exams') {
+              res.status(400).json({ message: error.message });
+         }
+         else{
+            res.status(500).json({ message: error.message });
+         }
     }
 };
 
