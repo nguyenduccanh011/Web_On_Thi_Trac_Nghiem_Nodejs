@@ -1,17 +1,26 @@
 <template>
-    <div class="login">
-      <h2>Login</h2>
+    <div class="register">
+      <h2>Register</h2>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
           <label for="username">Username:</label>
           <input type="text" id="username" v-model="username" required>
         </div>
         <div class="form-group">
+          <label for="email">Email:</label>
+          <input type="email" id="email" v-model="email" required>
+        </div>
+        <div class="form-group">
           <label for="password">Password:</label>
           <input type="password" id="password" v-model="password" required>
         </div>
-        <button type="submit">Login</button>
-        <div v-if="loginError" class="error-message">{{ loginError }}</div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirm Password:</label>
+          <input type="password" id="confirmPassword" v-model="confirmPassword" required>
+           <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
+        </div>
+        <button type="submit">Register</button>
+         <div v-if="registrationError" class="error-message">{{ registrationError }}</div>
       </form>
     </div>
   </template>
@@ -23,46 +32,49 @@
     data() {
       return {
         username: '',
+        email: '',
         password: '',
-         loginError: ''
+        confirmPassword: '',
+        passwordError: '',
+        registrationError: ''
       };
     },
     methods: {
       async handleSubmit() {
-          this.loginError = ''; // Reset lỗi
+          this.passwordError = ''; //reset lỗi
+          this.registrationError = '';
+        if (this.password !== this.confirmPassword) {
+          this.passwordError = 'Passwords do not match';
+          return;
+        }
+  
         try {
-          const response = await authService.login({
+          await authService.register({
             username: this.username,
+            email: this.email,
             password: this.password,
           });
-  
-          // Lưu token vào localStorage
-          localStorage.setItem('token', response.data.token);
-          // Lưu thông tin user (nếu có)
-           localStorage.setItem('user', JSON.stringify(response.data.user));
-  
-          // Chuyển hướng đến trang chủ hoặc dashboard
-          this.$router.push('/'); // Hoặc '/dashboard', tùy thuộc vào routing của bạn
+          // Chuyển hướng đến trang login sau khi đăng ký thành công
+          this.$router.push('/login');  // Đảm bảo bạn đã định nghĩa route '/login'
         } catch (error) {
            if (error.response && error.response.data && error.response.data.message) {
-            this.loginError = error.response.data.message; // Hiển thị lỗi từ backend
-           } else {
-               this.loginError = "Đã xảy ra lỗi khi đăng nhập";
+               this.registrationError = error.response.data.message; // Hiển thị lỗi từ backend
            }
         }
       },
     },
   };
   </script>
-   <style scoped>
-  /* CSS tương tự như RegisterView.vue */
-  .login {
+  
+  <style scoped>
+  .register {
     max-width: 400px;
     margin: 0 auto;
     padding: 20px;
     border: 1px solid #ccc;
     border-radius: 5px;
   }
+  
   .form-group {
     margin-bottom: 15px;
   }
@@ -73,6 +85,7 @@
   }
   
   input[type="text"],
+  input[type="email"],
   input[type="password"] {
     width: 100%;
     padding: 10px;
@@ -88,7 +101,7 @@
     border-radius: 4px;
     cursor: pointer;
   }
-    .error-message {
+  .error-message {
      color: red;
     margin-top: 5px;
   }

@@ -2,47 +2,46 @@
 const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const config = require('../config/config');
+const { jwtSecret, jwtExpiration } = require('../config/config'); // Import config
 
-exports.registerUser = async (username, password, email, full_name) => {
-    try {
-        const existingUser = await User.findOne({ where: { username } });
-        if (existingUser) {
-            throw new Error('Username already exists');
-        }
+exports.registerUser = async (username, email, password) => {
+  // Kiểm tra username và email đã tồn tại chưa
+  const existingUsername = await User.findOne({ where: { username } });
+  if (existingUsername) {
+    throw new Error('Username already exists');
+  }
 
-        const existingEmail = await User.findOne({where: {email}});
-        if(existingEmail) {
-            throw new Error('Email already exists');
-        }
+  const existingEmail = await User.findOne({ where: { email } });
+  if (existingEmail) {
+    throw new Error('Email already exists');
+  }
 
-        const hashedPassword = await bcrypt.hash(password, 10); // Hash mật khẩu (saltRounds = 10)
-        const newUser = await User.create({ username, password: hashedPassword, email, full_name });
-
-        // Trả về thông tin user (không bao gồm mật khẩu)
-        return { user_id: newUser.user_id, username: newUser.username, email: newUser.email, full_name: newUser.full_name };
-    } catch (error) {
-        throw error; // Ném lỗi để controller xử lý
-    }
+  const hashedPassword = await bcrypt.hash(password, 10); // Hash mật khẩu
+  const newUser = await User.create({
+    username,
+    email,
+    password: hashedPassword,
+    role: 'user', // Mặc định là user
+  });
+  // Không trả về password đã hash
+  return { id: newUser.id, username: newUser.username, email: newUser.email, role: newUser.role };
 };
 
 exports.loginUser = async (username, password) => {
-    try {
-        const user = await User.findOne({ where: { username } });
-        if (!user) {
-            throw new Error('Invalid credentials'); // Tên người dùng không tồn tại
-        }
+  const user = await User.findOne({ where: { username } });
+  if (!user) {
+    throw new Error('Invalid credentials');
+  }
 
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            throw new Error('Invalid credentials'); // Mật khẩu không đúng
-        }
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw new Error('Invalid credentials');
+  }
 
-        // Tạo JWT token
-        const token = jwt.sign({ userId: user.user_id, role: user.role }, config.jwtSecret, { expiresIn: '1h' }); // Thời hạn 1 giờ
+  // Tạo JWT token
+  const token = jwt.sign({ id: user.id, role: user.role }, jwtSecret, {
+    expiresIn: jwtExpiration,
+  });
 
-        return token;
-    } catch (error) {
-        throw error;
-    }
+  return { user, token };
 };
