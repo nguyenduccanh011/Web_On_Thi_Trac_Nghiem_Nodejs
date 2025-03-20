@@ -149,15 +149,18 @@ exports.getQuestionsForExam = async (examId) => {
     const exam = await Exam.findById({ examId });
 
     const query = `
-          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = 'easy' ORDER BY RAND() LIMIT :easyCount)
+          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = easy ORDER BY RAND() LIMIT :easyCount)
           UNION
-          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = 'medium' ORDER BY RAND() LIMIT :mediumCount)
+          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = medium ORDER BY RAND() LIMIT :mediumCount)
           UNION
-          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = 'hard' ORDER BY RAND() LIMIT :hardCount)
+          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = hard ORDER BY RAND() LIMIT :hardCount)
         `;
 
     const questions = await sequelize.query(query, {
       replacements: {
+        easy: DifficultyLevel.EASY, // Assume DifficultyLevel is imported
+        medium: DifficultyLevel.MEDIUM,
+        hard: DifficultyLevel.HARD,
         categoryId: exam.category_id,
         easyCount: exam.easy_question_count,
         mediumCount: exam.medium_question_count,
