@@ -1,5 +1,5 @@
 // src/controllers/exam.controller.js
-const examService = require('../services/exam.service');
+const examService = require("../services/exam.service");
 
 exports.getAllExams = async (req, res) => {
   try {
@@ -45,7 +45,7 @@ exports.deleteExam = async (req, res) => {
   try {
     const examId = req.params.id;
     await examService.deleteExam(examId);
-    res.status(204).json({message: 'Exam deleted successfully'}); // 204 No Content
+    res.status(204).json({ message: "Exam deleted successfully" }); // 204 No Content
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -54,10 +54,10 @@ exports.deleteExam = async (req, res) => {
 // Lấy câu hỏi cho bài thi (dựa vào category, difficulty, limit)
 exports.getQuestionsForExam = async (req, res) => {
   try {
-      const { categoryId, difficulty, limit } = req.query; // Lấy các tham số từ query string
-      const questions = await examService.getQuestionsForExam(categoryId, difficulty, parseInt(limit) || 10); // Chuyển limit thành số nguyên, mặc định là 10 nếu không có
-      res.json(questions);
+    const { examId } = req.query; // Lấy các tham số từ query string
+    const questions = await examService.getQuestionsForExam(examId); // Gọi service để lấy câu hỏi
+    res.json(questions);
   } catch (error) {
-      res.status(500).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
