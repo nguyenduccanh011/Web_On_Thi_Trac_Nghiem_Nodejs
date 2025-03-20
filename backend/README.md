@@ -2,7 +2,8 @@
 
 # Dự án Web Ôn Thi Tiếng Anh Trắc Nghiệm
 
-[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ## Tổng quan
+[![License](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) 
+## Tổng quan
 
 Dự án này là một ứng dụng web được xây dựng bằng Node.js, cung cấp nền tảng cho người dùng ôn luyện tiếng Anh thông qua các bài thi trắc nghiệm. Dự án bao gồm các chức năng cho cả người dùng thông thường và quản trị viên (Admin).
 
@@ -28,7 +29,7 @@ Dự án này là một ứng dụng web được xây dựng bằng Node.js, cu
 
 ## Cơ sở dữ liệu
 
-* **Hệ quản trị cơ sở dữ liệu:** [Điền tên hệ quản trị CSDL bạn sử dụng, ví dụ: MySQL]
+* **Hệ quản trị cơ sở dữ liệu:** MySQL
 
 * **Các bảng:**
 
@@ -47,10 +48,6 @@ Dự án này là một ứng dụng web được xây dựng bằng Node.js, cu
         * `question_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
         * `question_text` (`TEXT`, NOT NULL)
         * `correct_answer` (`VARCHAR(255)`, NOT NULL)
-        * `option_a` (`VARCHAR(255)`, NOT NULL)
-        * `option_b` (`VARCHAR(255)`, NOT NULL)
-        * `option_c` (`VARCHAR(255)`)
-        * `option_d` (`VARCHAR(255)`)
         * `category_id` (`INT`, FOREIGN KEY `exam_categories`)
         * `difficulty` (`ENUM('easy', 'medium', 'hard')`)
         * `explanation` (`TEXT`)
@@ -117,7 +114,15 @@ Dự án này là một ứng dụng web được xây dựng bằng Node.js, cu
         * `content` (`TEXT`, NOT NULL)
         * `created_at` (`TIMESTAMP`)
         * `updated_at` (`TIMESTAMP`)
-        
+
+    * **`answer`:** Lưu trữ các đáp án của câu hỏi
+        * `answer_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
+        * `answer_text` (`STRING(255)`, NOT NULL)
+        * `question_id` (`INT`, FOREIGN KEY `Question`)
+        * `is_correct` (`BOOLEAN`, NOT NULL)
+        * `created_at` (`TIMESTAMP`)
+        * `updated_at` (`TIMESTAMP`)se
+
 
 ## Giao diện người dùng (dự kiến)
 
@@ -156,4 +161,4 @@ Dự án này là một ứng dụng web được xây dựng bằng Node.js, cu
 * helmet
 * express-validator
 
-## Đóng góp 
+## Đóng góp

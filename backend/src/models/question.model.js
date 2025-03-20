@@ -17,20 +17,6 @@ const Question = sequelize.define('Question', {
     type: DataTypes.STRING(255),
     allowNull: false,
   },
-  option_a: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  option_b: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  option_c: {
-    type: DataTypes.STRING(255),
-  },
-  option_d: {
-    type: DataTypes.STRING(255),
-  },
   category_id: {
     type: DataTypes.INTEGER,
     allowNull: false,

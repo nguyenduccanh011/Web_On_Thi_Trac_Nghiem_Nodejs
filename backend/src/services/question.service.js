@@ -1,6 +1,7 @@
 // src/services/question.service.js
 const Question = require('../models/question.model');
 const ExamCategory = require('../models/exam_category.model');
+const Answer = require('../models/answer.model'); // Import Answer model
 const { Sequelize } = require('sequelize');
 exports.getAllQuestions = async () => {
   try {
@@ -27,17 +28,29 @@ exports.getQuestionById = async (questionId) => {
   }
 };
 
-exports.createQuestion = async (questionData) => {
-  try {
-    const newQuestion = await Question.create(questionData);
-      // Lấy thông tin đầy đủ của câu hỏi sau khi tạo (tùy chọn)
-    const createdQuestion = await Question.findByPk(newQuestion.question_id, {
-        include: [{ model: ExamCategory, as: 'category' }],
-    });
-    return createdQuestion;
-  } catch (error) {
-    throw error;
+// Create a new question with answers
+exports.createQuestion = async (data) => {
+  const { question_text, correct_answer, category_id, difficulty, explanation, answers } = data;
+
+  const question = await Question.create({
+    question_text,
+    correct_answer,
+    category_id,
+    difficulty,
+    explanation,
+  });
+
+  if (answers && answers.length > 0) {
+    for (const answer of answers) {
+      await Answer.create({
+        answer_text: answer.answer_text,
+        question_id: question.question_id,
+        is_correct: answer.is_correct,
+      });
+    }
   }
+
+  return question;
 };
 
 exports.updateQuestion = async (questionId, questionData) => {
@@ -96,4 +109,17 @@ exports.searchQuestions = async (searchTerm) => {
   } catch (error) {
     throw error;
   }
+};
+
+// Get a question with its answers
+exports.getQuestion = async (id) => {
+  const question = await Question.findByPk(id, {
+    include: [{ model: Answer, as: 'answers' }],
+  });
+
+  if (!question) {
+    throw new Error('Question not found');
+  }
+
+  return question;
 };

@@ -1,5 +1,7 @@
 // src/controllers/question.controller.js
 const questionService = require('../services/question.service');
+const Question = require('../models/question.model');
+const Answer = require('../models/answer.model'); // Import Answer model
 
 exports.getAllQuestions = async (req, res) => {
     try {
@@ -22,15 +24,35 @@ exports.getQuestionById = async (req, res) => {
     }
 };
 
+// Create a new question with answers
 exports.createQuestion = async (req, res) => {
-    try {
-        const questionData = req.body;
-        const newQuestion = await questionService.createQuestion(questionData);
-        res.status(201).json(newQuestion);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
+  try {
+    const { question_text, correct_answer, category_id, difficulty, explanation, answers } = req.body;
+
+    const question = await Question.create({
+      question_text,
+      correct_answer,
+      category_id,
+      difficulty,
+      explanation,
+    });
+
+    if (answers && answers.length > 0) {
+      for (const answer of answers) {
+        await Answer.create({
+          answer_text: answer.answer_text,
+          question_id: question.question_id,
+          is_correct: answer.is_correct,
+        });
+      }
     }
+
+    res.status(201).json(question);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
+
 exports.updateQuestion = async (req, res) => {
     try {
         const question = await questionService.updateQuestion(req.params.id, req.body);
@@ -68,4 +90,21 @@ exports.searchQuestions = async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
+};
+
+// Get a question with its answers
+exports.getQuestion = async (req, res) => {
+  try {
+    const question = await Question.findByPk(req.params.id, {
+      include: [{ model: Answer, as: 'answers' }],
+    });
+
+    if (!question) {
+      return res.status(404).json({ error: 'Question not found' });
+    }
+
+    res.status(200).json(question);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 };
