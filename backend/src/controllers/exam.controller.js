@@ -1,5 +1,6 @@
 // src/controllers/exam.controller.js
 const examService = require("../services/exam.service");
+const shuffleArray = require("lodash");
 
 exports.getAllExams = async (req, res) => {
   try {
@@ -56,7 +57,8 @@ exports.getQuestionsForExam = async (req, res) => {
   try {
     const { examId } = req.query; // Lấy các tham số từ query string
     const questions = await examService.getQuestionsForExam(examId); // Gọi service để lấy câu hỏi
-    res.json(questions);
+    const shuffledQuestions = shuffleArray.shuffle(questions); // Trộn câu hỏi
+    res.json(shuffledQuestions); // Trả về danh sách câu hỏi đã trộn
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
