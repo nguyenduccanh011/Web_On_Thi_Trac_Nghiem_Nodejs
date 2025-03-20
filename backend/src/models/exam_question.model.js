@@ -31,7 +31,7 @@ const ExamQuestion = sequelize.define('ExamQuestion', {
     },
 }, {
     tableName: 'exam_questions',
-    timestamps: false, // Không cần timestamps cho bảng trung gian
+    timestamps: true, // Không cần timestamps cho bảng trung gian
 });
 
 // Quan hệ nhiều-nhiều

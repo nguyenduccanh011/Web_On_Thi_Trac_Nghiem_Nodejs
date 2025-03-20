@@ -41,7 +41,7 @@ const User = sequelize.define('User', {
     },
 }, {
     tableName: 'users',
-    timestamps: false, // Bạn đã tắt timestamps ở đây.  Nếu muốn có createdAt/updatedAt, hãy đặt là true.
+    timestamps: true, // Bạn đã tắt timestamps ở đây.  Nếu muốn có createdAt/updatedAt, hãy đặt là true.
 });
 
 module.exports = User;

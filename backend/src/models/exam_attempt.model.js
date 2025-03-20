@@ -47,7 +47,7 @@ const ExamAttempt = sequelize.define('ExamAttempt', {
     },
 }, {
     tableName: 'exam_attempts',
-    timestamps: false, // Không cần timestamps cho bảng này.
+    timestamps: true, // Không cần timestamps cho bảng này.
 });
 
 ExamAttempt.belongsTo(User, { foreignKey: 'user_id', as: 'user' });

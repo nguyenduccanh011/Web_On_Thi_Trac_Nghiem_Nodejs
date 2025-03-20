@@ -28,7 +28,7 @@ const Leaderboard = sequelize.define('Leaderboard', {
     },
 }, {
     tableName: 'leaderboard',
-    timestamps: false, // Không cần timestamps
+    timestamps: true, // Không cần timestamps
 });
 
 Leaderboard.belongsTo(User, { foreignKey: 'user_id', as: 'user' });
