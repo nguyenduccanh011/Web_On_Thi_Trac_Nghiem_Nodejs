@@ -21,6 +21,7 @@
   import axios from 'axios';
   
   export default {
+    name: 'QuestionDetail',
     data() {
       return {
         question: null, // Lưu thông tin chi tiết câu hỏi

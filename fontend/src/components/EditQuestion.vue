@@ -52,6 +52,7 @@
   import axios from 'axios';
   
   export default {
+    name: 'EditQuestion',
     data() {
       return {
         question: null, // Lưu thông tin câu hỏi cần chỉnh sửa

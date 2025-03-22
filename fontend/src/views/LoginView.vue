@@ -1,95 +1,136 @@
 <template>
-    <div class="login">
-      <h2>Login</h2>
+  <div class="login">
+    <div class="form-container">
+      <h2>Đăng nhập</h2>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
-          <label for="username">Username:</label>
+          <label for="username"><i class="fas fa-user"></i> Username:</label>
           <input type="text" id="username" v-model="username" required>
         </div>
         <div class="form-group">
-          <label for="password">Password:</label>
+          <label for="password"><i class="fas fa-lock"></i> Password:</label>
           <input type="password" id="password" v-model="password" required>
         </div>
-        <button type="submit">Login</button>
+        <button type="submit">Đăng nhập</button>
         <div v-if="loginError" class="error-message">{{ loginError }}</div>
       </form>
     </div>
-  </template>
-  
-  <script>
-  import authService from '../services/auth.service';
-  
-  export default {
-    data() {
-      return {
-        username: '',
-        password: '',
-         loginError: ''
-      };
+  </div>
+</template>
+
+<script>
+import authService from '../services/auth.service';
+
+export default {
+  data() {
+    return {
+      username: '',
+      password: '',
+      loginError: ''
+    };
+  },
+  methods: {
+    async handleSubmit() {
+      this.loginError = '';
+      try {
+        const response = await authService.login({
+          username: this.username,
+          password: this.password,
+        });
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        this.$router.push('/');
+      } catch (error) {
+        this.loginError = error.response?.data?.message || "Đã xảy ra lỗi khi đăng nhập";
+      }
     },
-    methods: {
-      async handleSubmit() {
-          this.loginError = ''; // Reset lỗi
-        try {
-          const response = await authService.login({
-            username: this.username,
-            password: this.password,
-          });
-  
-          // Lưu token vào localStorage
-          localStorage.setItem('token', response.data.token);
-          // Lưu thông tin user (nếu có)
-           localStorage.setItem('user', JSON.stringify(response.data.user));
-  
-          // Chuyển hướng đến trang chủ hoặc dashboard
-          this.$router.push('/'); // Hoặc '/dashboard', tùy thuộc vào routing của bạn
-        } catch (error) {
-           if (error.response && error.response.data && error.response.data.message) {
-            this.loginError = error.response.data.message; // Hiển thị lỗi từ backend
-           } else {
-               this.loginError = "Đã xảy ra lỗi khi đăng nhập";
-           }
-        }
-      },
-    },
-  };
-  </script>
-   <style scoped>
-  /* CSS tương tự như RegisterView.vue */
-  .login {
-    max-width: 400px;
-    margin: 0 auto;
+  },
+};
+</script>
+
+<style scoped>
+.login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #ecf0f1;
+}
+
+.form-container {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #2c3e50;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+  color: #2c3e50;
+}
+
+label i {
+  margin-right: 10px;
+  color: #3498db;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  transition: border-color 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="password"]:focus {
+  border-color: #3498db;
+  outline: none;
+}
+
+button {
+  width: 100%;
+  background-color: #3498db;
+  color: white;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+button:hover {
+  background-color: #2980b9;
+}
+
+.error-message {
+  color: red;
+  margin-top: 10px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .form-container {
     padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
   }
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 5px;
-  }
-  
   input[type="text"],
   input[type="password"] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    padding: 8px;
   }
-  
-  button {
-    background-color: #007bff;
-    color: white;
-    padding: 10px 15px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-    .error-message {
-     color: red;
-    margin-top: 5px;
-  }
-  </style>
+}
+</style>

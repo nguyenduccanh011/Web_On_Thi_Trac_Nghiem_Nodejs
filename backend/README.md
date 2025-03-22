@@ -115,14 +115,13 @@ Dự án này là một ứng dụng web được xây dựng bằng Node.js, cu
         * `created_at` (`TIMESTAMP`)
         * `updated_at` (`TIMESTAMP`)
 
-    * **`answer`:** Lưu trữ các đáp án của câu hỏi
+    * **`answers`:** Lưu trữ các đáp án của câu hỏi
         * `answer_id` (`INT`, PRIMARY KEY, AUTO_INCREMENT)
-        * `answer_text` (`STRING(255)`, NOT NULL)
-        * `question_id` (`INT`, FOREIGN KEY `Question`)
+        * `answer_text` (`VARCHAR(255)`, NOT NULL)
+        * `question_id` (`INT`, FOREIGN KEY `questions`)
         * `is_correct` (`BOOLEAN`, NOT NULL)
         * `created_at` (`TIMESTAMP`)
-        * `updated_at` (`TIMESTAMP`)se
-
+        * `updated_at` (`TIMESTAMP`)
 
 ## Giao diện người dùng (dự kiến)
 
