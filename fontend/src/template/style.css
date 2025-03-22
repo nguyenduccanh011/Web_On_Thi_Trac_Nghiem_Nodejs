@@ -1,0 +1,394 @@
+/* Reset cơ bản */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Font chữ hệ thống, dễ đọc */
+    line-height: 1.6;
+    background-color: #f0f2f5; /* Màu nền xám nhạt */
+    color: #333; /* Màu chữ chính */
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+    padding-top: 70px; /* Add padding to avoid being hidden by navbar */
+}
+
+/* ------------------ Thanh Điều Hướng Trên Cùng (Top Nav) ------------------ */
+.top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px; /* Tăng padding */
+    background-color: #fff;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15); /* Đổ bóng đậm hơn */
+    width: 100%;
+    z-index: 100;
+    position: fixed; /* Change from sticky to fixed */
+    top: 0; /* Đảm bảo dính ở trên cùng */
+    left: 0; /* Ensure it starts from the left */
+    flex-wrap: wrap; /* Allow wrapping */
+}
+
+.top-nav .logo a {
+    text-decoration: none;
+    color: #2e86c1; /* Màu xanh dương đậm hơn cho logo */
+    font-weight: 700; /* Chữ đậm hơn */
+    font-size: 1.8em; /* Kích thước lớn hơn */
+    letter-spacing: 1px; /* Giãn chữ */
+}
+
+.search-bar {
+    display: flex;
+    align-items: center;
+    border: 2px solid #d0d3d4; /* Viền đậm hơn */
+    border-radius: 30px; /* Bo tròn nhiều hơn */
+    padding: 8px 15px;
+    background-color: #fff; /* Đổi nền thành trắng */
+    width: 350px; /* Chiều rộng lớn hơn */
+    transition: border-color 0.3s; /* Hiệu ứng khi focus */
+}
+.search-bar:focus-within {
+    border-color: #2e86c1; /* Đổi màu viền khi focus */
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    margin-left: 10px; /* Tăng khoảng cách */
+    width: calc(100% - 30px); /* Chiếm phần còn lại */
+    font-size: 1em;
+    color: #555; /* Màu chữ xám đậm */
+}
+.search-bar i{
+  color: #777;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    position: relative;
+    margin-top: 10px; /* Add margin to separate from search bar */
+}
+
+.user-info .user-details {
+    display: flex;
+    flex-direction: column;
+    margin-right: 15px;
+    text-align: right; /* Căn phải tên và role */
+}
+
+.avatar {
+    width: 45px; /* Kích thước lớn hơn */
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 12px;
+    border: 2px solid #fff;  /*Thêm border*/
+}
+
+.user-info span {
+    margin-right: 5px;
+    font-size: 1em; /* Kích thước chữ lớn hơn */
+    color: #444;
+}
+
+.user-info .role {
+    font-size: 0.85em; /* Kích thước nhỏ hơn cho role */
+    color: #777;
+}
+
+/* Dropdown menu */
+.user-dropdown {
+    display: none;
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    min-width: 180px; /* Rộng hơn */
+    z-index: 10;
+    border-radius: 8px; /* Bo góc */
+    overflow: hidden; /* Ẩn nội dung tràn */
+}
+
+.user-info:hover .user-dropdown {
+    display: block;
+}
+
+.user-dropdown a {
+    display: block;
+    padding: 12px 18px;
+    text-decoration: none;
+    color: #555;
+    transition: background-color 0.2s, color 0.2s; /* Hiệu ứng màu */
+    white-space: nowrap; /* Không xuống dòng */
+}
+
+.user-dropdown a:hover {
+    background-color: #e8f0fe; /* Màu nền khi hover */
+    color: #2e86c1; /* Màu chữ khi hover */
+}
+.user-dropdown a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center; /* Căn giữa icon */
+}
+
+/* ------------------ Sidebar (Thanh Điều Hướng Dọc) ------------------ */
+.sidebar {
+    width: 260px; /* Rộng hơn */
+    background-color: #2c3e50; /* Màu tối hơn */
+    color: #ecf0f1; /* Màu chữ sáng hơn */
+    padding-top: 30px;
+    transition: width 0.3s ease; /* Hiệu ứng thu nhỏ/mở rộng */
+    position: fixed; /* Fix sidebar position */
+    top: 70px; /* Adjust top to avoid navbar */
+    height: calc(100vh - 70px); /* Adjust height */
+}
+
+.sidebar nav ul {
+    list-style: none;
+}
+
+.sidebar nav li a {
+    display: flex; /* Dùng flex để căn chỉnh icon và text */
+    align-items: center; /* Căn giữa theo chiều dọc */
+    padding: 12px 25px;
+    color: #ecf0f1;
+    text-decoration: none;
+    transition: background-color 0.3s, color 0.3s;
+    border-left: 3px solid transparent; /* Tạo border bên trái */
+
+}
+
+.sidebar nav li a:hover,
+.sidebar nav li a.active { /* Thêm class .active cho item đang chọn */
+    background-color: #34495e;
+    color: #fff;
+     border-left-color: #3498db; /* Màu border khi hover/active */
+}
+
+.sidebar nav li a i {
+    margin-right: 15px;
+    width: 24px; /* Rộng hơn */
+    text-align: center;
+    font-size: 1.2em; /* Lớn hơn */
+}
+
+/* ------------------ Nội Dung Chính (Main Content) ------------------ */
+.content {
+    flex: 1;
+    padding: 30px; /* Tăng padding */
+    background-color: #f8f9fa; /* Màu nền sáng */
+    margin-left: 260px; /* Add margin to avoid sidebar */
+    width: calc(100% - 260px); /* Adjust width to full width */
+}
+
+/* Tiêu đề section */
+.section-title {
+    text-align: left;
+    margin-bottom: 20px;
+    margin-top: 20px;
+    color: #444; /* Sẫm màu hơn */
+    font-size: 1.6em; /* Lớn hơn */
+    font-weight: 600; /* Đậm hơn */
+    border-bottom: 2px solid #ddd; /* Thêm đường kẻ dưới */
+    padding-bottom: 10px;
+}
+
+/* Card */
+.card {
+    background-color: white;
+    border-radius: 12px; /* Bo tròn nhiều hơn */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 25px; /* Tăng padding */
+    margin-bottom: 20px;
+    text-align: center;
+    width: calc(20% - 20px); /* 5 cột, có khoảng cách */
+    margin: 10px;
+    display: inline-block;
+    vertical-align: top;
+    transition: transform 0.2s, box-shadow 0.2s; /* Hiệu ứng */
+}
+
+.card:hover {
+    transform: translateY(-5px); /* Nâng lên khi hover */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15); /* Bóng đổ lớn hơn khi hover */
+}
+
+.card h3 {
+    color: #333;
+    font-size: 1.3em;
+    margin-bottom: 12px;
+}
+
+.card p {
+    color: #777;
+    font-size: 0.95em;
+    margin-bottom: 15px;
+}
+
+/* Nút bấm */
+.btn {
+    padding: 12px 20px;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    font-size: 1em;
+    font-weight: 500; /* Chữ đậm hơn */
+}
+
+.btn:hover {
+    background-color: #2980b9;
+    transform: scale(1.05); /* Phóng to một chút khi hover */
+}
+
+/* View More */
+.view-more {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.view-more a {
+    color: #3498db;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s;
+}
+
+.view-more a:hover {
+    color: #2980b9;
+    text-decoration: underline; /* Gạch chân khi hover */
+}
+
+/* ------------------ Responsive (Cho các kích thước màn hình khác nhau) ------------------ */
+
+/* Màn hình nhỏ hơn (tablet) */
+@media (max-width: 992px) {
+    .sidebar {
+        width: 80px; /* Thu nhỏ sidebar */
+        position: fixed; /* Ensure sidebar stays fixed */
+        top: 70px; /* Adjust top to avoid navbar */
+        height: calc(100vh - 70px); /* Adjust height */
+    }
+
+    .sidebar nav li a span {
+        display: none; /* Ẩn chữ, chỉ hiển thị icon */
+    }
+    .sidebar nav li a i {
+        margin-right: 0; /* Xóa margin right */
+    }
+
+    .content {
+        padding: 20px;
+        margin-left: 80px; /* Adjust margin to avoid sidebar */
+        width: calc(100% - 80px); /* Adjust width to full width */
+    }
+
+    .search-bar {
+        width: 200px; /* Thu nhỏ search bar */
+    }
+}
+
+/* Màn hình rất nhỏ (mobile) */
+@media (max-width: 768px) {
+  .container{
+    flex-direction: column;
+  }
+    .top-nav {
+        flex-direction: column; /* Các phần tử xếp chồng lên nhau */
+        align-items: stretch; /* Kéo dài các phần tử */
+        padding: 15px;
+
+    }
+  .top-nav .logo{
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .search-bar {
+        width: 100%; /* Chiếm toàn bộ chiều rộng */
+        margin-bottom: 10px;
+
+    }
+  .user-info {
+        margin-top: 0; /* Reset margin */
+        order: -1; /* Move above search bar */
+    }
+  .user-info .user-details{
+        display: none;
+    }
+
+    .sidebar {
+        width: 100%; /* Chiếm toàn bộ chiều rộng */
+        padding-top: 15px;
+        position: relative; /* Change to relative */
+        top: 0; /* Reset top */
+        height: auto; /* Reset height */
+    }
+    .sidebar nav li a span{
+      display: inline; /*Hiện lại text*/
+    }
+    .sidebar nav li a i{
+      margin-right: 10px;
+    }
+    .sidebar nav ul{
+      display: flex; /*Chuyển các item trên thanh nav dọc thành hàng ngang.*/
+      flex-wrap: wrap; /*Cho phép xuống hàng*/
+      justify-content: space-around; /*Căn đều các item*/
+    }
+
+    .content {
+        padding: 15px;
+        margin-left: 0; /* Reset margin */
+        width: 100%; /* Reset width */
+    }
+
+    .card {
+        width: 100%; /* 1 cột */
+        margin: 10px 0; /* Điều chỉnh margin */
+    }
+    .user-dropdown{
+      min-width: 100px; /*Giảm độ rộng của dropdown menu*/
+    }
+    .user-dropdown a{
+      padding: 10px 12px; /*Giảm padding*/
+    }
+}
+
+/* Màn hình cực nhỏ */
+@media (max-width: 480px) {
+    .top-nav .logo a {
+        font-size: 1.5em; /* Nhỏ hơn */
+    }
+    .search-bar input{
+      font-size: 0.9em;
+    }
+    .card h3{
+      font-size: 1.1em;
+    }
+    .card p{
+      font-size: 0.9em;
+    }
+}
+
+@media (min-width: 1200px) {
+    .card {
+        width: calc(25% - 20px); /* 4 cột, có khoảng cách */
+    }
+}
+
+.grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between; /* Ensure even distribution */
+}
+

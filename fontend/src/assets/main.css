@@ -1,0 +1,19 @@
+/* src/assets/main.css */
+
+/* Thêm font từ Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Định nghĩa các biến trong :root */
+:root {
+  --primary-color: #2e86c1;      /* Màu chính */
+  --background-color: #f0f2f5;   /* Màu nền */
+  --text-color: #333;            /* Màu chữ */
+  --font-family: 'Roboto', sans-serif; /* Font chính */
+}
+
+/* Áp dụng font và các biến cho toàn bộ trang */
+body {
+  font-family: var(--font-family);
+  background-color: var(--background-color);
+  color: var(--text-color);
+}

@@ -46,4 +46,15 @@
   aside ul li a:hover {
     text-decoration: underline;
   }
+
+  aside {
+  position: fixed;
+  top: 70px;
+  width: 260px;
+  height: calc(100vh - 70px);
+}
+aside ul li a:hover {
+  background-color: #34495e;
+  border-left: 3px solid #3498db;
+}
   </style>

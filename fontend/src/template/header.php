@@ -126,19 +126,4 @@ export default {
 .user-dropdown a:hover {
   background-color: #f0f0f0;
 }
-
-.search-bar {
-  border: 2px solid #d0d3d4;
-  border-radius: 30px;
-  padding: 8px 15px;
-  transition: border-color 0.3s;
-}
-.search-bar:focus-within {
-  border-color: #2e86c1;
-}
-
-.user-dropdown a:hover {
-  background-color: #e8f0fe;
-  color: #2e86c1;
-}
 </style>
