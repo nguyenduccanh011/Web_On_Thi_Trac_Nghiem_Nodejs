@@ -51,18 +51,31 @@ export default {
       this.passwordError = '';
       this.registrationError = '';
       this.errors = {};
+      
+      // Kiểm tra mật khẩu
       if (this.password !== this.confirmPassword) {
-        this.passwordError = 'Passwords do not match';
+        this.passwordError = 'Mật khẩu xác nhận không khớp';
         return;
       }
+
+      // Kiểm tra độ dài mật khẩu
+      if (this.password.length < 6) {
+        this.errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+        return;
+      }
+
       try {
         await authService.register({
           username: this.username,
           email: this.email,
           password: this.password,
         });
+        
+        // Hiển thị thông báo thành công
+        alert('Đăng ký thành công! Vui lòng đăng nhập.');
         this.$router.push('/login');
       } catch (error) {
+        console.error('Registration error:', error);
         if (error.response?.data?.errors) {
           this.errors = error.response.data.errors.reduce((acc, err) => {
             acc[err.param] = err.msg;
@@ -70,6 +83,8 @@ export default {
           }, {});
         } else if (error.response?.data?.message) {
           this.registrationError = error.response.data.message;
+        } else {
+          this.registrationError = 'Có lỗi xảy ra khi đăng ký. Vui lòng thử lại.';
         }
       }
     },

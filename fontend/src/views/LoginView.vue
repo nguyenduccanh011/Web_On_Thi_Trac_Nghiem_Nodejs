@@ -13,6 +13,9 @@
         </div>
         <button type="submit">Đăng nhập</button>
         <div v-if="loginError" class="error-message">{{ loginError }}</div>
+        <div class="register-link">
+          <p>Chưa có tài khoản? <router-link to="/register">Đăng ký ngay</router-link></p>
+        </div>
       </form>
     </div>
   </div>
@@ -122,6 +125,22 @@ button:hover {
   color: red;
   margin-top: 10px;
   text-align: center;
+}
+
+.register-link {
+  margin-top: 15px;
+  text-align: center;
+  color: #2c3e50;
+}
+
+.register-link a {
+  color: #3498db;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.register-link a:hover {
+  text-decoration: underline;
 }
 
 @media (max-width: 768px) {
