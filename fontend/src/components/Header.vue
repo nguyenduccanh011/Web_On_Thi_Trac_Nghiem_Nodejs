@@ -12,10 +12,10 @@
     <div class="user-info" @click="toggleDropdown" ref="userInfo">
       <img src="https://photo.znews.vn/w1200/Uploaded/mdf_eioxrd/2021_07_06/1q.jpg" alt="Avatar" class="avatar">
       <div class="user-details">
-        <span>Sanket Pal</span>
-        <span class="role">Student</span>
+        <span>{{ isLoggedIn ? 'Sanket Pal' : 'Chưa đăng nhập' }}</span>
+        <span class="role">{{ isLoggedIn ? 'Student' : 'Khách' }}</span>
       </div>
-      <div class="user-dropdown" v-show="isDropdownVisible" ref="dropdown">
+      <div class="user-dropdown" v-show="isDropdownVisible && isLoggedIn" ref="dropdown">
         <router-link to="/profile"><i class="fas fa-user"></i> Hồ sơ</router-link>
         <router-link to="/settings"><i class="fas fa-cog"></i> Cài đặt</router-link>
         <router-link to="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</router-link>
@@ -29,13 +29,30 @@ export default {
   name: 'AppHeader',
   data() {
     return {
-      isDropdownVisible: false
+      isDropdownVisible: false,
+      isLoggedIn: false
     };
   },
   methods: {
     toggleDropdown() {
+      if (!this.isLoggedIn) {
+        this.$router.push('/register');
+        return;
+      }
       this.isDropdownVisible = !this.isDropdownVisible;
+    },
+    handleClickOutside(event) {
+      if (this.$refs.userInfo && !this.$refs.userInfo.contains(event.target)) {
+        this.isDropdownVisible = false;
+      }
     }
+  },
+  mounted() {
+    document.addEventListener('click', this.handleClickOutside);
+    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+  },
+  beforeUnmount() {
+    document.removeEventListener('click', this.handleClickOutside);
   }
 };
 </script>
@@ -128,45 +145,6 @@ export default {
 }
 
 .user-dropdown {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  background-color: #fff;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-  border-radius: 4px;
-  overflow: hidden;
-  z-index: 200;
-}
-
-.user-dropdown a {
-  display: block;
-  padding: 10px 15px;
-  color: #444;
-  text-decoration: none;
-}
-
-.user-dropdown a:hover {
-  background-color: #f0f0f0;
-}
-
-.search-bar {
-  border: 2px solid #d0d3d4;
-  border-radius: 30px;
-  padding: 8px 15px;
-  transition: border-color 0.3s;
-}
-.search-bar:focus-within {
-  border-color: #2e86c1;
-}
-
-.user-dropdown a:hover {
-  background-color: #e8f0fe;
-  color: #2e86c1;
-}
-
-.user-dropdown {
-  display: none;
   position: absolute;
   top: 100%;
   right: 0;
@@ -185,7 +163,21 @@ export default {
   padding: 10px 15px;
   color: #444;
   text-decoration: none;
-  white-space: nowrap;
+}
+
+.user-dropdown a:hover {
+  background-color: #e8f0fe;
+  color: #2e86c1;
+}
+
+.search-bar {
+  border: 2px solid #d0d3d4;
+  border-radius: 30px;
+  padding: 8px 15px;
+  transition: border-color 0.3s;
+}
+.search-bar:focus-within {
+  border-color: #2e86c1;
 }
 
 .user-dropdown a:hover {
