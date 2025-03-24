@@ -78,13 +78,12 @@
 
         <div class="form-group half-width">
           <label for="category_id" class="form-label">Danh mục:</label>
-          <input
-            type="number"
+          <select
             id="category_id"
-            v-model.number="categoryId"
+            v-model="categoryId"
             required
-            class="form-input"
-          />
+            class="form-select"
+          ></select>
         </div>
       </div>
 
@@ -131,6 +130,9 @@ export default {
       errorMessage: "",
     };
   },
+  mounted() {
+    this.loadCategories();
+  },
   methods: {
     addOption() {
       if (this.options.length < 10) {
@@ -157,25 +159,31 @@ export default {
     },
     async createQuestion() {
       try {
+        const token = localStorage.getItem("token"); // Lấy token từ localStorage
         this.successMessage = "";
         this.errorMessage = "";
 
         const payload = {
           question_text: this.questionText,
-          options: this.options.map((option) => option.text),
-          correct_answer: this.correctAnswer,
+          answers: this.options.map((option) => option.text),
+          correct_answer: this.getCorrectAnswerText(),
           category_id: this.categoryId,
           explanation: this.explanation,
         };
 
-        const response = await axios.post("/api/questions", payload);
+        const response = await axios.post("/api/questions", payload, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Gửi token cùng với yêu cầu
+          },
+        });
         this.successMessage = "Câu hỏi đã được tạo thành công!";
 
         // Reset form
         this.questionText = "";
         this.options = [{ text: "" }, { text: "" }];
         this.correctAnswer = "A";
-        this.categoryId = null;
+        this.categoryId =
+          document.getElementById("category_id").options[0].value;
         this.explanation = "";
 
         console.log("Câu hỏi đã được tạo:", response.data);
@@ -200,6 +208,46 @@ export default {
 
         console.error("Lỗi khi tạo câu hỏi:", error);
       }
+    },
+    async fetchCategories() {
+      try {
+        const response = await axios.get("/api/categories");
+        this.categories = response.data;
+        // console.log("Danh mục đã được tải:", this.categories);
+
+        return this.categories;
+      } catch (error) {
+        console.error("Lỗi khi lấy danh mục:", error);
+      }
+    },
+    loadCategories() {
+      var categorySelect = document.getElementById("category_id");
+      this.fetchCategories()
+        .then((categories) => {
+          categories.forEach((category) => {
+            var option = document.createElement("option");
+            option.value = category.category_id;
+            option.textContent = category.category_name;
+            categorySelect.appendChild(option);
+          });
+        })
+        .catch((error) => {
+          console.error("Lỗi khi tải danh mục:", error);
+        })
+        .finally(() => {
+          // Set default selected option
+          if (categorySelect.options.length > 0) {
+            // console.log(categorySelect.options.length);
+            this.categoryId = categorySelect.options[0].value;
+          }
+        });
+    },
+    getCorrectAnswerText() {
+      // console.log(this.correctAnswer);
+      var selectedElement = document.getElementById("category_id");
+      var selectedOption =
+        selectedElement.options[selectedElement.selectedIndex];
+      return selectedOption.text;
     },
   },
 };
