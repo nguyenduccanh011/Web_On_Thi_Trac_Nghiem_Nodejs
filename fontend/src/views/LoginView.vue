@@ -23,6 +23,7 @@
 
 <script>
 import authService from '../services/auth.service';
+import eventBus from '../eventBus';
 
 export default {
   data() {
@@ -42,6 +43,8 @@ export default {
         });
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
+        localStorage.setItem('isLoggedIn', 'true');
+        eventBus.emit('login-success', response.data.user);
         this.$router.push('/');
       } catch (error) {
         this.loginError = error.response?.data?.message || "Đã xảy ra lỗi khi đăng nhập";

@@ -9,50 +9,64 @@
       <input type="text" placeholder="Tìm kiếm bài kiểm tra, chủ đề...">
     </div>
 
-    <div class="user-info" @click="toggleDropdown" ref="userInfo">
+    <div class="user-info" ref="userInfo">
       <img src="https://photo.znews.vn/w1200/Uploaded/mdf_eioxrd/2021_07_06/1q.jpg" alt="Avatar" class="avatar">
       <div class="user-details">
-        <span>{{ isLoggedIn ? 'Sanket Pal' : 'Chưa đăng nhập' }}</span>
-        <span class="role">{{ isLoggedIn ? 'Student' : 'Khách' }}</span>
+        <span>{{ userInfo ? userInfo.username : 'Chưa đăng nhập' }}</span>
+        <span class="role">{{ userInfo ? userInfo.role : 'Khách' }}</span>
       </div>
-      <div class="user-dropdown" v-show="isDropdownVisible && isLoggedIn" ref="dropdown">
+      <div class="user-dropdown" v-if="isLoggedIn">
         <router-link to="/profile"><i class="fas fa-user"></i> Hồ sơ</router-link>
         <router-link to="/settings"><i class="fas fa-cog"></i> Cài đặt</router-link>
-        <router-link to="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</router-link>
+        <a href="#" @click.prevent="handleLogout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
       </div>
     </div>
   </header>
 </template>
 
 <script>
+import eventBus from '../eventBus';
+
 export default {
   name: 'AppHeader',
   data() {
     return {
-      isDropdownVisible: false,
-      isLoggedIn: false
+      isLoggedIn: false,
+      userInfo: null
     };
   },
   methods: {
-    toggleDropdown() {
-      if (!this.isLoggedIn) {
-        this.$router.push('/register');
-        return;
-      }
-      this.isDropdownVisible = !this.isDropdownVisible;
+    handleLogout() {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('isLoggedIn');
+      this.isLoggedIn = false;
+      this.userInfo = null;
+      this.$router.push('/login');
     },
-    handleClickOutside(event) {
-      if (this.$refs.userInfo && !this.$refs.userInfo.contains(event.target)) {
-        this.isDropdownVisible = false;
+    updateUserInfo() {
+      const userStr = localStorage.getItem('user');
+      if (userStr) {
+        try {
+          this.userInfo = JSON.parse(userStr);
+        } catch (e) {
+          console.error('Error parsing user info:', e);
+        }
       }
+      this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
     }
   },
   mounted() {
-    document.addEventListener('click', this.handleClickOutside);
-    this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    this.updateUserInfo();
+    // Lắng nghe sự kiện đăng nhập thành công
+    eventBus.on('login-success', (user) => {
+      this.userInfo = user;
+      this.isLoggedIn = true;
+    });
   },
   beforeUnmount() {
-    document.removeEventListener('click', this.handleClickOutside);
+    // Xóa event listener khi component bị hủy
+    eventBus.off('login-success');
   }
 };
 </script>
@@ -145,6 +159,7 @@ export default {
 }
 
 .user-dropdown {
+  display: none;
   position: absolute;
   top: 100%;
   right: 0;
@@ -155,7 +170,10 @@ export default {
   z-index: 200;
   min-width: 150px;
   max-width: 200px;
-  animation: fadeIn 0.2s ease-in-out;
+}
+
+.user-info:hover .user-dropdown {
+  display: block;
 }
 
 .user-dropdown a {
@@ -166,7 +184,7 @@ export default {
 }
 
 .user-dropdown a:hover {
-  background-color: #e8f0fe;
+  background-color: #f0f0f0;
   color: #2e86c1;
 }
 
@@ -176,13 +194,9 @@ export default {
   padding: 8px 15px;
   transition: border-color 0.3s;
 }
+
 .search-bar:focus-within {
   border-color: #2e86c1;
-}
-
-.user-dropdown a:hover {
-  background-color: #e8f0fe;
-  color: #2e86c1;
 }
 
 @keyframes fadeIn {
