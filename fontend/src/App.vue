@@ -15,6 +15,7 @@
 import AppHeader from './components/Header.vue';
 import AppFooter from './components/Footer.vue';
 import AppSidebar from './components/Sidebar.vue';
+import './assets/main.css'; // Import main.css
 
 export default {
   name: 'App',
@@ -25,7 +26,6 @@ export default {
   }
 };
 </script>
-
 
 <style>
 #app {

@@ -9,13 +9,13 @@
       <input type="text" placeholder="Tìm kiếm bài kiểm tra, chủ đề...">
     </div>
 
-    <div class="user-info">
+    <div class="user-info" @click="toggleDropdown" ref="userInfo">
       <img src="https://photo.znews.vn/w1200/Uploaded/mdf_eioxrd/2021_07_06/1q.jpg" alt="Avatar" class="avatar">
       <div class="user-details">
         <span>Sanket Pal</span>
         <span class="role">Student</span>
       </div>
-      <div class="user-dropdown">
+      <div class="user-dropdown" v-show="isDropdownVisible" ref="dropdown">
         <router-link to="/profile"><i class="fas fa-user"></i> Hồ sơ</router-link>
         <router-link to="/settings"><i class="fas fa-cog"></i> Cài đặt</router-link>
         <router-link to="/logout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</router-link>
@@ -26,7 +26,17 @@
 
 <script>
 export default {
-  name: 'AppHeader'
+  name: 'AppHeader',
+  data() {
+    return {
+      isDropdownVisible: false
+    };
+  },
+  methods: {
+    toggleDropdown() {
+      this.isDropdownVisible = !this.isDropdownVisible;
+    }
+  }
 };
 </script>
 
@@ -47,6 +57,13 @@ export default {
   z-index: 100;
 }
 
+.logo {
+  flex-shrink: 0;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+}
+
 .logo a {
   text-decoration: none;
   color: #2e86c1;
@@ -58,6 +75,9 @@ export default {
 .search-bar {
   display: flex;
   align-items: center;
+  flex-grow: 2;
+  justify-content: center;
+  flex-basis: 50%; /* Mở rộng ô tìm kiếm */
 }
 
 .search-bar input {
@@ -65,6 +85,9 @@ export default {
   padding: 5px 10px;
   border: 1px solid #ccc;
   border-radius: 4px;
+  border: none; /* Loại bỏ viền */
+  outline: none; /* Loại bỏ viền khi focus */
+  width: 100%;
 }
 
 .user-info {
@@ -72,6 +95,10 @@ export default {
   align-items: center;
   cursor: pointer;
   position: relative;
+  flex-shrink: 0;
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
 }
 
 .user-info .user-details {
@@ -112,10 +139,6 @@ export default {
   z-index: 200;
 }
 
-.user-info:hover .user-dropdown {
-  display: block;
-}
-
 .user-dropdown a {
   display: block;
   padding: 10px 15px;
@@ -140,5 +163,38 @@ export default {
 .user-dropdown a:hover {
   background-color: #e8f0fe;
   color: #2e86c1;
+}
+
+.user-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: #fff;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  border-radius: 4px;
+  overflow: hidden;
+  z-index: 200;
+  min-width: 150px;
+  max-width: 200px;
+  animation: fadeIn 0.2s ease-in-out;
+}
+
+.user-dropdown a {
+  display: block;
+  padding: 10px 15px;
+  color: #444;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.user-dropdown a:hover {
+  background-color: #e8f0fe;
+  color: #2e86c1;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 </style>
