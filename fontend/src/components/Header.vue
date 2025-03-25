@@ -20,14 +20,16 @@
         <router-link to="/settings"><i class="fas fa-cog"></i> Cài đặt</router-link>
         <a href="#" @click.prevent="handleLogout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
       </div>
+
       <div class="user-dropdown" v-else>
         <router-link to="/login"><i class="fas fa-sign-in-alt"></i> Đăng nhập</router-link>
         <router-link to="/register"><i class="fas fa-user-plus"></i> Đăng ký</router-link>
       </div>
     </div>
   </header>
-</template>
 
+</template>
+  <!-- Script -->
 <script>
 import eventBus from '../eventBus';
 
