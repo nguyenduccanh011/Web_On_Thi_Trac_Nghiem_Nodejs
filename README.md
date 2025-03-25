@@ -82,3 +82,10 @@ To search for questions, send a GET request to `/questions/search?q=searchTerm`.
 | `ci` | Thay đổi CI/CD pipeline | `ci: Cập nhật GitHub Actions` |
 | `build` | Cấu hình build hệ thống | `build: Thêm webpack vào dự án` |
 | `revert` | Hoàn tác commit trước đó | `revert: Hoàn tác commit "feat(cart): Thêm xóa sản phẩm"` |
+
+
+Ví dụ
+git commit -m "feat(controller): Thêm API lấy danh sách sản phẩm"
+git commit -m "fix(repository): Sửa lỗi truy vấn dữ liệu sản phẩm"
+git commit -m "chore(database): Tạo bảng mới lưu lịch sử thanh toán"
+
