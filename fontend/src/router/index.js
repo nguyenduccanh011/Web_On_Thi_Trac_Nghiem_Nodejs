@@ -5,6 +5,8 @@ import CreateQuestionView from '../views/CreateQuestionView.vue';
 import CreateCategoryView from '../views/CreateCategoryView.vue';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
+import ForgotPasswordView from '../views/ForgotPasswordView.vue';
+import ResetPasswordView from '../views/ResetPasswordView.vue';
 import HomeView from '../views/HomeView.vue'; // Import
 
 const routes = [
@@ -42,6 +44,16 @@ const routes = [
     path: '/register',
     name: 'Register',
     component: RegisterView,
+  },
+  {
+    path: '/forgot-password',
+    name: 'ForgotPassword',
+    component: ForgotPasswordView,
+  },
+  {
+    path: '/reset-password/:token',
+    name: 'ResetPassword',
+    component: ResetPasswordView,
   },
 ];
 

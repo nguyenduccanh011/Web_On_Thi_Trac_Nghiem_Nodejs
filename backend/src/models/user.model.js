@@ -39,6 +39,12 @@ const User = sequelize.define('User', {
     profile_picture: {
         type: DataTypes.STRING(255),
     },
+    resetPasswordToken: {
+        type: DataTypes.STRING(255),
+    },
+    resetPasswordExpires: {
+        type: DataTypes.DATE,
+    }
 }, {
     tableName: 'users',
     timestamps: true, // Bạn đã tắt timestamps ở đây.  Nếu muốn có createdAt/updatedAt, hãy đặt là true.
