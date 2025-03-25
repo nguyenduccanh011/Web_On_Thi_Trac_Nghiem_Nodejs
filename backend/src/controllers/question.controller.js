@@ -46,7 +46,7 @@ exports.createQuestion = async (req, res) => {
 
     if (answers && answers.length > 0) {
       for (const answer of answers) {
-        console.log(answer); // Log each answer to the console
+        // Log each answer to the console
         await Answer.create({
           answer_text: answer,
           question_id: question.question_id,

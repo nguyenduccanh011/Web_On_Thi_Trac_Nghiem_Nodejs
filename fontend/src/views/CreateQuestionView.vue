@@ -162,11 +162,11 @@ export default {
         const token = localStorage.getItem("token"); // Lấy token từ localStorage
         this.successMessage = "";
         this.errorMessage = "";
-
+        var correct = this.getCorrectAnswerText();
         const payload = {
           question_text: this.questionText,
           answers: this.options.map((option) => option.text),
-          correct_answer: this.getCorrectAnswerText(),
+          correct_answer: correct,
           category_id: this.categoryId,
           explanation: this.explanation,
         };
@@ -243,11 +243,10 @@ export default {
         });
     },
     getCorrectAnswerText() {
-      // console.log(this.correctAnswer);
-      var selectedElement = document.getElementById("category_id");
-      var selectedOption =
-        selectedElement.options[selectedElement.selectedIndex];
-      return selectedOption.text;
+      var elementId =
+        "option_" + (this.correctAnswer.charCodeAt(0) - 65).toString();
+      var correctAnswerText = document.getElementById(elementId);
+      return correctAnswerText.value;
     },
   },
 };
