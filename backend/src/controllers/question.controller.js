@@ -43,7 +43,7 @@ exports.createQuestion = async (req, res) => {
       difficulty,
       explanation,
     });
-
+    console.log(answers);
     if (answers && answers.length > 0) {
       for (const answer of answers) {
         // Log each answer to the console
