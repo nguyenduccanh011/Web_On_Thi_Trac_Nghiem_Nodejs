@@ -46,6 +46,14 @@ export default {
       errors: {}
     };
   },
+  beforeMount() {
+    // Kiểm tra nếu người dùng đã đăng nhập
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+      // Chuyển hướng về trang chủ nếu đã đăng nhập
+      this.$router.push('/');
+    }
+  },
   methods: {
     async handleSubmit() {
       this.passwordError = '';
