@@ -176,6 +176,162 @@ export default {
 <style scoped>
 .profile-container {
   max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
 
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 300px;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid #f3f3f3;
+  border-top: 5px solid #3498db;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.error {
+  color: #e74c3c;
+  text-align: center;
+  padding: 2rem;
+  background: #fdf3f2;
+  border-radius: 5px;
+  margin: 1rem 0;
+}
+
+.profile-content {
+  padding: 2rem;
+}
+
+.profile-content h1 {
+  color: #2c3e50;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.profile-section {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.avatar-section {
+  flex: 0 0 200px;
+  text-align: center;
+}
+
+.avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+  border: 3px solid #3498db;
+}
+
+.change-avatar-btn {
+  background: #3498db;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.change-avatar-btn:hover {
+  background: #2980b9;
+}
+
+.info-section {
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.form-group input:disabled {
+  background: #f5f6fa;
+  cursor: not-allowed;
+}
+
+.button-group {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  margin-top: 2rem;
+}
+
+.save-btn, .cancel-btn {
+  padding: 0.8rem 2rem;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.save-btn {
+  background: #2ecc71;
+  color: white;
+}
+
+.save-btn:hover {
+  background: #27ae60;
+}
+
+.cancel-btn {
+  background: #e74c3c;
+  color: white;
+}
+
+.cancel-btn:hover {
+  background: #c0392b;
+}
+
+@media (max-width: 768px) {
+  .profile-section {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .avatar-section {
+    flex: none;
+  }
+  
+  .info-section {
+    width: 100%;
+  }
 }
 </style> 

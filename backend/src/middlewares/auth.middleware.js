@@ -16,8 +16,18 @@ const authMiddleware = (req, res, next) => {
     }
 
     console.log('Token:', token); // Log token
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = jwt.verify(token, config.jwtSecret);
     console.log('Decoded token:', decoded); // Log token đã decode
+    
+    // Đảm bảo decoded token có userId
+    if (!decoded.userId) {
+      console.error('Token không chứa userId');
+      return res.status(401).json({
+        success: false,
+        message: 'Token không hợp lệ'
+      });
+    }
+    
     req.user = decoded;
     next();
   } catch (error) {

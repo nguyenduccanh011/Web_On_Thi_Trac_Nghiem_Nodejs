@@ -1,6 +1,7 @@
 // src/routes/user.routes.js
 const express = require('express');
 const userController = require('../controllers/user.controller');
+const userService = require('../services/user.service');
 const authMiddleware = require('../middlewares/auth.middleware');
 const adminMiddleware = require('../middlewares/admin.middleware')
 const { body } = require('express-validator');
@@ -15,16 +16,16 @@ router.use(authMiddleware);
 
 // Lấy thông tin user hiện tại (dựa vào token)
 router.get('/me', async (req, res) => {
-
     try {
-        const userId = req.user.id;
+        const userId = req.user.userId;
         const user = await userService.getUserById(userId);
         if(!user) {
-          return res.status(404).json({message: "User not found"});
+          return res.status(404).json({message: "Không tìm thấy người dùng"});
         }
         res.json(user);
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error('Error in /me route:', error);
+        res.status(500).json({ message: "Không thể tải thông tin người dùng. Vui lòng thử lại sau." });
     }
 });
 
