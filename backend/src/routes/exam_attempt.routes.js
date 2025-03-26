@@ -6,7 +6,7 @@ const authMiddleware = require("../middlewares/auth.middleware");
 const router = express.Router();
 
 //Lấy danh sách bài thi của một user
-router.post("/me", authMiddleware.verifyToken, examAttemptController.getAttempByUser);
+router.get("/me", authMiddleware.verifyToken, examAttemptController.getAttempByUser);
 
 // Lấy chi tiết lần làm bài (cần xác thực)
 router.get("/:id", authMiddleware.verifyToken, examAttemptController.getAttemptDetails);

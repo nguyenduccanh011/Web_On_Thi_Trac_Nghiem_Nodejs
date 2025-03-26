@@ -4,7 +4,7 @@ const examAttemptService = require("../services/exam_attempt.service");
 
 exports.getAttempByUser = async (req, res) => {
   try {
-    const userId = req.body.userId;
+    const userId = req.user.id;
     const attempts = await examAttemptService.getAttemptsByUser(userId);
     res.json(attempts);
   } catch (error) {
