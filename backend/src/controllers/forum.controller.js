@@ -1,7 +1,7 @@
 // src/controllers/forum.controller.js
 const forumService = require('../services/forum.service');
 
-exports.getPostsByTopicId = async (req, res) => {
+const getPostsByTopicId = async (req, res) => {
     try {
         const topicId = req.params.id;
         const posts = await forumService.getPostsByTopicId(topicId);
@@ -11,7 +11,7 @@ exports.getPostsByTopicId = async (req, res) => {
     }
 };
 
-exports.updateTopic = async (req, res) => {
+const updateTopic = async (req, res) => {
     try {
         const topicId = req.params.id;
         const topicData = req.body;
@@ -22,7 +22,7 @@ exports.updateTopic = async (req, res) => {
     }
 };
 
-exports.deleteTopic = async (req, res) => {
+const deleteTopic = async (req, res) => {
     try {
         const topicId = req.params.id;
         await forumService.deleteTopic(topicId);
@@ -32,7 +32,7 @@ exports.deleteTopic = async (req, res) => {
     }
 };
 
-exports.updatePost = async (req, res) => {
+const updatePost = async (req, res) => {
     try {
         const postId = req.params.postId;
         const postData = req.body;
@@ -43,7 +43,7 @@ exports.updatePost = async (req, res) => {
     }
 };
 
-exports.deletePost = async (req, res) => {
+const deletePost = async (req, res) => {
     try {
         const postId = req.params.postId;
         await forumService.deletePost(postId);
@@ -53,7 +53,7 @@ exports.deletePost = async (req, res) => {
     }
 };
 
-exports.getAllTopics = async (req, res) => {
+const getAllTopics = async (req, res) => {
     try {
         const topics = await forumService.getAllTopics();
         res.json(topics);
@@ -62,7 +62,7 @@ exports.getAllTopics = async (req, res) => {
     }
 };
 
-exports.getTopicById = async (req, res) => {
+const getTopicById = async (req, res) => {
     try {
         const topicId = req.params.id;
         const topic = await forumService.getTopicById(topicId);
@@ -72,7 +72,7 @@ exports.getTopicById = async (req, res) => {
     }
 };
 
-exports.createTopic = async (req, res) => {
+const createTopic = async (req, res) => {
     try {
         const topicData = req.body;
         const newTopic = await forumService.createTopic(topicData);
@@ -82,7 +82,7 @@ exports.createTopic = async (req, res) => {
     }
 };
 
-exports.createPost = async (req, res) => {
+const createPost = async (req, res) => {
     try {
         const postData = req.body;
         const newPost = await forumService.createPost(postData);
@@ -92,7 +92,7 @@ exports.createPost = async (req, res) => {
     }
 };
 
-exports.searchTopics = async (req, res) => {
+const searchTopics = async (req, res) => {
     try {
         const searchTerm = req.query.q;
         const topics = await forumService.searchTopics(searchTerm);
@@ -103,14 +103,14 @@ exports.searchTopics = async (req, res) => {
 };
 
 module.exports = {
-    getPostsByTopicId: exports.getPostsByTopicId,
-    updateTopic: exports.updateTopic,
-    deleteTopic: exports.deleteTopic,
-    updatePost: exports.updatePost,
-    deletePost: exports.deletePost,
-    getAllTopics: exports.getAllTopics,
-    getTopicById: exports.getTopicById,
-    createTopic: exports.createTopic,
-    createPost: exports.createPost,
-    searchTopics: exports.searchTopics
+    getPostsByTopicId,
+    updateTopic,
+    deleteTopic,
+    updatePost,
+    deletePost,
+    getAllTopics,
+    getTopicById,
+    createTopic,
+    createPost,
+    searchTopics
 };

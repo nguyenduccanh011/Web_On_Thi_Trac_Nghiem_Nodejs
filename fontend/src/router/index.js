@@ -10,6 +10,7 @@ import ResetPasswordView from '../views/ResetPasswordView.vue';
 import HomeView from '../views/HomeView.vue'; // Import
 import ProfileView from '../views/ProfileView.vue'
 
+
 const routes = [
   {
     path: '/',
@@ -62,6 +63,7 @@ const routes = [
     component: ProfileView,
     meta: { requiresAuth: true }
   },
+
 ];
 
 const router = createRouter({
@@ -78,6 +80,7 @@ router.beforeEach((to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth)) {
     if (!isLoggedIn || !token || !user || !user.user_id) {
       // Lưu đường dẫn đích để chuyển hướng sau khi đăng nhập
+
       next({
         path: '/login',
         query: { redirect: to.fullPath }
@@ -88,6 +91,7 @@ router.beforeEach((to, from, next) => {
   } else if (to.path === '/login' && isLoggedIn) {
     // Nếu đã đăng nhập và cố gắng truy cập trang login, chuyển hướng về trang chủ
     next('/');
+
   } else {
     next();
   }

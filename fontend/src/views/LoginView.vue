@@ -11,6 +11,7 @@
           <label for="password"><i class="fas fa-lock"></i> Password:</label>
           <input type="password" id="password" v-model="password" required>
           <div class="forgot-password">
+
             <router-link to="/forgot-password">Quên mật khẩu?</router-link>
           </div>
         </div>
@@ -160,17 +161,20 @@ button:hover {
 }
 
 .forgot-password {
+
   text-align: right;
   margin-top: 5px;
 }
 
 .forgot-password a {
+
   color: #3498db;
   text-decoration: none;
   font-size: 0.9em;
 }
 
 .forgot-password a:hover {
+
   text-decoration: underline;
 }
 

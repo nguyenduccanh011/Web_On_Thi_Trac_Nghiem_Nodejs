@@ -19,5 +19,8 @@ if exist %fileName% (
     echo DB_NAME=exam_online >> .env
     echo DB_PORT=3306 >> .env
     echo JWT_SECRET=your-super-secret-jwt-key // Thay bằng khóa bí mật JWT của bạn >> .env
+    echo EMAIL_USER=email >> .env
+    echo MAIL_PASSWORD=pass_application >> .env
+    echo FRONTEND_URL=http://localhost:8080 >> .env
 )
 echo - Cài đặt environment hoàn tất.

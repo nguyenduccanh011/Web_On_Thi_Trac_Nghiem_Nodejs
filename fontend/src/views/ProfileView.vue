@@ -61,6 +61,7 @@
       <div class="button-group">
         <button @click="handleUpdateProfile" class="save-btn">Lưu thay đổi</button>
         <button @click="$router.push('/')" class="cancel-btn">Hủy</button>
+
       </div>
     </div>
   </div>
@@ -68,6 +69,7 @@
 
 <script>
 import userService from '../services/user.service';
+
 
 export default {
   name: 'ProfileView',
@@ -77,6 +79,7 @@ export default {
       loading: false,
       error: null,
       selectedFile: null
+
     };
   },
   async created() {
@@ -164,6 +167,7 @@ export default {
         // Reset input file
         event.target.value = '';
       }
+
     }
   }
 };
@@ -172,134 +176,6 @@ export default {
 <style scoped>
 .profile-container {
   max-width: 800px;
-  margin: 80px auto 0;
-  padding: 20px;
-}
 
-.loading {
-  text-align: center;
-  padding: 40px;
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid #f3f3f3;
-  border-top: 4px solid #2e86c1;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-  margin: 0 auto 20px;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-.error {
-  text-align: center;
-  color: #e74c3c;
-  padding: 20px;
-}
-
-.profile-content {
-  background: white;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  padding: 30px;
-}
-
-.profile-section {
-  display: flex;
-  gap: 40px;
-  margin-top: 20px;
-}
-
-.avatar-section {
-  text-align: center;
-}
-
-.avatar {
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 15px;
-}
-
-.change-avatar-btn {
-  background: #f8f9fa;
-  border: 1px solid #ddd;
-  padding: 8px 16px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: all 0.3s;
-}
-
-.change-avatar-btn:hover {
-  background: #e9ecef;
-}
-
-.info-section {
-  flex: 1;
-}
-
-.form-group {
-  margin-bottom: 20px;
-}
-
-.form-group label {
-  display: block;
-  margin-bottom: 5px;
-  color: #666;
-  font-weight: 500;
-}
-
-.form-group input {
-  width: 100%;
-  padding: 8px 12px;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  font-size: 14px;
-}
-
-.form-group input:disabled {
-  background: #f8f9fa;
-  cursor: not-allowed;
-}
-
-.button-group {
-  display: flex;
-  gap: 15px;
-  margin-top: 30px;
-  justify-content: flex-end;
-}
-
-.save-btn, .cancel-btn {
-  padding: 10px 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: all 0.3s;
-}
-
-.save-btn {
-  background: #2e86c1;
-  color: white;
-  border: none;
-}
-
-.save-btn:hover {
-  background: #2874a6;
-}
-
-.cancel-btn {
-  background: #f8f9fa;
-  color: #666;
-  border: 1px solid #ddd;
-}
-
-.cancel-btn:hover {
-  background: #e9ecef;
 }
 </style> 

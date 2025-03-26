@@ -19,4 +19,5 @@ export default {
     localStorage.removeItem('user');
     localStorage.removeItem('isLoggedIn');
   }
+
 };
