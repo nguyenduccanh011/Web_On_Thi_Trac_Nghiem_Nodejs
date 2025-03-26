@@ -2,9 +2,9 @@
     <aside class="sidebar">
       <nav>
         <ul>
-          <li><router-link to="/"><i class="fas fa-tachometer-alt"></i> Dashboard</router-link></li>
-          <li><router-link to="/exams"><i class="fas fa-book"></i> Study for MCT</router-link></li>
-          <li><router-link to="/history"><i class="fas fa-stethoscope"></i> Study for OSCE</router-link></li>
+          <li><router-link to="/"><i class="fas fa-tachometer-alt"></i> Trang chủ</router-link></li>
+          <li><router-link to="/create-question"><i class="fas fa-book"></i> Tạo câu hỏi mới</router-link></li>
+          <li><router-link to="/create-category"><i class="fas fa-stethoscope"></i> Tạo danh mục mới</router-link></li>
           <li><router-link to="/leaderboard"><i class="fas fa-clipboard-list"></i> Cheat Sheet</router-link></li>
           <li><router-link to="/forum"><i class="fas fa-users"></i> OLTS Social</router-link></li>
           <li><router-link to="/support"><i class="fas fa-chalkboard-teacher"></i> Tutor Support</router-link></li>

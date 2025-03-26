@@ -46,3 +46,45 @@ exports.login = async (req, res) => {
     }
   }
 };
+
+// Xử lý quên mật khẩu
+exports.forgotPassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { email } = req.body;
+    await authService.forgotPassword(email);
+    res.status(200).json({ message: 'Password reset instructions have been sent to your email' });
+  } catch (error) {
+    if (error.message === 'User not found') {
+      res.status(404).json({ message: 'No account found with this email address' });
+    } else {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+};
+
+// Xử lý đặt lại mật khẩu
+exports.resetPassword = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    const { token, password } = req.body;
+    await authService.resetPassword(token, password);
+    res.status(200).json({ message: 'Password has been reset successfully' });
+  } catch (error) {
+    if (error.message === 'Invalid or expired token') {
+      res.status(400).json({ message: 'Invalid or expired reset token' });
+    } else {
+      console.error(error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  }
+};

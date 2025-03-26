@@ -10,6 +10,9 @@
         <div class="form-group">
           <label for="password"><i class="fas fa-lock"></i> Password:</label>
           <input type="password" id="password" v-model="password" required>
+          <div class="forgot-password">
+            <router-link to="/forgot-password">Quên mật khẩu?</router-link>
+          </div>
         </div>
         <button type="submit">Đăng nhập</button>
         <div v-if="loginError" class="error-message">{{ loginError }}</div>
@@ -32,6 +35,14 @@ export default {
       password: '',
       loginError: ''
     };
+  },
+  beforeMount() {
+    // Kiểm tra nếu người dùng đã đăng nhập
+    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+    if (isLoggedIn) {
+      // Chuyển hướng về trang chủ nếu đã đăng nhập
+      this.$router.push('/');
+    }
   },
   methods: {
     async handleSubmit() {
@@ -134,6 +145,21 @@ button:hover {
   margin-top: 15px;
   text-align: center;
   color: #2c3e50;
+}
+
+.forgot-password {
+  text-align: right;
+  margin-top: 5px;
+}
+
+.forgot-password a {
+  color: #3498db;
+  text-decoration: none;
+  font-size: 0.9em;
+}
+
+.forgot-password a:hover {
+  text-decoration: underline;
 }
 
 .register-link a {
