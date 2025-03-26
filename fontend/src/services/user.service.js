@@ -74,10 +74,10 @@ export default {
         }
       );
 
-      if (response.data && response.data.user) {
+      if (response.data && response.data.success) {
         return response.data.user;
       } else {
-        throw new Error('Dữ liệu phản hồi không hợp lệ');
+        throw new Error(response.data.message || 'Dữ liệu phản hồi không hợp lệ');
       }
     } catch (error) {
       if (error.response) {
@@ -88,7 +88,7 @@ export default {
         throw new Error('Không thể kết nối đến máy chủ');
       } else {
         // Lỗi khi tạo request
-        throw new Error('Có lỗi xảy ra khi cập nhật ảnh đại diện');
+        throw error;
       }
     }
   }

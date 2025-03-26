@@ -19,15 +19,19 @@ exports.getAllUsers = async () => {
 
 exports.getUserById = async (userId) => {
   try {
+    console.log('Fetching user with ID:', userId);
     const user = await User.findByPk(userId, {
       attributes: { exclude: ['password'] }, // Loại bỏ trường password
     });
     if (!user) {
-      throw new Error('User not found');
+      console.log('User not found with ID:', userId);
+      return null;
     }
+    console.log('User found:', user);
     return user;
   } catch (error) {
-    throw error;
+    console.error('Error in getUserById:', error);
+    throw new Error('Lỗi khi lấy thông tin người dùng');
   }
 };
 
@@ -95,7 +99,7 @@ exports.getUserExamHistory = async (userId) => {
 
 exports.updateProfilePicture = async (userId, profilePicture) => {
   try {
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({ where: { user_id: userId } });
     if (!user) {
       throw new Error('User not found');
     }
@@ -104,7 +108,8 @@ exports.updateProfilePicture = async (userId, profilePicture) => {
     await user.update({ profile_picture: profilePicture });
 
     // Lấy lại thông tin user đã cập nhật
-    const updatedUser = await User.findByPk(userId, {
+    const updatedUser = await User.findOne({ 
+      where: { user_id: userId },
       attributes: { exclude: ['password'] }
     });
 

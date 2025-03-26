@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const path = require('path');
 const userProfileRoutes = require('./routes/user_profile.routes');
 
 const app = express();
@@ -7,6 +8,9 @@ const app = express();
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Phục vụ file tĩnh từ thư mục uploads
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 // Routes
 app.use('/api/profile', userProfileRoutes);
