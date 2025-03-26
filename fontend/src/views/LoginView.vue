@@ -52,12 +52,24 @@ export default {
           username: this.username,
           password: this.password,
         });
+        
+        console.log('Login response:', response.data);
+        
+        // Lưu token và thông tin user
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('isLoggedIn', 'true');
+        
+        console.log('Stored token:', localStorage.getItem('token'));
+        console.log('Stored user:', localStorage.getItem('user'));
+        
         eventBus.emit('login-success', response.data.user);
-        this.$router.push('/');
+        
+        // Kiểm tra xem có đường dẫn chuyển hướng không
+        const redirectPath = this.$route.query.redirect || '/';
+        this.$router.push(redirectPath);
       } catch (error) {
+        console.error('Login error:', error.response?.data);
         this.loginError = error.response?.data?.message || "Đã xảy ra lỗi khi đăng nhập";
       }
     },

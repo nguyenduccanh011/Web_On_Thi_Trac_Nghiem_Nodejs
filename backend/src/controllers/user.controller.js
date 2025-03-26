@@ -1,33 +1,47 @@
 // src/controllers/user.controller.js
 const userService = require('../services/user.service');
+const { validationResult } = require('express-validator');
 
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await userService.getAllUsers();
     res.json(users);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Error getting users:', error);
+    res.status(500).json({ message: 'Internal server error' });
   }
 };
 
 exports.getUserById = async (req, res) => {
   try {
-    const userId = req.params.id;
-    const user = await userService.getUserById(userId);
+    const user = await userService.getUserById(req.params.id);
     res.json(user);
   } catch (error) {
-    res.status(404).json({ message: error.message });
+    if (error.message === 'User not found') {
+      res.status(404).json({ message: error.message });
+    } else {
+      console.error('Error getting user:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 };
 
 exports.updateUser = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
   try {
-    const userId = req.params.id;
-    const userData = req.body;
-    const updatedUser = await userService.updateUser(userId, userData);
-    res.json(updatedUser);
+    const updatedUser = await userService.updateUser(req.params.id, req.body);
+    res.json({ message: 'User updated successfully', user: updatedUser });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    if (error.message === 'User not found') {
+      res.status(404).json({ message: error.message });
+    } else {
+      console.error('Error updating user:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 };
 

@@ -5,6 +5,7 @@ const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const { sequelize, testConnection } = require('./src/config/database'); // Import sequelize
+const path = require('path');
 
 // Import tất cả các models
 require('./src/models/user.model');
@@ -64,6 +65,9 @@ app.use('/api/admin/exams', adminExamRoutes);
 app.use('/api/admin/questions', adminQuestionRoutes);
 app.use('/api/admin/users', adminUserRoutes);
 app.use('/api/admin/categories', adminExamCategoryRoutes);
+
+// Phục vụ file tĩnh từ thư mục uploads
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 app.get('/', (req, res) => {
     res.send('Welcome to the English Exam API!');

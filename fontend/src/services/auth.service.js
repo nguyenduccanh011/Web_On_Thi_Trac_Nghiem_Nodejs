@@ -14,7 +14,9 @@ export default {
   resetPassword(token, password) {
     return axios.post('/api/auth/reset-password', { token, password });
   },
-  // logout() { // Nếu muốn có hàm logout riêng
-  //   localStorage.removeItem('token');
-  // },
+  logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('isLoggedIn');
+  }
 };

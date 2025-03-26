@@ -4,6 +4,7 @@ const ExamAttempt = require('../models/exam_attempt.model');
 const Exam = require('../models/exam.model');
 const Question = require('../models/question.model');
 const UserAnswer = require('../models/user_answer.model');
+const bcrypt = require('bcrypt');
 
 exports.getAllUsers = async () => {
   try {
@@ -31,28 +32,29 @@ exports.getUserById = async (userId) => {
 };
 
 exports.updateUser = async (userId, userData) => {
-    try {
-        const user = await User.findByPk(userId);
-        if (!user) {
-            throw new Error('User not found');
-        }
-
-        // Cập nhật thông tin người dùng (không cập nhật mật khẩu ở đây)
-        await user.update({
-            full_name: userData.full_name || user.full_name, // Nếu không có giá trị mới thì giữ nguyên
-            email: userData.email || user.email,
-            profile_picture: userData.profile_picture || user.profile_picture,
-            role: userData.role || user.role, // Có thể cập nhật role, cần kiểm tra quyền trước khi cho phép
-        });
-          // Lấy lại thông tin user sau khi update
-        const updatedUser = await User.findByPk(userId, {
-            attributes: { exclude: ['password'] },
-        });
-
-        return updatedUser;
-    } catch (error) {
-        throw error;
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error('User not found');
     }
+
+    // Nếu có mật khẩu mới, hash nó
+    if (userData.password) {
+      userData.password = await bcrypt.hash(userData.password, 10);
+    }
+
+    // Cập nhật thông tin user
+    await user.update(userData);
+
+    // Lấy lại thông tin user đã cập nhật (không bao gồm password)
+    const updatedUser = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
+
+    return updatedUser;
+  } catch (error) {
+    throw error;
+  }
 };
 
 exports.deleteUser = async (userId) => {
@@ -89,4 +91,25 @@ exports.getUserExamHistory = async (userId) => {
     } catch (error) {
         throw error;
     }
+};
+
+exports.updateProfilePicture = async (userId, profilePicture) => {
+  try {
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // Cập nhật ảnh đại diện
+    await user.update({ profile_picture: profilePicture });
+
+    // Lấy lại thông tin user đã cập nhật
+    const updatedUser = await User.findByPk(userId, {
+      attributes: { exclude: ['password'] }
+    });
+
+    return updatedUser;
+  } catch (error) {
+    throw error;
+  }
 };
