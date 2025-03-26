@@ -10,9 +10,9 @@ exports.register = async (req, res) => {
   }
 
   try {
-    const { username, email, password } = req.body;
-    console.log('Registering user:', { username, email }); // Log request data
-    const newUser = await authService.registerUser(username, email, password);
+    const { username, email, password, fullname } = req.body;
+    console.log('Registering user:', { username, email, fullname }); // Log request data
+    const newUser = await authService.registerUser(username, email, password, fullname);
     res.status(201).json({ message: 'User registered successfully', user: newUser });
   } catch (error) {
     if (error.message === 'Username already exists' || error.message === 'Email already exists') {
