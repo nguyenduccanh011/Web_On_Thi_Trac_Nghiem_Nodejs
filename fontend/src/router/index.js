@@ -5,9 +5,9 @@ import CreateQuestionView from '../views/CreateQuestionView.vue';
 import CreateCategoryView from '../views/CreateCategoryView.vue';
 import LoginView from '../views/LoginView.vue';
 import RegisterView from '../views/RegisterView.vue';
-import ForgotPasswordView from '../views/ForgotPasswordView.vue';
-import ResetPasswordView from '../views/ResetPasswordView.vue';
-import HomeView from '../views/HomeView.vue'; // Import
+import HomeView from '../views/HomeView.vue';
+import ProfileView from '../views/ProfileView.vue';
+
 
 const routes = [
   {
@@ -46,20 +46,35 @@ const routes = [
     component: RegisterView,
   },
   {
-    path: '/forgot-password',
-    name: 'ForgotPassword',
-    component: ForgotPasswordView,
-  },
-  {
-    path: '/reset-password/:token',
-    name: 'ResetPassword',
-    component: ResetPasswordView,
-  },
+    path: '/profile',
+    name: 'Profile',
+    component: ProfileView,
+    meta: { requiresAuth: true }
+  }
+
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+// Navigation guard để kiểm tra xác thực
+router.beforeEach((to, from, next) => {
+  const token = localStorage.getItem('token');
+  
+  if (to.matched.some(record => record.meta.requiresAuth)) {
+    if (!token) {
+      next({
+        path: '/login',
+        query: { redirect: to.fullPath }
+      });
+    } else {
+      next();
+    }
+  } else {
+    next();
+  }
 });
 
 export default router;

@@ -7,7 +7,7 @@ const adminMiddleware = require('../../middlewares/admin.middleware');
 const router = express.Router();
 
 // Tất cả các route trong này đều cần xác thực và quyền admin
-router.use(authMiddleware.verifyToken, adminMiddleware.isAdmin);
+router.use(authMiddleware, adminMiddleware);
 
 router.get('/', adminExamController.getAllExams);
 router.get('/:id', adminExamController.getExamById);
