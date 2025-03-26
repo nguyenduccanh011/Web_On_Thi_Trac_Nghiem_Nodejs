@@ -11,7 +11,7 @@ const path = require('path');
 const router = express.Router();
 
 // Middleware xác thực cho tất cả các routes
-router.use(authMiddleware.verifyToken);
+router.use(authMiddleware);
 
 // Lấy thông tin user hiện tại (dựa vào token)
 router.get('/me', async (req, res) => {
