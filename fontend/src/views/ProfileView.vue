@@ -14,7 +14,7 @@
       
       <div class="profile-section">
         <div class="avatar-section">
-          <img :src="user.profile_picture || '/default-avatar.png'" alt="Avatar" class="avatar">
+          <img :src="getProfilePictureUrl(user.profile_picture)" alt="Avatar" class="avatar">
           <input 
             type="file" 
             ref="fileInput" 
@@ -70,6 +70,7 @@
 <script>
 import userService from '../services/user.service';
 
+const API_URL = 'http://localhost:3000/api';
 
 export default {
   name: 'ProfileView',
@@ -79,7 +80,6 @@ export default {
       loading: false,
       error: null,
       selectedFile: null
-
     };
   },
   async created() {
@@ -120,14 +120,22 @@ export default {
     async handleUpdateProfile() {
       try {
         await userService.updateUser(this.user);
-        this.$toast.success('Cập nhật thông tin thành công!');
+        alert('Cập nhật thông tin thành công!');
       } catch (error) {
         console.error('Error updating profile:', error);
-        this.$toast.error('Không thể cập nhật thông tin. Vui lòng thử lại sau.');
+        alert('Không thể cập nhật thông tin. Vui lòng thử lại sau.');
       }
     },
     triggerFileInput() {
       this.$refs.fileInput.click();
+    },
+    getProfilePictureUrl(profilePicture) {
+      if (!profilePicture) {
+        return '/default-avatar.png';
+      }
+      const url = `${API_URL.replace('/api', '')}${profilePicture}`;
+      console.log('Profile picture URL:', url); // Debug log
+      return url;
     },
     async handleFileChange(event) {
       const file = event.target.files[0];
@@ -135,13 +143,13 @@ export default {
 
       // Kiểm tra kích thước file (tối đa 5MB)
       if (file.size > 5 * 1024 * 1024) {
-        this.$toast.error('Kích thước ảnh không được vượt quá 5MB');
+        alert('Kích thước ảnh không được vượt quá 5MB');
         return;
       }
 
       // Kiểm tra định dạng file
       if (!file.type.startsWith('image/')) {
-        this.$toast.error('Vui lòng chọn file ảnh');
+        alert('Vui lòng chọn file ảnh');
         return;
       }
 
@@ -152,22 +160,32 @@ export default {
         const formData = new FormData();
         formData.append('profile_picture', file);
 
-        const updatedUser = await userService.updateProfilePicture(formData);
-        if (updatedUser && updatedUser.profile_picture) {
-          this.user.profile_picture = updatedUser.profile_picture;
-          this.$toast.success('Cập nhật ảnh đại diện thành công!');
+        const response = await userService.updateProfilePicture(formData);
+        console.log('Update profile picture response:', response); // Debug log
+        
+        if (response && response.profile_picture) {
+          this.user.profile_picture = response.profile_picture;
+          console.log('Updated user profile picture:', this.user.profile_picture); // Debug log
+          
+          // Cập nhật localStorage
+          const user = JSON.parse(localStorage.getItem('user'));
+          if (user) {
+            user.profile_picture = response.profile_picture;
+            localStorage.setItem('user', JSON.stringify(user));
+          }
+          
+          alert('Cập nhật ảnh đại diện thành công!');
         } else {
-          throw new Error('Không thể cập nhật ảnh đại diện');
+          alert('Không thể cập nhật ảnh đại diện');
         }
       } catch (error) {
         console.error('Error updating profile picture:', error);
-        this.$toast.error(error.message || 'Không thể cập nhật ảnh đại diện. Vui lòng thử lại sau.');
+        alert(error.message || 'Không thể cập nhật ảnh đại diện. Vui lòng thử lại sau.');
       } finally {
         this.loading = false;
         // Reset input file
         event.target.value = '';
       }
-
     }
   }
 };

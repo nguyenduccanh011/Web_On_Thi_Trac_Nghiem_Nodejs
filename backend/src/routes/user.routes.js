@@ -14,6 +14,9 @@ const router = express.Router();
 // Middleware xác thực cho tất cả các routes
 router.use(authMiddleware);
 
+// Phục vụ file tĩnh từ thư mục uploads
+router.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+
 // Lấy thông tin user hiện tại (dựa vào token)
 router.get('/me', async (req, res) => {
     try {
@@ -62,7 +65,7 @@ router.get('/', authMiddleware, adminMiddleware, userController.getAllUsers);
 // Cấu hình multer để lưu file
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, 'uploads/profile-pictures/');
+    cb(null, path.join(__dirname, '../../uploads/profile-pictures/'));
   },
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
@@ -94,10 +97,17 @@ router.post('/profile-picture', upload.single('profile_picture'), async (req, re
     const profilePicture = `/uploads/profile-pictures/${req.file.filename}`;
     
     const updatedUser = await require('../services/user.service').updateProfilePicture(userId, profilePicture);
-    res.json(updatedUser);
+    res.json({
+      success: true,
+      user: updatedUser,
+      message: 'Cập nhật ảnh đại diện thành công'
+    });
   } catch (error) {
     console.error('Error updating profile picture:', error);
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ 
+      success: false,
+      message: error.message || 'Không thể cập nhật ảnh đại diện'
+    });
   }
 });
 

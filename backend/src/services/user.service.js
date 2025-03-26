@@ -99,7 +99,7 @@ exports.getUserExamHistory = async (userId) => {
 
 exports.updateProfilePicture = async (userId, profilePicture) => {
   try {
-    const user = await User.findByPk(userId);
+    const user = await User.findOne({ where: { user_id: userId } });
     if (!user) {
       throw new Error('User not found');
     }
@@ -108,7 +108,8 @@ exports.updateProfilePicture = async (userId, profilePicture) => {
     await user.update({ profile_picture: profilePicture });
 
     // Lấy lại thông tin user đã cập nhật
-    const updatedUser = await User.findByPk(userId, {
+    const updatedUser = await User.findOne({ 
+      where: { user_id: userId },
       attributes: { exclude: ['password'] }
     });
 
