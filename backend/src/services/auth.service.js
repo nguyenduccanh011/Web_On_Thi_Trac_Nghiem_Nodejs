@@ -24,7 +24,7 @@ exports.registerUser = async (username, email, password) => {
     role: 'user', // Mặc định là user
   });
   // Không trả về password đã hash
-  return { id: newUser.id, username: newUser.username, email: newUser.email, role: newUser.role };
+  return { user_id: newUser.user_id, username: newUser.username, email: newUser.email, role: newUser.role };
 };
 
 exports.loginUser = async (username, password) => {
@@ -39,7 +39,7 @@ exports.loginUser = async (username, password) => {
   }
 
   // Tạo JWT token
-  const token = jwt.sign({ id: user.id, role: user.role }, jwtSecret, {
+  const token = jwt.sign({ user_id: user.user_id, role: user.role }, jwtSecret, {
     expiresIn: jwtExpiration,
   });
 

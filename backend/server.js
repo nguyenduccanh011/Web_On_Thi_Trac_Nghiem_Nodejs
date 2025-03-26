@@ -27,6 +27,7 @@ const userRoutes = require('./src/routes/user.routes');
 const examAttemptRoutes = require('./src/routes/exam_attempt.routes');
 const examCategoryRoutes = require('./src/routes/exam_category.routes');
 const forumRoutes = require('./src/routes/forum.routes.js');
+const userProfileRoutes = require('./src/routes/user_profile.routes.js');
 
 // Import admin routes
 const adminAuthRoutes = require('./src/routes/admin/admin_auth.routes.js');
@@ -57,6 +58,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/attempts', examAttemptRoutes);
 app.use('/api/categories', examCategoryRoutes);
 app.use('/api/forum', forumRoutes);
+app.use('/api/profile', userProfileRoutes);
 
 // Admin routes
 app.use('/api/admin/auth', adminAuthRoutes);

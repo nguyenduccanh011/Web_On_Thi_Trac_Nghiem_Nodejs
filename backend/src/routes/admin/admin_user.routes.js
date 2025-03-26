@@ -5,8 +5,9 @@ const authMiddleware = require('../../middlewares/auth.middleware');
 const adminMiddleware = require('../../middlewares/admin.middleware');
 
 const router = express.Router();
+
 //Tất cả route cần xác thực và phân quyền
-router.use(authMiddleware.verifyToken, adminMiddleware.isAdmin);
+router.use(authMiddleware, adminMiddleware);
 
 router.get('/', adminUserController.getAllUsers);
 router.get('/:id', adminUserController.getUserById);

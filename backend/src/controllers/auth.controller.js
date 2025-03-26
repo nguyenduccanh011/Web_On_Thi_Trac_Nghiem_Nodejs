@@ -35,7 +35,16 @@ exports.login = async (req, res) => {
     const { user, token } = await authService.loginUser(username, password);
 
     // Có thể trả về thêm thông tin user (tùy chọn)
-    res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
+    res.status(200).json({ 
+      message: 'Login successful', 
+      token, 
+      user: { 
+        user_id: user.user_id, 
+        username: user.username, 
+        email: user.email, 
+        role: user.role 
+      } 
+    });
 
   } catch (error) {
     if (error.message === 'Invalid credentials') {

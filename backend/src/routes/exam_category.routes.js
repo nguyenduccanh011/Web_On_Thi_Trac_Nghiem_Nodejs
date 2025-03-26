@@ -5,13 +5,13 @@ const adminMiddleware = require('../middlewares/admin.middleware');
 
 const router = express.Router();
 
+// Các route công khai
 router.get('/', examCategoryController.getAllCategories);
 router.get('/:id', examCategoryController.getCategoryById);
 
-//Các route cần xác thực và phân quyền
-router.post('/', authMiddleware.verifyToken, adminMiddleware.isAdmin, examCategoryController.createCategory);
-router.put('/:id', authMiddleware.verifyToken, adminMiddleware.isAdmin, examCategoryController.updateCategory);
-router.delete('/:id', authMiddleware.verifyToken, adminMiddleware.isAdmin, examCategoryController.deleteCategory);
-
+// Các route cần xác thực và phân quyền admin
+router.post('/', authMiddleware, adminMiddleware, examCategoryController.createCategory);
+router.put('/:id', authMiddleware, adminMiddleware, examCategoryController.updateCategory);
+router.delete('/:id', authMiddleware, adminMiddleware, examCategoryController.deleteCategory);
 
 module.exports = router;

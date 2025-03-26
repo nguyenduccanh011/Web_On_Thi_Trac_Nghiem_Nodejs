@@ -6,15 +6,15 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const router = express.Router();
 
 // Bắt đầu làm bài (cần xác thực)
-router.post('/start', authMiddleware.verifyToken, examAttemptController.startExamAttempt);
+router.post('/start', authMiddleware, examAttemptController.startExamAttempt);
 
 // Nộp câu trả lời (cần xác thực)
-router.post('/submit', authMiddleware.verifyToken, examAttemptController.submitAnswer);
+router.post('/submit', authMiddleware, examAttemptController.submitAnswer);
 
 // Kết thúc bài làm (cần xác thực)
-router.post('/end', authMiddleware.verifyToken, examAttemptController.endExamAttempt);
+router.post('/end', authMiddleware, examAttemptController.endExamAttempt);
 
 // Lấy chi tiết lần làm bài (cần xác thực)
-router.get('/:id', authMiddleware.verifyToken, examAttemptController.getAttemptDetails);
+router.get('/:id', authMiddleware, examAttemptController.getAttemptDetails);
 
 module.exports = router;
