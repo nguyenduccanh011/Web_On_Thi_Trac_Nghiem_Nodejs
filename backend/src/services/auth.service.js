@@ -3,19 +3,11 @@ const User = require('../models/user.model');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { jwtSecret, jwtExpiration } = require('../config/config'); // Import config
-const nodemailer = require('nodemailer');
+const { sendEmail } = require('../config/email.config'); // Import email config
 const { Op } = require('sequelize');
 
-// Cấu hình email
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: process.env.EMAIL_USER,
-    pass: process.env.EMAIL_PASSWORD
-  }
-});
 
-exports.registerUser = async (username, email, password) => {
+exports.registerUser = async (username, email, password, fullname) => {
   // Kiểm tra username và email đã tồn tại chưa
   const existingUsername = await User.findOne({ where: { username } });
   if (existingUsername) {
@@ -32,10 +24,12 @@ exports.registerUser = async (username, email, password) => {
     username,
     email,
     password: hashedPassword,
+    full_name: fullname,
     role: 'user', // Mặc định là user
   });
   // Không trả về password đã hash
-  return { user_id: newUser.user_id, username: newUser.username, email: newUser.email, role: newUser.role };
+  return { id: newUser.id, username: newUser.username, email: newUser.email, full_name: newUser.full_name, role: newUser.role };
+
 };
 
 exports.loginUser = async (username, password) => {
@@ -49,107 +43,105 @@ exports.loginUser = async (username, password) => {
     throw new Error('Invalid credentials');
   }
 
-  // Tạo JWT token
-  const token = jwt.sign({ user_id: user.user_id, role: user.role }, jwtSecret, {
+  // Tạo JWT token với user_id
+  const token = jwt.sign({ userId: user.user_id, role: user.role }, jwtSecret, {
+
     expiresIn: jwtExpiration,
   });
 
   return { user, token };
 };
 
-// Tìm user theo email
-exports.findUserByEmail = async (email) => {
+// Xử lý quên mật khẩu
+exports.forgotPassword = async (email) => {
   const user = await User.findOne({ where: { email } });
-  return user;
-};
-
-// Lưu token đặt lại mật khẩu
-exports.saveResetToken = async (userId, token) => {
-  try {
-    const expires = new Date();
-    expires.setHours(expires.getHours() + 1); // Token hết hạn sau 1 giờ
-
-    await User.update(
-      {
-        resetPasswordToken: token,
-        resetPasswordExpires: expires
-      },
-      {
-        where: { user_id: userId }
-      }
-    );
-  } catch (error) {
-    console.error('Error saving reset token:', error);
-    throw error;
+  if (!user) {
+    throw new Error('User not found');
   }
-};
 
-// Gửi email đặt lại mật khẩu
-exports.sendResetPasswordEmail = async (email, resetToken) => {
-  const resetUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
+  // Tạo reset token với user_id thay vì id
+  const resetToken = jwt.sign({ id: user.user_id }, jwtSecret, { expiresIn: '1h' });
   
-  const mailOptions = {
-    from: process.env.EMAIL_USER,
-    to: email,
-    subject: 'Đặt lại mật khẩu',
-    html: `
-      <h2>Yêu cầu đặt lại mật khẩu</h2>
-      <p>Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng click vào link bên dưới để đặt lại mật khẩu:</p>
-      <a href="${resetUrl}">Đặt lại mật khẩu</a>
+  // Lưu reset token và thời gian hết hạn vào database
+  await user.update({ 
+    resetToken,
+    resetTokenExpires: new Date(Date.now() + 3600000) // 1 giờ
+  });
+
+  // Tạo link đặt lại mật khẩu
+  const resetLink = `${process.env.FRONTEND_URL}/reset-password?token=${resetToken}`;
+  
+  // Gửi email chứa reset link
+  await sendEmail(user.email, 'Đặt lại mật khẩu', `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+      <h2 style="color: #2c3e50;">Đặt lại mật khẩu</h2>
+      <p>Xin chào ${user.username},</p>
+      <p>Bạn đã yêu cầu đặt lại mật khẩu. Vui lòng click vào nút bên dưới để đặt lại mật khẩu:</p>
+      <div style="text-align: center; margin: 30px 0;">
+        <a href="${resetLink}" 
+           style="background-color: #3498db; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; display: inline-block;">
+          Đặt lại mật khẩu
+        </a>
+      </div>
+      <p>Hoặc copy và paste link sau vào trình duyệt:</p>
+      <p style="word-break: break-all; color: #3498db;">${resetLink}</p>
       <p>Link này sẽ hết hạn sau 1 giờ.</p>
       <p>Nếu bạn không yêu cầu đặt lại mật khẩu, vui lòng bỏ qua email này.</p>
-    `
-  };
+      <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+      <p style="color: #7f8c8d; font-size: 12px;">Email này được gửi tự động, vui lòng không trả lời.</p>
+    </div>
+  `);
 
-  await transporter.sendMail(mailOptions);
+  return true;
 };
 
-// Tìm user theo reset token
-exports.findUserByResetToken = async (userId, token) => {
+// Xử lý đặt lại mật khẩu
+exports.resetPassword = async (token, newPassword) => {
   try {
-    const user = await User.findOne({
-      where: {
-        resetPasswordToken: token,
-        resetPasswordExpires: {
-          [Op.gt]: new Date() // Sử dụng thời gian hiện tại
+    // Verify token
+    const decoded = jwt.verify(token, jwtSecret);
+    console.log('Decoded token:', decoded); // Log để debug
+    
+    // Tìm user và kiểm tra token
+    const user = await User.findOne({ 
+      where: { 
+        user_id: decoded.id,
+        resetToken: token,
+        resetTokenExpires: {
+          [Op.gt]: new Date()
         }
       }
     });
-    return user;
-  } catch (error) {
-    console.error('Error finding user by reset token:', error);
-    return null;
-  }
-};
 
-// Cập nhật mật khẩu mới
-exports.updatePassword = async (userId, newPassword) => {
-  try {
+    console.log('Found user:', user ? 'Yes' : 'No'); // Log để debug
+
+    if (!user) {
+      throw new Error('Token không hợp lệ hoặc đã hết hạn');
+    }
+
+    // Hash mật khẩu mới
     const hashedPassword = await bcrypt.hash(newPassword, 10);
-    await User.update(
-      { password: hashedPassword },
-      { where: { user_id: userId } }
-    );
-  } catch (error) {
-    console.error('Error updating password:', error);
-    throw error;
-  }
-};
+    
+    // Cập nhật mật khẩu và xóa reset token
+    await user.update({ 
+      password: hashedPassword,
+      resetToken: null,
+      resetTokenExpires: null
+    });
 
-// Xóa token đặt lại mật khẩu
-exports.clearResetToken = async (userId) => {
-  try {
-    await User.update(
-      {
-        resetPasswordToken: null,
-        resetPasswordExpires: null
-      },
-      {
-        where: { user_id: userId }
-      }
-    );
+    return true;
   } catch (error) {
-    console.error('Error clearing reset token:', error);
-    throw error;
+    console.error('Reset password error:', error);
+    if (error.name === 'TokenExpiredError') {
+      throw new Error('Token đã hết hạn');
+    }
+    if (error.name === 'JsonWebTokenError') {
+      throw new Error('Token không hợp lệ');
+    }
+    if (error.name === 'SequelizeValidationError') {
+      throw new Error('Dữ liệu không hợp lệ');
+    }
+    throw new Error('Có lỗi xảy ra khi đặt lại mật khẩu');
+
   }
 };

@@ -10,7 +10,8 @@
         <div class="form-group">
           <label for="password"><i class="fas fa-lock"></i> Password:</label>
           <input type="password" id="password" v-model="password" required>
-          <div class="forgot-password-link">
+          <div class="forgot-password">
+
             <router-link to="/forgot-password">Quên mật khẩu?</router-link>
           </div>
         </div>
@@ -52,12 +53,24 @@ export default {
           username: this.username,
           password: this.password,
         });
+        
+        console.log('Login response:', response.data);
+        
+        // Lưu token và thông tin user
         localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         localStorage.setItem('isLoggedIn', 'true');
+        
+        console.log('Stored token:', localStorage.getItem('token'));
+        console.log('Stored user:', localStorage.getItem('user'));
+        
         eventBus.emit('login-success', response.data.user);
-        this.$router.push('/');
+        
+        // Kiểm tra xem có đường dẫn chuyển hướng không
+        const redirectPath = this.$route.query.redirect || '/';
+        this.$router.push(redirectPath);
       } catch (error) {
+        console.error('Login error:', error.response?.data);
         this.loginError = error.response?.data?.message || "Đã xảy ra lỗi khi đăng nhập";
       }
     },
@@ -147,18 +160,21 @@ button:hover {
   color: #2c3e50;
 }
 
-.forgot-password-link {
+.forgot-password {
+
   text-align: right;
   margin-top: 5px;
 }
 
-.forgot-password-link a {
+.forgot-password a {
+
   color: #3498db;
   text-decoration: none;
   font-size: 0.9em;
 }
 
-.forgot-password-link a:hover {
+.forgot-password a:hover {
+
   text-decoration: underline;
 }
 

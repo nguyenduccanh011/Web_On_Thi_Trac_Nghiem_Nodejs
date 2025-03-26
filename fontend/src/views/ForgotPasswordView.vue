@@ -8,13 +8,12 @@
           <label for="email"><i class="fas fa-envelope"></i> Email:</label>
           <input type="email" id="email" v-model="email" required>
           <div v-if="error" class="error-message">{{ error }}</div>
+          <div v-if="success" class="success-message">{{ success }}</div>
         </div>
-        <button type="submit" :disabled="isLoading">
-          {{ isLoading ? 'Đang gửi...' : 'Gửi yêu cầu' }}
-        </button>
-        <div v-if="success" class="success-message">
-          {{ success }}
-          <router-link to="/login" class="login-link">Quay lại đăng nhập</router-link>
+        <button type="submit">Gửi yêu cầu</button>
+        <div class="back-to-login">
+          <router-link to="/login"><i class="fas fa-arrow-left"></i> Quay lại đăng nhập</router-link>
+
         </div>
       </form>
     </div>
@@ -30,30 +29,20 @@ export default {
     return {
       email: '',
       error: '',
-      success: '',
-      isLoading: false
+      success: ''
     };
   },
-  beforeMount() {
-    // Kiểm tra nếu người dùng đã đăng nhập
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    if (isLoggedIn) {
-      this.$router.push('/');
-    }
-  },
+
   methods: {
     async handleSubmit() {
       this.error = '';
       this.success = '';
-      this.isLoading = true;
-
       try {
-        await authService.forgotPassword({ email: this.email });
-        this.success = 'Vui lòng kiểm tra email của bạn để đặt lại mật khẩu.';
+        await authService.forgotPassword(this.email);
+        this.success = 'Vui lòng kiểm tra email của bạn để đặt lại mật khẩu';
       } catch (error) {
-        this.error = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
-      } finally {
-        this.isLoading = false;
+        this.error = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại';
+
       }
     }
   }
@@ -130,44 +119,50 @@ button {
   transition: background-color 0.3s;
 }
 
-button:hover:not(:disabled) {
+button:hover {
   background-color: #2980b9;
-}
-
-button:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
 }
 
 .error-message {
   color: #e74c3c;
   margin-top: 5px;
-  font-size: 0.9em;
+  text-align: center;
+
 }
 
 .success-message {
   color: #27ae60;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.back-to-login {
+
   margin-top: 15px;
   text-align: center;
 }
 
-.login-link {
-  display: block;
-  margin-top: 10px;
+.back-to-login a {
   color: #3498db;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
-.login-link:hover {
+.back-to-login a i {
+  margin-right: 5px;
+}
+
+.back-to-login a:hover {
+
   text-decoration: underline;
 }
 
 @media (max-width: 768px) {
   .form-container {
     padding: 20px;
-    margin: 15px;
   }
-  
+
   input[type="email"] {
     padding: 8px;
   }

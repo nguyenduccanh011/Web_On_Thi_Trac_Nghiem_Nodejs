@@ -4,6 +4,11 @@
       <h2>Đăng ký</h2>
       <form @submit.prevent="handleSubmit">
         <div class="form-group">
+          <label for="fullname"><i class="fas fa-user-circle"></i> Họ và tên:</label>
+          <input type="text" id="fullname" v-model="fullname" required>
+          <div v-if="errors.fullname" class="error-message">{{ errors.fullname }}</div>
+        </div>
+        <div class="form-group">
           <label for="username"><i class="fas fa-user"></i> Username:</label>
           <input type="text" id="username" v-model="username" required>
           <div v-if="errors.username" class="error-message">{{ errors.username }}</div>
@@ -41,6 +46,7 @@ export default {
       email: '',
       password: '',
       confirmPassword: '',
+      fullname: '',
       passwordError: '',
       registrationError: '',
       errors: {}
@@ -77,6 +83,7 @@ export default {
           username: this.username,
           email: this.email,
           password: this.password,
+          fullname: this.fullname,
         });
         
         // Hiển thị thông báo thành công

@@ -13,13 +13,12 @@
           <input type="password" id="confirmPassword" v-model="confirmPassword" required>
           <div v-if="passwordError" class="error-message">{{ passwordError }}</div>
         </div>
-        <button type="submit" :disabled="isLoading">
-          {{ isLoading ? 'Đang xử lý...' : 'Đặt lại mật khẩu' }}
-        </button>
+        <button type="submit">Đặt lại mật khẩu</button>
         <div v-if="error" class="error-message">{{ error }}</div>
-        <div v-if="success" class="success-message">
-          {{ success }}
-          <router-link to="/login" class="login-link">Quay lại đăng nhập</router-link>
+        <div v-if="success" class="success-message">{{ success }}</div>
+        <div class="back-to-login">
+          <router-link to="/login"><i class="fas fa-arrow-left"></i> Quay lại đăng nhập</router-link>
+
         </div>
       </form>
     </div>
@@ -37,41 +36,74 @@ export default {
       confirmPassword: '',
       error: '',
       success: '',
-      isLoading: false,
-      errors: {},
-      passwordError: ''
+      passwordError: '',
+      errors: {}
     };
   },
+  created() {
+    // Lấy token từ URL
+    const token = this.$route.query.token;
+    if (!token) {
+      this.error = 'Token không hợp lệ hoặc đã hết hạn';
+      setTimeout(() => {
+        this.$router.push('/login');
+      }, 3000);
+    }
+  },
+
   methods: {
     async handleSubmit() {
       this.error = '';
       this.success = '';
-      this.errors = {};
       this.passwordError = '';
-      this.isLoading = true;
+      this.errors = {};
+
 
       // Kiểm tra mật khẩu
       if (this.password !== this.confirmPassword) {
         this.passwordError = 'Mật khẩu xác nhận không khớp';
-        this.isLoading = false;
+
         return;
       }
 
       // Kiểm tra độ dài mật khẩu
       if (this.password.length < 6) {
         this.errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
-        this.isLoading = false;
+
         return;
       }
 
       try {
-        const token = this.$route.params.token;
+        const token = this.$route.query.token;
+        console.log('Token from URL:', token); // Log để debug
+
+        if (!token) {
+          this.error = 'Token không hợp lệ hoặc đã hết hạn';
+          setTimeout(() => {
+            this.$router.push('/login');
+          }, 3000);
+          return;
+        }
+
+        console.log('Sending reset password request...'); // Log để debug
         await authService.resetPassword(token, this.password);
+        console.log('Reset password successful'); // Log để debug
         this.success = 'Mật khẩu đã được đặt lại thành công!';
+        setTimeout(() => {
+          this.$router.push('/login');
+        }, 3000);
       } catch (error) {
-        this.error = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại.';
-      } finally {
-        this.isLoading = false;
+        console.error('Reset password error:', error);
+        console.error('Error response:', error.response); // Log để debug
+        this.error = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại';
+        if (error.response?.data?.message === 'Token đã hết hạn' || 
+            error.response?.data?.message === 'Token không hợp lệ' ||
+            error.response?.data?.message === 'Token không hợp lệ hoặc đã hết hạn') {
+          setTimeout(() => {
+            this.$router.push('/login');
+          }, 3000);
+        }
+
       }
     }
   }
@@ -142,44 +174,50 @@ button {
   transition: background-color 0.3s;
 }
 
-button:hover:not(:disabled) {
+button:hover {
   background-color: #2980b9;
-}
-
-button:disabled {
-  background-color: #bdc3c7;
-  cursor: not-allowed;
 }
 
 .error-message {
   color: #e74c3c;
   margin-top: 5px;
-  font-size: 0.9em;
+  text-align: center;
+
 }
 
 .success-message {
   color: #27ae60;
+  margin-top: 5px;
+  text-align: center;
+}
+
+.back-to-login {
+
   margin-top: 15px;
   text-align: center;
 }
 
-.login-link {
-  display: block;
-  margin-top: 10px;
+.back-to-login a {
   color: #3498db;
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
 }
 
-.login-link:hover {
+.back-to-login a i {
+  margin-right: 5px;
+}
+
+.back-to-login a:hover {
+
   text-decoration: underline;
 }
 
 @media (max-width: 768px) {
   .form-container {
     padding: 20px;
-    margin: 15px;
   }
-  
+
   input[type="password"] {
     padding: 8px;
   }
