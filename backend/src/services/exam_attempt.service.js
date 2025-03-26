@@ -11,9 +11,45 @@ exports.getAttemptsByUser = async (userId) => {
   try {
     const attempts = await ExamAttempt.findAll({
       where: { user_id: userId },
-      include: [{ model: Exam, as: "exam" , attributes: ["exam_name"] }],
+      include: [{ model: Exam, as: "exam", attributes: ["exam_name"] }],
     });
     return attempts;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Create new exam attempt
+exports.createExamAttempt = async (examAttempt) => {
+  try {
+    // Check if exam exists
+    const exam = await Exam.findByPk(examId);
+    if (!exam) {
+      throw new Error("Exam not found");
+    }
+
+    // Check if user exists
+    const user = await User.findByPk(userId);
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    // Create new exam attempt with all attributes
+    const examAttempt = await ExamAttempt.create({
+      user_id: examAttempt.user_id,
+      exam_id: examAttempt.exam_id,
+      start_time: examAttempt.start_time,
+      end_time: examAttempt.end_time,
+      duration: examAttempt.duration,
+      score: examAttempt.score,
+      total_questions: examAttempt.total_questions,
+      correct_answers: examAttempt.correct_answers,
+      wrong_answers: examAttempt.wrong_answers,
+      created_at: examAttempt.created_at,
+      updated_at: examAttempt.updated_at,
+    });
+
+    return examAttempt;
   } catch (error) {
     throw error;
   }
