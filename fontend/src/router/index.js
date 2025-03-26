@@ -8,6 +8,7 @@ import RegisterView from '../views/RegisterView.vue';
 import HomeView from '../views/HomeView.vue';
 import ProfileView from '../views/ProfileView.vue';
 
+
 const routes = [
   {
     path: '/',
@@ -50,6 +51,7 @@ const routes = [
     component: ProfileView,
     meta: { requiresAuth: true }
   }
+
 ];
 
 const router = createRouter({
