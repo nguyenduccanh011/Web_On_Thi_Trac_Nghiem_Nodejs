@@ -10,7 +10,7 @@
     </div>
 
     <div class="user-info" ref="userInfo" @click.stop="toggleDropdown">
-      <img :src="userInfo?.avatar || '/default-avatar.png'" alt="Avatar" class="avatar">
+      <img :src="getProfilePictureUrl(userInfo?.profile_picture)" alt="Avatar" class="avatar">
       <div class="user-details">
         <span>{{ userInfo ? userInfo.username : 'Chưa đăng nhập' }}</span>
         <span class="role">{{ userInfo ? userInfo.role : 'Khách' }}</span>
@@ -43,6 +43,8 @@
 <script>
 import eventBus from '../eventBus';
 import authService from '../services/auth.service';
+
+const API_URL = 'http://localhost:3000/api';
 
 export default {
   name: 'AppHeader',
@@ -109,6 +111,12 @@ export default {
       this.userInfo = null;
       this.showDropdown = false;
       this.$router.push('/login');
+    },
+    getProfilePictureUrl(profilePicture) {
+      if (!profilePicture) {
+        return '/default-avatar.png';
+      }
+      return `${API_URL.replace('/api', '')}${profilePicture}`;
     }
   }
 };

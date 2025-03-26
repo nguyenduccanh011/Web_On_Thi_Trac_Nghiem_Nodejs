@@ -19,10 +19,10 @@
             </div>
 
             <div class="user-info">
-              <img src="https://photo.znews.vn/w1200/Uploaded/mdf_eioxrd/2021_07_06/1q.jpg" alt="Avatar" class="avatar">
+              <img src="/default-avatar.png" alt="Avatar" class="avatar" id="userAvatar">
               <div class="user-details">
-                <span>Sanket Pal</span>
-                <span class="role">Student</span>
+                <span id="userName">Chưa đăng nhập</span>
+                <span class="role" id="userRole">Khách</span>
               </div>
                <div class="user-dropdown">
                   <a href="#"><i class="fas fa-user"></i> Hồ sơ</a>
@@ -153,5 +153,39 @@
           </section>
             </main>
     </div>
+    <script>
+      document.addEventListener('DOMContentLoaded', function() {
+        // Kiểm tra trạng thái đăng nhập
+        const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        
+        if (isLoggedIn && user) {
+          // Cập nhật ảnh đại diện cho cả header và home
+          const avatars = document.querySelectorAll('.avatar');
+          if (user.profile_picture) {
+            const profilePictureUrl = `http://localhost:3000${user.profile_picture}`;
+            avatars.forEach(avatar => {
+              avatar.src = profilePictureUrl;
+              // Thêm xử lý lỗi khi ảnh không tải được
+              avatar.onerror = function() {
+                this.src = '/default-avatar.png';
+              };
+            });
+          }
+          
+          // Cập nhật tên người dùng
+          const userNameElements = document.querySelectorAll('#userName, #headerUserName');
+          userNameElements.forEach(element => {
+            element.textContent = user.username;
+          });
+          
+          // Cập nhật vai trò
+          const userRoleElements = document.querySelectorAll('#userRole, #headerUserRole');
+          userRoleElements.forEach(element => {
+            element.textContent = user.role === 'admin' ? 'Quản trị viên' : 'Người dùng';
+          });
+        }
+      });
+    </script>
 </body>
 </html>
