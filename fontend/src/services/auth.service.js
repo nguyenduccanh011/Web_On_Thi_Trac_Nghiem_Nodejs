@@ -8,6 +8,12 @@ export default {
   login(credentials) {
     return axios.post('/api/auth/login', credentials);
   },
+  forgotPassword(email) {
+    return axios.post('/api/auth/forgot-password', { email });
+  },
+  resetPassword(token, password) {
+    return axios.post('/api/auth/reset-password', { token, password });
+  },
   // logout() { // Nếu muốn có hàm logout riêng
   //   localStorage.removeItem('token');
   // },
