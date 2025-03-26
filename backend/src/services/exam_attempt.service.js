@@ -10,8 +10,8 @@ const { Sequelize } = require("sequelize");
 exports.getAttemptsByUser = async (userId) => {
   try {
     const attempts = await ExamAttempt.findAll({
-      where: { userId },
-      include: [{ model: Exam, as: "exam" }],
+      where: { user_id: userId },
+      include: [{ model: Exam, as: "exam" , attributes: ["exam_name"] }],
     });
     return attempts;
   } catch (error) {
