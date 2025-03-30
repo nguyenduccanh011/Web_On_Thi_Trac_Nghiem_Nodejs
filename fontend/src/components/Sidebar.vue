@@ -6,7 +6,7 @@
           <li><router-link to="/create-question"><i class="fas fa-book"></i> Tạo câu hỏi mới</router-link></li>
           <li><router-link to="/create-category"><i class="fas fa-stethoscope"></i> Tạo danh mục mới</router-link></li>
           <li><router-link to="/exam-attempt"><i class="fas fa-clipboard-list"></i> Lịch sử thi</router-link></li>
-          <li><router-link to="/forum"><i class="fas fa-users"></i> OLTS Social</router-link></li>
+          <li><router-link to="/take-exam/1"><i class="fas fa-users"></i> Thi thử (Đề mẫu)</router-link></li>
           <li><router-link to="/support"><i class="fas fa-chalkboard-teacher"></i> Tutor Support</router-link></li>
           <li><router-link to="/criteria"><i class="fas fa-check-circle"></i> Eligibility Criteria</router-link></li>
           <li><router-link to="/help"><i class="fas fa-question-circle"></i> Help</router-link></li>

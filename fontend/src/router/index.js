@@ -11,6 +11,7 @@ import HomeView from "../views/HomeView.vue"; // Import
 import ProfileView from "../views/ProfileView.vue";
 import ExamAttemptView from "../views/ExamAttemptView.vue";
 import ExamDetailView from "../views/ExamDetailView.vue";
+import TakeExamView from "../views/TakeExamView.vue";
 
 const routes = [
   {
@@ -67,6 +68,12 @@ const routes = [
     path: "/exam-attempt/detail/:attemptId",
     name: "AttemptDetail",
     component: ExamDetailView,
+    props: true,
+  },
+  {
+    path: "/take-exam/:examId",
+    name: "TakeExam",
+    component: TakeExamView,
     props: true,
   },
   {
