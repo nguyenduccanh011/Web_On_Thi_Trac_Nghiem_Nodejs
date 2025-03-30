@@ -15,9 +15,11 @@ require("./src/models/exam_question.model.js");
 require("./src/models/forum_post.model.js");
 require("./src/models/forum_topic.model.js");
 require("./src/models/leaderboard.model.js");
+const answer = require("./src/models/answer.model.js");
 const user_answer = require("./src/models/user_answer.model.js");
-require("./src/models/question.model");
+const question = require("./src/models/question.model");
 
+question.hasMany(answer, { foreignKey: "question_id", as: "answers" });
 exam_attempt.hasMany(user_answer, { foreignKey: 'attempt_id', as: 'user_answers'  });
 
 // Import các routes

@@ -5,6 +5,7 @@ const Exam = require("../models/exam.model");
 const User = require("../models/user.model");
 const Question = require("../models/question.model");
 const { Sequelize } = require("sequelize");
+const Answer = require("../models/answer.model");
 
 // Lấy danh sách bài thi của một user
 exports.getAttemptsByUser = async (userId) => {
@@ -61,9 +62,11 @@ exports.getAttemptDetails = async (attemptId) => {
     const attempt = await ExamAttempt.findByPk(attemptId, {
       include: [
         { model: Exam, as: "exam" },
-        { model: UserAnswer, as: "user_answers", include: [{ model: Question, as: "question" , attributes: {
+        { model: UserAnswer, as: "user_answers", include: [{ model: Question, as: "question",
+              attributes: {
                 exclude: ['correct_answer', 'category_id'] // loại bỏ trường này
-              } 
+              }
+              , include: [{ model: Answer, as: "answers" , attributes: ['answer_id', 'answer_text']} ]
           }] 
         },
       ],
