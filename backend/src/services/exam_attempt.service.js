@@ -20,6 +20,21 @@ exports.getAttemptsByUser = async (userId) => {
   }
 };
 
+//Lấy thông tin bài thi theo ID
+exports.getAttemptById = async (attemptId) => {
+  try {
+    const attempt = await ExamAttempt.findByPk(attemptId, {
+      include: [{ model: Exam, as: "exam" }],
+    });
+    if (!attempt) {
+      throw new Error("Exam attempt not found");
+    }
+    return attempt;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Create new exam attempt
 exports.createExamAttempt = async (examAttempt) => {
   try {
@@ -62,12 +77,25 @@ exports.getAttemptDetails = async (attemptId) => {
     const attempt = await ExamAttempt.findByPk(attemptId, {
       include: [
         { model: Exam, as: "exam" },
-        { model: UserAnswer, as: "user_answers", include: [{ model: Question, as: "question",
+        {
+          model: UserAnswer,
+          as: "user_answers",
+          include: [
+            {
+              model: Question,
+              as: "question",
               attributes: {
-                exclude: ['correct_answer', 'category_id'] // loại bỏ trường này
-              }
-              , include: [{ model: Answer, as: "answers" , attributes: ['answer_id', 'answer_text']} ]
-          }] 
+                exclude: ["correct_answer", "category_id"], // loại bỏ trường này
+              },
+              include: [
+                {
+                  model: Answer,
+                  as: "answers",
+                  attributes: ["answer_id", "answer_text"],
+                },
+              ],
+            },
+          ],
         },
       ],
     });

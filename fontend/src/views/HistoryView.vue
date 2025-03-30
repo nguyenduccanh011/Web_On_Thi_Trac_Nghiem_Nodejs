@@ -22,7 +22,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="(attempt, index) in history" :key="attempt.attempt_id">
+          <tr
+            v-for="(attempt, index) in history"
+            :key="attempt.attempt_id"
+            @click="goToDetail(attempt.attempt_id)"
+            style="cursor: pointer"
+          >
             <td>{{ index + 1 }}</td>
             <td>{{ attempt.exam.exam_name }}</td>
             <td>{{ formatDateOnly(attempt.start_time) }}</td>
@@ -93,6 +98,9 @@ export default {
       if (minutes > 0) parts.push(`${minutes} phút`);
       if (seconds > 0) parts.push(`${seconds} giây`);
       return parts.join(" ") || "0 giây";
+    },
+    goToDetail(attemptId) {
+      this.$router.push(`/history/detail/${attemptId}`);
     },
   },
   mounted() {

@@ -9,6 +9,7 @@ import ForgotPasswordView from "../views/ForgotPasswordView.vue";
 import ResetPasswordView from "../views/ResetPasswordView.vue";
 import HomeView from "../views/HomeView.vue"; // Import
 import HistoryView from "../views/HistoryView.vue";
+import DetailHistoryView from "../views/DetailHistoryView.vue"; // Import
 
 const routes = [
   {
