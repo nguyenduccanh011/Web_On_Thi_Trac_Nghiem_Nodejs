@@ -1,10 +1,9 @@
 // src/controllers/exam_attempt.controller.js
-
 const examAttemptService = require("../services/exam_attempt.service");
 
 exports.getAttempByUser = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user.userId;
     const attempts = await examAttemptService.getAttemptsByUser(userId);
     res.json(attempts);
   } catch (error) {
@@ -23,7 +22,7 @@ exports.getAttemptDetails = async (req, res) => {
     }
 
     // Kiểm tra xem attempt có thuộc về user không (tùy chọn)
-    if (attempt.user_id !== req.user.id) {
+    if (attempt.user_id !== req.user.userId) {
       // Nếu attempt không thuộc về user, trả về lỗi 403 (Forbidden)
       return res.status(403).json({ message: "Forbidden" });
     }
