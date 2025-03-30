@@ -15,21 +15,31 @@
       <input type="text" placeholder="Tìm kiếm bài kiểm tra, chủ đề...">
     </div>
 
-    <div class="user-info" ref="userInfo">
-      <img :src="userInfo ? userInfo.avatar : 'https://photo.znews.vn/w1200/Uploaded/mdf_eioxrd/2021_07_06/1q.jpg'" alt="Avatar" class="avatar">
+    <div class="user-info" ref="userInfo" @click.stop="toggleDropdown">
+      <img :src="getProfilePictureUrl(userInfo?.profile_picture)" alt="Avatar" class="avatar">
       <div class="user-details">
         <span>{{ userInfo ? userInfo.username : 'Chưa đăng nhập' }}</span>
         <span class="role">{{ userInfo ? userInfo.role : 'Khách' }}</span>
       </div>
-      <div class="user-dropdown" v-if="isLoggedIn">
-        <router-link to="/profile"><i class="fas fa-user"></i> Hồ sơ</router-link>
-        <router-link to="/settings"><i class="fas fa-cog"></i> Cài đặt</router-link>
-        <a href="#" @click.prevent="handleLogout"><i class="fas fa-sign-out-alt"></i> Đăng xuất</a>
+      <div class="user-dropdown" v-show="showDropdown">
+        <router-link to="/profile" class="dropdown-item" @click="handleNavigation('/profile')">
+          <i class="fas fa-user"></i> Hồ sơ
+        </router-link>
+        <router-link to="/settings" class="dropdown-item" @click="handleNavigation('/settings')">
+          <i class="fas fa-cog"></i> Cài đặt
+        </router-link>
+        <a href="#" @click.prevent="handleLogout" class="dropdown-item">
+          <i class="fas fa-sign-out-alt"></i> Đăng xuất
+        </a>
       </div>
 
-      <div class="user-dropdown" v-else>
-        <router-link to="/login"><i class="fas fa-sign-in-alt"></i> Đăng nhập</router-link>
-        <router-link to="/register"><i class="fas fa-user-plus"></i> Đăng ký</router-link>
+      <div class="user-dropdown" v-show="showDropdown && !isLoggedIn">
+        <router-link to="/login" class="dropdown-item" @click.stop="handleNavigation('/login')">
+          <i class="fas fa-sign-in-alt"></i> Đăng nhập
+        </router-link>
+        <router-link to="/register" class="dropdown-item" @click.stop="handleNavigation('/register')">
+          <i class="fas fa-user-plus"></i> Đăng ký
+        </router-link>
       </div>
     </div>
   </header>
@@ -38,47 +48,82 @@
   <!-- Script -->
 <script>
 import eventBus from '../eventBus';
+import authService from '../services/auth.service';
+
+const API_URL = 'http://localhost:3000/api';
 
 export default {
   name: 'AppHeader',
   data() {
     return {
       isLoggedIn: false,
-      userInfo: null
+      userInfo: null,
+      showDropdown: false
     };
   },
-  methods: {
-    handleLogout() {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      localStorage.removeItem('isLoggedIn');
-      this.isLoggedIn = false;
-      this.userInfo = null;
-      this.$router.push('/login');
-    },
-    updateUserInfo() {
-      const userStr = localStorage.getItem('user');
-      if (userStr) {
-        try {
-          this.userInfo = JSON.parse(userStr);
-        } catch (e) {
-          console.error('Error parsing user info:', e);
-        }
-      }
-      this.isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    }
-  },
-  mounted() {
-    this.updateUserInfo();
-    // Lắng nghe sự kiện đăng nhập thành công
+  created() {
+    this.checkLoginStatus();
     eventBus.on('login-success', (user) => {
-      this.userInfo = user;
       this.isLoggedIn = true;
+      this.userInfo = user;
     });
   },
+  mounted() {
+    // Đóng dropdown khi click ra ngoài
+    document.addEventListener('click', this.handleClickOutside);
+  },
   beforeUnmount() {
-    // Xóa event listener khi component bị hủy
     eventBus.off('login-success');
+    document.removeEventListener('click', this.handleClickOutside);
+  },
+  methods: {
+    checkLoginStatus() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const user = localStorage.getItem('user');
+      
+      if (isLoggedIn && user) {
+        this.isLoggedIn = true;
+        this.userInfo = JSON.parse(user);
+      }
+    },
+    toggleDropdown() {
+      this.showDropdown = !this.showDropdown;
+    },
+    handleClickOutside(event) {
+      if (this.$refs.userInfo && !this.$refs.userInfo.contains(event.target)) {
+        this.showDropdown = false;
+      }
+    },
+    handleNavigation(path) {
+      this.showDropdown = false;
+      this.$router.push(path);
+    },
+    handleProfileClick() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const token = localStorage.getItem('token');
+      const user = localStorage.getItem('user');
+
+      if (!isLoggedIn || !token || !user) {
+        this.$router.push('/login');
+        return;
+      }
+
+      this.showDropdown = false;
+      this.$router.push('/profile');
+    },
+    handleLogout() {
+      authService.logout();
+      this.isLoggedIn = false;
+      this.userInfo = null;
+      this.showDropdown = false;
+      this.$router.push('/login');
+    },
+    getProfilePictureUrl(profilePicture) {
+      if (!profilePicture) {
+        return '/default-avatar.png';
+      }
+      return `${API_URL.replace('/api', '')}${profilePicture}`;
+    }
   }
 };
 </script>
@@ -178,7 +223,7 @@ export default {
 }
 
 .user-dropdown {
-  display: none;
+  display: block;
   position: absolute;
   top: 100%;
   right: 0;
@@ -236,5 +281,24 @@ export default {
     opacity: 1; 
     transform: translateY(0); 
   }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+  color: #2c3e50;
+  text-decoration: none;
+  transition: background-color 0.3s;
+}
+
+.dropdown-item:hover {
+  background-color: #f8f9fa;
+}
+
+.dropdown-item i {
+  margin-right: 0.5rem;
+  width: 20px;
+  text-align: center;
 }
 </style>

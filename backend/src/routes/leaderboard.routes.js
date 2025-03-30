@@ -6,6 +6,6 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const router = express.Router();
 
 // Lấy bảng xếp hạng (cần xác thực)
-router.get('/', authMiddleware.verifyToken, leaderboardController.getLeaderboard);
+router.get('/', authMiddleware, leaderboardController.getLeaderboard);
 
 module.exports = router;

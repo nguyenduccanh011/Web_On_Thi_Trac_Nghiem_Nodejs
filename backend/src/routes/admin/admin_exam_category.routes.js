@@ -5,7 +5,7 @@ const adminMiddleware = require('../../middlewares/admin.middleware');
 
 const router = express.Router();
 
-router.use(authMiddleware.verifyToken, adminMiddleware.isAdmin);
+router.use(authMiddleware, adminMiddleware);
 
 router.get('/', adminExamCategoryController.getAllCategories);
 router.get('/:id', adminExamCategoryController.getCategoryById);

@@ -6,7 +6,8 @@ const { jwtSecret, jwtExpiration } = require('../config/config'); // Import conf
 const { sendEmail } = require('../config/email.config'); // Import email config
 const { Op } = require('sequelize');
 
-exports.registerUser = async (username, email, password) => {
+
+exports.registerUser = async (username, email, password, fullname) => {
   // Kiểm tra username và email đã tồn tại chưa
   const existingUsername = await User.findOne({ where: { username } });
   if (existingUsername) {
@@ -23,10 +24,12 @@ exports.registerUser = async (username, email, password) => {
     username,
     email,
     password: hashedPassword,
+    full_name: fullname,
     role: 'user', // Mặc định là user
   });
   // Không trả về password đã hash
-  return { id: newUser.id, username: newUser.username, email: newUser.email, role: newUser.role };
+  return { id: newUser.id, username: newUser.username, email: newUser.email, full_name: newUser.full_name, role: newUser.role };
+
 };
 
 exports.loginUser = async (username, password) => {
@@ -41,7 +44,8 @@ exports.loginUser = async (username, password) => {
   }
 
   // Tạo JWT token với user_id
-  const token = jwt.sign({ id: user.user_id, role: user.role }, jwtSecret, {
+  const token = jwt.sign({ userId: user.user_id, role: user.role }, jwtSecret, {
+
     expiresIn: jwtExpiration,
   });
 
@@ -138,5 +142,6 @@ exports.resetPassword = async (token, newPassword) => {
       throw new Error('Dữ liệu không hợp lệ');
     }
     throw new Error('Có lỗi xảy ra khi đặt lại mật khẩu');
+
   }
 };

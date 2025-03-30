@@ -10,6 +10,7 @@ import ResetPasswordView from "../views/ResetPasswordView.vue";
 import HomeView from "../views/HomeView.vue"; // Import
 import HistoryView from "../views/HistoryView.vue";
 import DetailHistoryView from "../views/DetailHistoryView.vue"; // Import
+import ProfileView from "../views/ProfileView.vue";
 
 const routes = [
   {
@@ -68,11 +69,42 @@ const routes = [
     component: DetailHistoryView,
     props: true,
   },
+  {
+    path: "/profile",
+    name: "profile",
+    component: ProfileView,
+    meta: { requiresAuth: true },
+  },
 ];
 
 const router = createRouter({
   history: createWebHistory(process.env.BASE_URL),
   routes,
+});
+
+// Thêm navigation guard
+router.beforeEach((to, from, next) => {
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
+    if (!isLoggedIn || !token || !user || !user.user_id) {
+      // Lưu đường dẫn đích để chuyển hướng sau khi đăng nhập
+
+      next({
+        path: "/login",
+        query: { redirect: to.fullPath },
+      });
+    } else {
+      next();
+    }
+  } else if (to.path === "/login" && isLoggedIn) {
+    // Nếu đã đăng nhập và cố gắng truy cập trang login, chuyển hướng về trang chủ
+    next("/");
+  } else {
+    next();
+  }
 });
 
 export default router;

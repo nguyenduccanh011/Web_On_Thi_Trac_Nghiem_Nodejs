@@ -5,6 +5,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const morgan = require("morgan");
 const { sequelize, testConnection } = require("./src/config/database"); // Import sequelize
+const path = require("path");
 
 // Import tất cả các models
 require("./src/models/user.model");
@@ -20,7 +21,10 @@ const user_answer = require("./src/models/user_answer.model.js");
 const question = require("./src/models/question.model");
 
 question.hasMany(answer, { foreignKey: "question_id", as: "answers" });
-exam_attempt.hasMany(user_answer, { foreignKey: 'attempt_id', as: 'user_answers'  });
+exam_attempt.hasMany(user_answer, {
+  foreignKey: "attempt_id",
+  as: "user_answers",
+});
 
 // Import các routes
 const authRoutes = require("./src/routes/auth.routes");
@@ -31,6 +35,7 @@ const userRoutes = require("./src/routes/user.routes");
 const examAttemptRoutes = require("./src/routes/exam_attempt.routes");
 const examCategoryRoutes = require("./src/routes/exam_category.routes");
 const forumRoutes = require("./src/routes/forum.routes.js");
+const userProfileRoutes = require("./src/routes/user_profile.routes.js");
 
 // Import admin routes
 const adminAuthRoutes = require("./src/routes/admin/admin_auth.routes.js");
@@ -44,8 +49,19 @@ const app = express(); // KHAI BÁO APP Ở ĐÂY
 const port = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors());
-app.use(helmet());
+app.use(
+  cors({
+    origin: "http://localhost:8080", // URL của frontend
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }, // Cho phép truy cập file tĩnh từ các origin khác
+  })
+);
 app.use(morgan("dev"));
 app.use(express.json());
 
@@ -61,6 +77,7 @@ app.use("/api/user", userRoutes);
 app.use("/api/attempts", examAttemptRoutes);
 app.use("/api/categories", examCategoryRoutes);
 app.use("/api/forum", forumRoutes);
+app.use("/api/profile", userProfileRoutes);
 
 // Admin routes
 app.use("/api/admin/auth", adminAuthRoutes);
@@ -68,6 +85,9 @@ app.use("/api/admin/exams", adminExamRoutes);
 app.use("/api/admin/questions", adminQuestionRoutes);
 app.use("/api/admin/users", adminUserRoutes);
 app.use("/api/admin/categories", adminExamCategoryRoutes);
+
+// Phục vụ file tĩnh từ thư mục uploads
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.get("/", (req, res) => {
   res.send("Welcome to the English Exam API!");
