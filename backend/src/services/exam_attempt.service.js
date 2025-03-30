@@ -61,7 +61,11 @@ exports.getAttemptDetails = async (attemptId) => {
     const attempt = await ExamAttempt.findByPk(attemptId, {
       include: [
         { model: Exam, as: "exam" },
-        { model: UserAnswer, as: "user_answers", include: [{ model: Question, as: "question" }] },
+        { model: UserAnswer, as: "user_answers", include: [{ model: Question, as: "question" , attributes: {
+                exclude: ['correct_answer', 'category_id'] // loại bỏ trường này
+              } 
+          }] 
+        },
       ],
     });
     if (!attempt) {
