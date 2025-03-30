@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.get("/", examController.getAllExams);
 router.get("/:id", examController.getExamById);
+router.get("/:id/take-exam", examController.taskExamByExamId);
 
 // Các route cần xác thực và phân quyền admin
 router.post("/", authMiddleware, adminMiddleware, examController.createExam);

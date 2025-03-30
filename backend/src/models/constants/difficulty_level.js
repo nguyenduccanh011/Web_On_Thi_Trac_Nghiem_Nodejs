@@ -3,3 +3,5 @@ const DifficultyLevel = Object.freeze({
   MEDIUM: "medium",
   HARD: "hard",
 });
+
+module.exports = DifficultyLevel;
