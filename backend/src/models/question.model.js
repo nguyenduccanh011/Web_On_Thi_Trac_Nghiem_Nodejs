@@ -13,22 +13,6 @@ const Question = sequelize.define('Question', {
     type: DataTypes.TEXT,
     allowNull: false,
   },
-  answer_a: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  answer_b: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  answer_c: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
-  answer_d: {
-    type: DataTypes.STRING(255),
-    allowNull: false,
-  },
   correct_answer: {
     type: DataTypes.STRING(255),
     allowNull: false,
