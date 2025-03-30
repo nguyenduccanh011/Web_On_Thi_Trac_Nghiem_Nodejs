@@ -61,7 +61,7 @@ exports.getAttemptDetails = async (attemptId) => {
     const attempt = await ExamAttempt.findByPk(attemptId, {
       include: [
         { model: Exam, as: "exam" },
-        { model: User, as: "user", attributes: { exclude: ["password"] } },
+        { model: UserAnswer, as: "user_answers", include: [{ model: Question, as: "question" }] },
       ],
     });
     if (!attempt) {

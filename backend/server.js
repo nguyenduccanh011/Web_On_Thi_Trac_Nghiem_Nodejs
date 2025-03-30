@@ -10,13 +10,15 @@ const { sequelize, testConnection } = require("./src/config/database"); // Impor
 require("./src/models/user.model");
 require("./src/models/exam.model");
 require("./src/models/exam_category.model");
-require("./src/models/exam_attempt.model.js");
+const exam_attempt = require("./src/models/exam_attempt.model.js");
 require("./src/models/exam_question.model.js");
 require("./src/models/forum_post.model.js");
 require("./src/models/forum_topic.model.js");
 require("./src/models/leaderboard.model.js");
-require("./src/models/user_answer.model.js");
+const user_answer = require("./src/models/user_answer.model.js");
 require("./src/models/question.model");
+
+exam_attempt.hasMany(user_answer, { foreignKey: 'attempt_id', as: 'user_answers'  });
 
 // Import các routes
 const authRoutes = require("./src/routes/auth.routes");
@@ -34,6 +36,7 @@ const adminExamRoutes = require("./src/routes/admin/admin_exam.routes.js");
 const adminQuestionRoutes = require("./src/routes/admin/admin_question.routes.js");
 const adminUserRoutes = require("./src/routes/admin/admin_user.routes.js");
 const adminExamCategoryRoutes = require("./src/routes/admin/admin_exam_category.routes.js");
+const e = require("express");
 
 const app = express(); // KHAI BÁO APP Ở ĐÂY
 const port = process.env.PORT || 3000;
