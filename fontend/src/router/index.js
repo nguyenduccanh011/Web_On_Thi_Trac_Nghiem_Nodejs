@@ -1,79 +1,69 @@
-import { createRouter, createWebHistory } from "vue-router";
-import QuestionDetailView from "../views/QuestionDetailView.vue";
-import EditQuestionView from "../views/EditQuestionView.vue";
-import CreateQuestionView from "../views/CreateQuestionView.vue";
-import CreateCategoryView from "../views/CreateCategoryView.vue";
-import LoginView from "../views/LoginView.vue";
-import RegisterView from "../views/RegisterView.vue";
-import ForgotPasswordView from "../views/ForgotPasswordView.vue";
-import ResetPasswordView from "../views/ResetPasswordView.vue";
-import HomeView from "../views/HomeView.vue"; // Import
-import HistoryView from "../views/HistoryView.vue";
-import DetailHistoryView from "../views/DetailHistoryView.vue"; // Import
+import { createRouter, createWebHistory } from 'vue-router';
+import QuestionDetailView from '../views/QuestionDetailView.vue';
+import EditQuestionView from '../views/EditQuestionView.vue';
+import CreateQuestionView from '../views/CreateQuestionView.vue';
+import CreateCategoryView from '../views/CreateCategoryView.vue';
+import LoginView from '../views/LoginView.vue';
+import RegisterView from '../views/RegisterView.vue';
+import ForgotPasswordView from '../views/ForgotPasswordView.vue';
+import ResetPasswordView from '../views/ResetPasswordView.vue';
+import HomeView from '../views/HomeView.vue'; // Import
 import ProfileView from '../views/ProfileView.vue'
+
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
+    path: '/',
+    name: 'Home',
     component: HomeView,
   },
   {
-    path: "/questions/:id",
-    name: "QuestionDetail",
+    path: '/questions/:id',
+    name: 'QuestionDetail',
     component: QuestionDetailView,
   },
   {
-    path: "/questions/:id/edit",
-    name: "EditQuestion",
+    path: '/questions/:id/edit',
+    name: 'EditQuestion',
     component: EditQuestionView,
   },
   {
-    path: "/create-question",
-    name: "CreateQuestion",
+    path: '/create-question',
+    name: 'CreateQuestion',
     component: CreateQuestionView,
   },
   {
-    path: "/create-category",
-    name: "CreateCategory",
+    path: '/create-category',
+    name: 'CreateCategory',
     component: CreateCategoryView,
   },
   {
-    path: "/login",
-    name: "Login",
+    path: '/login',
+    name: 'Login',
     component: LoginView,
   },
   {
-    path: "/register",
-    name: "Register",
+    path: '/register',
+    name: 'Register',
     component: RegisterView,
   },
   {
-    path: "/forgot-password",
-    name: "ForgotPassword",
+    path: '/forgot-password',
+    name: 'ForgotPassword',
     component: ForgotPasswordView,
   },
   {
-    path: "/reset-password",
-    name: "ResetPassword",
+    path: '/reset-password',
+    name: 'ResetPassword',
     component: ResetPasswordView,
   },
   {
-    path: "/history",
-    name: "History",
-    component: HistoryView,
-  },
-  {
-    path: "/history/detail/:attemptId",
-    name: "AttemptDetail",
-    component: DetailHistoryView,
-    props: true,
-  },
     path: '/profile',
     name: 'profile',
     component: ProfileView,
     meta: { requiresAuth: true }
   },
+
 ];
 
 const router = createRouter({
@@ -81,7 +71,6 @@ const router = createRouter({
   routes,
 });
 
-export default router;
 // Thêm navigation guard
 router.beforeEach((to, from, next) => {
   const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';

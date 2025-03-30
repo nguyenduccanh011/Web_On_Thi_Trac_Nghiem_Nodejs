@@ -36,7 +36,7 @@ const UserAnswer = sequelize.define('UserAnswer', {
     tableName: 'user_answers',
     timestamps: true,
 });
-  
+
 UserAnswer.belongsTo(ExamAttempt, { foreignKey: 'attempt_id', as: 'attempt' });
 UserAnswer.belongsTo(Question, { foreignKey: 'question_id', as: 'question' });
 

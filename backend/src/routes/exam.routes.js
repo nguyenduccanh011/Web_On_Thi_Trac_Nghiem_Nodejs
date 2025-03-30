@@ -1,13 +1,13 @@
 // src/routes/exam.routes.js
-const express = require("express");
-const examController = require("../controllers/exam.controller");
-const authMiddleware = require("../middlewares/auth.middleware");
-const adminMiddleware = require("../middlewares/admin.middleware");
+const express = require('express');
+const examController = require('../controllers/exam.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
+const adminMiddleware = require('../middlewares/admin.middleware');
 
 const router = express.Router();
 
-router.get("/", examController.getAllExams);
-router.get("/:id", examController.getExamById);
+router.get('/', examController.getAllExams);
+router.get('/:id', examController.getExamById);
 
 // Các route cần xác thực và phân quyền admin
 router.post('/', authMiddleware, adminMiddleware, examController.createExam);

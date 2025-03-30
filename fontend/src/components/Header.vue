@@ -4,12 +4,6 @@
       <router-link to="/">QLTSGeek</router-link>
     </div>
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-
-
     <div class="search-bar">
       <i class="fas fa-search"></i> 
       <input type="text" placeholder="Tìm kiếm bài kiểm tra, chủ đề...">
