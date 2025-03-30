@@ -22,11 +22,14 @@
             :key="answer.answer_id"
           >
             <div
-              class="p-3 rounded text-center fw-semibold border"
+              class="p-3 rounded text-center fw-semibold border d-flex justify-content-between align-items-center"
               :class="getAnswerClass(answer, ua)"
             >
-              {{ answer.answer_text }}
-              <span v-if="answer.answer_text === ua.selected_answer">✔️</span>
+              <span>{{ answer.answer_text }}</span>
+              <span v-if="answer.answer_id == ua.selected_answer">
+                <span v-if="ua.is_correct">✅</span>
+                <span v-else>❌</span>
+              </span>
             </div>
           </div>
         </div>
@@ -78,13 +81,20 @@ export default {
   },
   methods: {
     getAnswerClass(answer, ua) {
-      const isSelected = answer.answer_text === ua.selected_answer;
-      const isCorrect = ua.is_correct && isSelected;
-      const isWrong = !ua.is_correct && isSelected;
+      const isSelected = answer.answer_id == ua.selected_answer;
 
-      if (isCorrect) return "bg-success text-white border-success";
-      if (isWrong) return "bg-danger text-white border-danger";
-      return "bg-secondary text-white border-secondary";
+      // Nếu là đáp án không được chọn
+      if (!isSelected) {
+        return "bg-secondary text-white border-secondary";
+      }
+
+      if (ua.is_correct) {
+        // Nếu là đáp án đúng
+        return "bg-success text-white border-success";
+      } else {
+        // Nếu là đáp án đsai
+        return "bg-danger text-white border-danger";
+      }
     },
   },
 };
