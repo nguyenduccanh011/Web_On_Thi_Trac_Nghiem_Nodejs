@@ -10,9 +10,9 @@ exports.register = async (req, res) => {
   }
 
   try {
-    const { username, email, password } = req.body;
-    console.log('Registering user:', { username, email }); // Log request data
-    const newUser = await authService.registerUser(username, email, password);
+    const { username, email, password, fullname } = req.body;
+    console.log('Registering user:', { username, email, fullname }); // Log request data
+    const newUser = await authService.registerUser(username, email, password, fullname);
     res.status(201).json({ message: 'User registered successfully', user: newUser });
   } catch (error) {
     if (error.message === 'Username already exists' || error.message === 'Email already exists') {
@@ -34,8 +34,18 @@ exports.login = async (req, res) => {
     const { username, password } = req.body;
     const { user, token } = await authService.loginUser(username, password);
 
-    // Có thể trả về thêm thông tin user (tùy chọn)
-    res.status(200).json({ message: 'Login successful', token, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
+    // Trả về thông tin user với user_id
+    res.status(200).json({ 
+      message: 'Login successful', 
+      token, 
+      user: { 
+        user_id: user.user_id, 
+        username: user.username, 
+        email: user.email, 
+        full_name: user.full_name,
+        role: user.role 
+      } 
+    });
 
   } catch (error) {
     if (error.message === 'Invalid credentials') {
@@ -86,5 +96,6 @@ exports.resetPassword = async (req, res) => {
       console.error(error);
       res.status(500).json({ message: 'Internal server error' });
     }
+
   }
 };

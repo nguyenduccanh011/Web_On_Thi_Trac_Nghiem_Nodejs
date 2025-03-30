@@ -13,6 +13,7 @@
         <button type="submit">Gửi yêu cầu</button>
         <div class="back-to-login">
           <router-link to="/login"><i class="fas fa-arrow-left"></i> Quay lại đăng nhập</router-link>
+
         </div>
       </form>
     </div>
@@ -31,6 +32,7 @@ export default {
       success: ''
     };
   },
+
   methods: {
     async handleSubmit() {
       this.error = '';
@@ -40,6 +42,7 @@ export default {
         this.success = 'Vui lòng kiểm tra email của bạn để đặt lại mật khẩu';
       } catch (error) {
         this.error = error.response?.data?.message || 'Có lỗi xảy ra. Vui lòng thử lại';
+
       }
     }
   }
@@ -124,6 +127,7 @@ button:hover {
   color: #e74c3c;
   margin-top: 5px;
   text-align: center;
+
 }
 
 .success-message {
@@ -133,6 +137,7 @@ button:hover {
 }
 
 .back-to-login {
+
   margin-top: 15px;
   text-align: center;
 }
@@ -149,6 +154,7 @@ button:hover {
 }
 
 .back-to-login a:hover {
+
   text-decoration: underline;
 }
 
@@ -156,6 +162,7 @@ button:hover {
   .form-container {
     padding: 20px;
   }
+
   input[type="email"] {
     padding: 8px;
   }

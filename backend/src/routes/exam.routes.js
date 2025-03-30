@@ -10,10 +10,10 @@ router.get("/", examController.getAllExams);
 router.get("/:id", examController.getExamById);
 
 // Các route cần xác thực và phân quyền admin
-router.post("/", authMiddleware.verifyToken, adminMiddleware.isAdmin, examController.createExam);
-router.put("/:id", authMiddleware.verifyToken, adminMiddleware.isAdmin, examController.updateExam);
-router.delete("/:id", authMiddleware.verifyToken, adminMiddleware.isAdmin, examController.deleteExam);
+router.post('/', authMiddleware, adminMiddleware, examController.createExam);
+router.put('/:id', authMiddleware, adminMiddleware, examController.updateExam);
+router.delete('/:id', authMiddleware, adminMiddleware, examController.deleteExam);
 // Route lấy câu hỏi cho bài thi, cần xác thực user
-router.get("/questions", authMiddleware.verifyToken, examController.getQuestionsForExam);
+router.get('/questions', authMiddleware, examController.getQuestionsForExam);
 
 module.exports = router;

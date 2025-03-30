@@ -35,13 +35,13 @@ router.post(
   ],
   authController.forgotPassword
 );
-
 // Đặt lại mật khẩu
 router.post(
   '/reset-password',
   [
     body('token').notEmpty().withMessage('Reset token is required'),
     body('password').notEmpty().withMessage('Password is required').isLength({ min: 6 }).withMessage('Password must be at least 6 characters'),
+
   ],
   authController.resetPassword
 );

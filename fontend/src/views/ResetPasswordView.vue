@@ -18,6 +18,7 @@
         <div v-if="success" class="success-message">{{ success }}</div>
         <div class="back-to-login">
           <router-link to="/login"><i class="fas fa-arrow-left"></i> Quay lại đăng nhập</router-link>
+
         </div>
       </form>
     </div>
@@ -49,6 +50,7 @@ export default {
       }, 3000);
     }
   },
+
   methods: {
     async handleSubmit() {
       this.error = '';
@@ -56,15 +58,18 @@ export default {
       this.passwordError = '';
       this.errors = {};
 
+
       // Kiểm tra mật khẩu
       if (this.password !== this.confirmPassword) {
         this.passwordError = 'Mật khẩu xác nhận không khớp';
+
         return;
       }
 
       // Kiểm tra độ dài mật khẩu
       if (this.password.length < 6) {
         this.errors.password = 'Mật khẩu phải có ít nhất 6 ký tự';
+
         return;
       }
 
@@ -98,6 +103,7 @@ export default {
             this.$router.push('/login');
           }, 3000);
         }
+
       }
     }
   }
@@ -176,6 +182,7 @@ button:hover {
   color: #e74c3c;
   margin-top: 5px;
   text-align: center;
+
 }
 
 .success-message {
@@ -185,6 +192,7 @@ button:hover {
 }
 
 .back-to-login {
+
   margin-top: 15px;
   text-align: center;
 }
@@ -201,6 +209,7 @@ button:hover {
 }
 
 .back-to-login a:hover {
+
   text-decoration: underline;
 }
 
@@ -208,6 +217,7 @@ button:hover {
   .form-container {
     padding: 20px;
   }
+
   input[type="password"] {
     padding: 8px;
   }

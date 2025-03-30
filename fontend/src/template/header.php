@@ -10,10 +10,10 @@
     </div>
 
     <div class="user-info">
-      <img src="https://photo.znews.vn/w1200/Uploaded/mdf_eioxrd/2021_07_06/1q.jpg" alt="Avatar" class="avatar">
+      <img src="/default-avatar.png" alt="Avatar" class="avatar" id="headerAvatar">
       <div class="user-details">
-        <span>Sanket Pal</span>
-        <span class="role">Student</span>
+        <span id="headerUserName">Chưa đăng nhập</span>
+        <span class="role" id="headerUserRole">Khách</span>
       </div>
       <div class="user-dropdown">
         <router-link to="/profile"><i class="fas fa-user"></i> Hồ sơ</router-link>
@@ -26,7 +26,35 @@
 
 <script>
 export default {
-  name: 'AppHeader'
+  name: 'AppHeader',
+  mounted() {
+    // Cập nhật thông tin người dùng khi component được mount
+    this.updateUserInfo();
+  },
+  methods: {
+    updateUserInfo() {
+      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+      const user = JSON.parse(localStorage.getItem('user') || '{}');
+      
+      if (isLoggedIn && user) {
+        // Cập nhật ảnh đại diện
+        const avatarImg = document.getElementById('headerAvatar');
+        if (user.profile_picture) {
+          avatarImg.src = `http://localhost:3000${user.profile_picture}`;
+          // Thêm xử lý lỗi khi ảnh không tải được
+          avatarImg.onerror = function() {
+            this.src = '/default-avatar.png';
+          };
+        }
+        
+        // Cập nhật tên người dùng
+        document.getElementById('headerUserName').textContent = user.username;
+        
+        // Cập nhật vai trò
+        document.getElementById('headerUserRole').textContent = user.role === 'admin' ? 'Quản trị viên' : 'Người dùng';
+      }
+    }
+  }
 };
 </script>
 
