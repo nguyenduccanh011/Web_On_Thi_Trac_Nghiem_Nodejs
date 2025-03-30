@@ -8,9 +8,9 @@ import RegisterView from "../views/RegisterView.vue";
 import ForgotPasswordView from "../views/ForgotPasswordView.vue";
 import ResetPasswordView from "../views/ResetPasswordView.vue";
 import HomeView from "../views/HomeView.vue"; // Import
-import HistoryView from "../views/HistoryView.vue";
-import DetailHistoryView from "../views/DetailHistoryView.vue"; // Import
 import ProfileView from "../views/ProfileView.vue";
+import ExamAttemptView from "../views/ExamAttemptView.vue";
+import ExamDetailView from "../views/ExamDetailView.vue";
 
 const routes = [
   {
@@ -59,14 +59,14 @@ const routes = [
     component: ResetPasswordView,
   },
   {
-    path: "/history",
-    name: "History",
-    component: HistoryView,
+    path: "/exam-attempt",
+    name: "ExamAttempt",
+    component: ExamAttemptView,
   },
   {
-    path: "/history/detail/:attemptId",
+    path: "/exam-attempt/detail/:attemptId",
     name: "AttemptDetail",
-    component: DetailHistoryView,
+    component: ExamDetailView,
     props: true,
   },
   {
