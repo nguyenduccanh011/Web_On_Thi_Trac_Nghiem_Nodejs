@@ -283,7 +283,7 @@ exports.getQuestionsForExamTake = async (examId) => {
             ],
           },
         ],
-        order: [["question_order", "ASC"]],
+        order: Sequelize.literal("RAND()"),
       });
       // Map kết quả để thêm trường 'difficulty' text
       const questionsWithDetails = examQuestions
