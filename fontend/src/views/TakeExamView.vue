@@ -18,6 +18,11 @@
     </div>
 
     <div v-else>
+      <div class="alert alert-warning fw-bold text-center">
+        ⏰ Thời gian còn lại:
+        {{ String(Math.floor(timeLeft / 60)).padStart(2, "0") }}:
+        {{ String(timeLeft % 60).padStart(2, "0") }}
+      </div>
       <div
         v-for="(q, index) in questions"
         :key="q.question_id"
@@ -72,6 +77,8 @@ export default {
       submitted: false,
       score: null,
       correctCount: 0,
+      timeLeft: 10,
+      timer: null,
     };
   },
   async mounted() {
@@ -102,9 +109,29 @@ export default {
       alert("Lỗi kết nối máy chủ.");
     } finally {
       this.loading = false;
+      this.startTimer();
+      window.addEventListener("beforeunload", this.handleBeforeUnload);
     }
   },
   methods: {
+    startTimer() {
+      this.timer = setInterval(() => {
+        if (this.timeLeft > 0) {
+          this.timeLeft--;
+        } else {
+          this.clearTimer();
+          if (!this.submitted) {
+            this.submitAnswers();
+          }
+        }
+      }, 1000);
+    },
+    clearTimer() {
+      if (this.timer) {
+        clearInterval(this.timer);
+        this.timer = null;
+      }
+    },
     selectAnswer(questionId, answerId) {
       this.userAnswers[questionId] = answerId;
     },
@@ -114,13 +141,13 @@ export default {
         : "bg-white";
     },
     submitAnswers() {
-      let correct = 0;
-      console.log(this.userAnswers);
+      this.clearTimer();
+      window.removeEventListener("beforeunload", this.handleBeforeUnload);
 
+      let correct = 0;
       this.questions.forEach((q) => {
         const selectedId = this.userAnswers[q.question_id];
         const correctAnswer = q.answers.find((a) => a.is_correct);
-
         if (selectedId && selectedId === correctAnswer?.answer_id) {
           correct++;
         }
@@ -130,7 +157,35 @@ export default {
       this.score = Math.round((correct / this.questions.length) * 10);
       this.submitted = true;
     },
+    goBack() {
+      this.$router.push("/");
+    },
+    handleBeforeUnload(e) {
+      if (!this.submitted) {
+        e.preventDefault();
+        e.returnValue = "";
+        this.submitAnswers();
+      }
+    },
+  },
+
+  // ✅ Nếu bạn dùng Vue 3
+  beforeUnmount() {
+    window.removeEventListener("beforeunload", this.handleBeforeUnload);
+  },
+
+  // ✅ Ngăn rời route khi chưa nộp
+  beforeRouteLeave(to, from, next) {
+    if (!this.submitted) {
+      if (confirm("Bạn có chắc muốn kết thúc bài thi? Bài sẽ được nộp ngay.")) {
+        this.submitAnswers();
+        next(); // cho phép đi tiếp
+      } else {
+        next(false); // chặn rời trang
+      }
+    } else {
+      next(); // đã nộp rồi thì cho rời
+    }
   },
 };
 </script>
-<style scoped></style>
