@@ -179,9 +179,13 @@ exports.getQuestionsForExam = async (examId) => {
     const easyQuestions = await Question.findAll({
       where: {
         category_id: exam.category_id,
-        difficulty: DifficultyLevel.EASY,
       },
       include: [
+        {
+          model: DifficultyLevel,
+          as: "difficult_level",
+          where: { difficult_level_text: "easy" }, // điều kiện lọc theo text "easy"
+        },
         {
           model: Answer,
           as: "answers", // phải đúng alias nếu có
@@ -194,9 +198,13 @@ exports.getQuestionsForExam = async (examId) => {
     const mediumQuestions = await Question.findAll({
       where: {
         category_id: exam.category_id,
-        difficulty: DifficultyLevel.MEDIUM,
       },
       include: [
+        {
+          model: DifficultyLevel,
+          as: "difficult_level",
+          where: { difficult_level_text: "medium" }, // điều kiện lọc theo text "easy"
+        },
         {
           model: Answer,
           as: "answers", // phải đúng alias nếu có
@@ -209,9 +217,13 @@ exports.getQuestionsForExam = async (examId) => {
     const hardQuestions = await Question.findAll({
       where: {
         category_id: exam.category_id,
-        difficulty: DifficultyLevel.HARD,
       },
       include: [
+        {
+          model: DifficultyLevel,
+          as: "difficult_level",
+          where: { difficult_level_text: "hard" }, // điều kiện lọc theo text "easy"
+        },
         {
           model: Answer,
           as: "answers", // phải đúng alias nếu có
