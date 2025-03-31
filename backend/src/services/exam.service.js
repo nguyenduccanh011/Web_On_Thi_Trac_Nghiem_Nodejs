@@ -5,7 +5,7 @@ const Question = require("../models/question.model");
 const ExamCategory = require("../models/exam_category.model");
 const { sequelize } = require("../config/database");
 const { Sequelize } = require("sequelize");
-const DifficultyLevel = require("../models/constants/difficulty_level"); // Import DifficultyLevel từ file constants
+const DifficultyLevel = require("../models/difficulty_level.model"); // Import DifficultyLevel từ file constants
 const e = require("express");
 const Answer = require("../models/answer.model");
 

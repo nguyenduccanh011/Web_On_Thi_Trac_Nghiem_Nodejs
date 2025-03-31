@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 import QuestionDetailView from "../views/QuestionDetailView.vue";
 import EditQuestionView from "../views/EditQuestionView.vue";
 import CreateQuestionView from "../views/CreateQuestionView.vue";
-import CreateCategoryView from "../views/CreateCategoryView.vue";
+import CreateExamView from "../views/CreateExamView.vue";
 import LoginView from "../views/LoginView.vue";
 import RegisterView from "../views/RegisterView.vue";
 import ForgotPasswordView from "../views/ForgotPasswordView.vue";
@@ -35,9 +35,9 @@ const routes = [
     component: CreateQuestionView,
   },
   {
-    path: "/create-category",
-    name: "CreateCategory",
-    component: CreateCategoryView,
+    path: "/create-exam",
+    name: "CreateExam",
+    component: CreateExamView,
   },
   {
     path: "/login",

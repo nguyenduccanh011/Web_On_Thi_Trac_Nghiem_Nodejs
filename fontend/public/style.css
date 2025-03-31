@@ -418,3 +418,100 @@ select:disabled {
   box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 /* ... Các style khác từ file public/style.css ... */
+
+/* Style để căn chỉnh select và nút + trên cùng hàng */
+.select-with-button {
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 5px; /* Khoảng cách nhỏ giữa select và button */
+}
+
+.select-with-button .form-select {
+  flex-grow: 1; /* Cho select chiếm phần lớn không gian */
+  margin-right: 0; /* Bỏ margin mặc định nếu có */
+}
+
+.add-inline-btn {
+  padding: 5px 10px; /* Điều chỉnh padding cho nút nhỏ hơn */
+  line-height: 1; /* Giảm chiều cao dòng */
+  min-width: auto; /* Bỏ min-width mặc định */
+  font-size: 1.2em; /* Làm dấu cộng to hơn chút */
+  flex-shrink: 0; /* Ngăn nút bị co lại */
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+}
+.add-inline-btn:hover {
+  background-color: #eee;
+}
+
+/* Cải thiện style cho popup */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Đảm bảo popup nổi lên trên */
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 450px; /* Giới hạn chiều rộng popup */
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+  font-size: 1.4em;
+}
+
+.popup-form .form-group {
+  margin-bottom: 15px;
+}
+
+.popup-form .form-label {
+  margin-bottom: 5px;
+  display: block;
+  font-weight: 600;
+  color: #555;
+}
+.popup-form .form-textarea {
+  /* Thêm style cho textarea trong popup */
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  min-height: 60px; /* Chiều cao tối thiểu */
+  resize: vertical; /* Cho phép thay đổi chiều cao */
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end; /* Đẩy nút về bên phải */
+  gap: 10px; /* Khoảng cách giữa các nút */
+  margin-top: 20px;
+}
+
+.popup-btn {
+  padding: 8px 15px;
+}
+.small-error {
+  font-size: 0.9em; /* Lỗi trong popup nhỏ hơn chút */
+  margin-top: -10px; /* Kéo lên gần input hơn */
+  margin-bottom: 10px;
+}
