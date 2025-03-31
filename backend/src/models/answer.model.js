@@ -17,10 +17,10 @@ const Answer = sequelize.define(
     question_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
-      references: {
-        model: Question,
-        key: "question_id",
-      },
+      // references: {
+      //   model: Question,
+      //   key: "question_id",
+      // },
     },
     is_correct: {
       type: DataTypes.BOOLEAN,
