@@ -154,12 +154,18 @@ export default {
         this.endTime = new Date();
 
         let correct = 0;
-        this.questions.forEach((q) => {
-          const selectedId = this.userAnswers[q.question_id];
+        const answerDetails = this.questions.map((q) => {
+          const selectedId = this.userAnswers[q.question_id] || null;
           const correctAnswer = q.answers.find((a) => a.is_correct);
-          if (selectedId && selectedId === correctAnswer?.answer_id) {
-            correct++;
-          }
+          const isCorrect = selectedId === correctAnswer?.answer_id;
+
+          if (isCorrect) correct++;
+
+          return {
+            question_id: q.question_id,
+            selected_answer: selectedId == null ? 0 : selectedId,
+            is_correct: isCorrect,
+          };
         });
 
         this.correctCount = correct;
@@ -173,9 +179,8 @@ export default {
           total_questions: this.questions.length,
           correct_answers: this.correctCount,
           incorrect_answers: this.questions.length - this.correctCount,
+          answers: answerDetails,
         };
-
-        console.log("Payload to save:", payload);
 
         await fetch(`http://localhost:3000/api/attempts/save`, {
           method: "POST",
