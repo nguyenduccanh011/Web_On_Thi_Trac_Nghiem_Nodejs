@@ -109,7 +109,6 @@ export default {
         this.$router.push("/exams");
         return;
       }
-
       const data = await res.json();
       this.questions = data;
     } catch (err) {
@@ -182,7 +181,7 @@ export default {
           answers: answerDetails,
         };
 
-        await fetch(`http://localhost:3000/api/attempts/save`, {
+        const saveStatus = await fetch(`/api/attempts/save`, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -191,6 +190,11 @@ export default {
           body: JSON.stringify(payload),
         });
 
+        if (!saveStatus.ok) {
+          const err = await saveStatus.json();
+          alert(err.message || "Không thể lưu bài thi");
+          return;
+        }
         this.submitted = true;
       } catch (error) {
         console.error("Lỗi trong submitAnswers:", error);

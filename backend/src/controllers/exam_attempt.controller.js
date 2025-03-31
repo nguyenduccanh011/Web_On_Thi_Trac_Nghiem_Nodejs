@@ -1,5 +1,6 @@
 // src/controllers/exam_attempt.controller.js
 const examAttemptService = require("../services/exam_attempt.service");
+const examService = require("../services/exam.service");
 const userAnswerService = require("../services/user_answer.service");
 
 exports.saveExamAttempt = async (req, res) => {
@@ -8,7 +9,7 @@ exports.saveExamAttempt = async (req, res) => {
     const userId = req.user.userId; // Lấy userId từ req.user (đã xác thực)
 
     // Kiểm tra xem bài thi có tồn tại không
-    const exam = await examAttemptService.getAttemptById(result.exam_id);
+    const exam = await examService.getExamById(result.exam_id);
     if (!exam) {
       return res.status(404).json({ message: "Exam not found" });
     }

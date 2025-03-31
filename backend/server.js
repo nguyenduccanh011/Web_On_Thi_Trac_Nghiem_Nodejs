@@ -16,15 +16,11 @@ require("./src/models/exam_question.model.js");
 require("./src/models/forum_post.model.js");
 require("./src/models/forum_topic.model.js");
 require("./src/models/leaderboard.model.js");
-const answer = require("./src/models/answer.model.js");
-const user_answer = require("./src/models/user_answer.model.js");
-const question = require("./src/models/question.model");
+require("./src/models/user_answer.model.js");
+require("./src/models/question.model");
+require("./src/models/exam_difficulty.model");
+require("./src/models/exam_question.model.js");
 
-question.hasMany(answer, { foreignKey: "question_id", as: "answers" });
-exam_attempt.hasMany(user_answer, {
-  foreignKey: "attempt_id",
-  as: "user_answers",
-});
 
 // Import các routes
 const authRoutes = require("./src/routes/auth.routes");
@@ -37,6 +33,8 @@ const examAttemptRoutes = require("./src/routes/exam_attempt.routes");
 const examCategoryRoutes = require("./src/routes/exam_category.routes");
 const forumRoutes = require("./src/routes/forum.routes.js");
 const userProfileRoutes = require("./src/routes/user_profile.routes.js");
+const examDifficultyRoutes = require("./src/routes/exam_difficulty.routes.js");
+const examQuestionRoutes = require("./src/routes/exam_question.routes.js");
 
 // Import admin routes
 const adminAuthRoutes = require("./src/routes/admin/admin_auth.routes.js");
@@ -79,6 +77,8 @@ app.use("/api/attempts", examAttemptRoutes);
 app.use("/api/categories", examCategoryRoutes);
 app.use("/api/forum", forumRoutes);
 app.use("/api/profile", userProfileRoutes);
+app.use("/api/exam-difficulty", examDifficultyRoutes);
+app.use("/api/exam-questions", examQuestionRoutes);
 
 // Admin routes
 app.use("/api/admin/auth", adminAuthRoutes);

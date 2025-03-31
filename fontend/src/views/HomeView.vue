@@ -20,8 +20,10 @@
     </div>
     <nav>
       <ul>
-        <li><router-link to="/create-question">Tạo câu hỏi mới</router-link></li>
-        <li><router-link to="/create-category">Tạo danh mục mới</router-link></li>
+        <li>
+          <router-link to="/create-question">Tạo câu hỏi mới</router-link>
+        </li>
+        <li><router-link to="/create-exam">Tạo đề thi mới</router-link></li>
       </ul>
     </nav>
   </div>
@@ -29,7 +31,7 @@
 
 <script>
 export default {
-  name: 'HomeView',
+  name: "HomeView",
 };
 </script>
 

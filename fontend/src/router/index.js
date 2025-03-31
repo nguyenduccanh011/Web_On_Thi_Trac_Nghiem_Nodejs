@@ -12,6 +12,7 @@ import ProfileView from "../views/ProfileView.vue";
 import ExamAttemptView from "../views/ExamAttemptView.vue";
 import ExamDetailView from "../views/ExamDetailView.vue";
 import TakeExamView from "../views/TakeExamView.vue";
+import ExamSelectionView from "../views/ExamSelectionView.vue";
 
 const routes = [
   {
@@ -81,6 +82,19 @@ const routes = [
     name: "profile",
     component: ProfileView,
     meta: { requiresAuth: true },
+  },
+  {
+    path: "/exams/select", // Đường dẫn để hiển thị danh sách chọn đề
+    name: "ExamSelection",
+    component: ExamSelectionView,
+    meta: { requiresAuth: true }, // Thêm nếu cần yêu cầu đăng nhập để xem danh sách
+  },
+  {
+    path: "/exams/:examId/take", // Đường dẫn để làm bài thi
+    name: "TakeExam", // Đặt tên để $router.push hoạt động
+    component: TakeExamView,
+    props: true, // Cho phép truyền route param :examId thành prop cho TakeExamView
+    meta: { requiresAuth: true }, // Yêu cầu đăng nhập để làm bài
   },
 ];
 
