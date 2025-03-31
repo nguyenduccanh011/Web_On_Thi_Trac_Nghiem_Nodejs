@@ -11,7 +11,7 @@ const path = require("path");
 require("./src/models/user.model");
 require("./src/models/exam.model");
 require("./src/models/exam_category.model");
-require("./src/models/exam_attempt.model.js");
+const exam_attempt = require("./src/models/exam_attempt.model.js");
 require("./src/models/exam_question.model.js");
 require("./src/models/forum_post.model.js");
 require("./src/models/forum_topic.model.js");
@@ -20,6 +20,7 @@ require("./src/models/user_answer.model.js");
 require("./src/models/question.model");
 require("./src/models/exam_difficulty.model");
 require("./src/models/exam_question.model.js");
+
 
 // Import các routes
 const authRoutes = require("./src/routes/auth.routes");
