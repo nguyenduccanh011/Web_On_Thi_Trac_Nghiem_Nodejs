@@ -1,5 +1,6 @@
 // src/controllers/exam_attempt.controller.js
 const examAttemptService = require("../services/exam_attempt.service");
+const userAnswerService = require("../services/user_answer.service");
 
 exports.saveExamAttempt = async (req, res) => {
   try {
@@ -18,7 +19,16 @@ exports.saveExamAttempt = async (req, res) => {
       return res.status(400).json({ message: "Failed to save attempt" });
     }
 
-    res.status(201).json({ message: "OK" }); // 201 Created nếu lưu thành công
+    // Lưu câu trả lời của người dùng
+    const answers = await userAnswerService.saveUserAnswer(
+      attempt.attempt_id,
+      result.answers
+    );
+    if (!answers) {
+      return res.status(400).json({ message: "Failed to save answers" });
+    }
+
+    await res.status(201).json({ message: "OK" }); // 201 Created nếu lưu thành công
   } catch (error) {
     res.status(500).json({ message: error.message }); // 500 nếu có lỗi xảy ra
   }

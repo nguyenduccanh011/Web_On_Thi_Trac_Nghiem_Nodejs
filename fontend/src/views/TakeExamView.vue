@@ -119,7 +119,6 @@ export default {
       this.loading = false;
       this.startTime = new Date(); // Bắt đầu tính thời gian
       this.startTimer();
-      window.addEventListener("beforeunload", this.handleBeforeUnload);
     }
   },
   methods: {
@@ -174,8 +173,6 @@ export default {
           total_questions: this.questions.length,
           correct_answers: this.correctCount,
           incorrect_answers: this.questions.length - this.correctCount,
-          created_at: formatDateTime(new Date()),
-          updated_at: formatDateTime(new Date()),
         };
 
         console.log("Payload to save:", payload);
