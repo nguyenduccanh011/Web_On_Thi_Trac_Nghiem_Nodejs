@@ -23,7 +23,7 @@
           >
         </li>
         <li>
-          <router-link to="/take-exam/1"
+          <router-link to="/exams/select"
             ><i class="fas fa-users"></i> Thi thử (Đề mẫu)</router-link
           >
         </li>

@@ -3,6 +3,7 @@ const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
 const ExamCategory = require("./exam_category.model"); // Import model ExamCategory
 const DifficultyLevel = require("./difficulty_level.model");
+const Answer = require("./answer.model");
 
 const Question = sequelize.define(
   "Question",
@@ -57,5 +58,6 @@ Question.belongsTo(DifficultyLevel, {
   foreignKey: "difficult_level_id",
   as: "difficult_level",
 });
+Question.hasMany(Answer, { foreignKey: "question_id", as: "answers" });
 
 module.exports = Question;

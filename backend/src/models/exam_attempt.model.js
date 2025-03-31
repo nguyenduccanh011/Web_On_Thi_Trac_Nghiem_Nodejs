@@ -47,10 +47,19 @@ const ExamAttempt = sequelize.define(
     incorrect_answers: {
       type: DataTypes.INTEGER,
     },
+    created_at: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updated_at: {
+      type: DataTypes.DATE,
+    },
   },
   {
     tableName: "exam_attempts",
     timestamps: true, // Không cần timestamps cho bảng này.
+    updatedAt: "updated_at",
+    createdAt: "created_at",
   }
 );
 

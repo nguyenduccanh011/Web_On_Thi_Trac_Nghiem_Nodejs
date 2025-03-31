@@ -1,7 +1,7 @@
-// src/models/exam.model.js
+// src/models/exam.model.js (Hoặc tên file mới nếu bạn muốn)
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
-const ExamCategory = require("./exam_category.model");
+const ExamCategory = require("./exam_category.model"); // Giả sử bạn có model này
 
 const Exam = sequelize.define(
   "Exam",
@@ -15,18 +15,7 @@ const Exam = sequelize.define(
       type: DataTypes.STRING(100),
       allowNull: false,
     },
-    easy_question_count: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    medium_question_count: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
-    hard_question_count: {
-      type: DataTypes.INTEGER,
-      defaultValue: 0,
-    },
+    // Đã loại bỏ: easy_question_count, medium_question_count, hard_question_count
     description: {
       type: DataTypes.TEXT,
     },
@@ -34,13 +23,13 @@ const Exam = sequelize.define(
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
-        model: ExamCategory,
+        model: ExamCategory, // Tham chiếu đến model ExamCategory
         key: "category_id",
       },
     },
     created_at: {
       type: DataTypes.DATE,
-      defaultValue: DataTypes.NOW, // Sử dụng DataTypes.NOW để tự động lấy thời gian hiện tại
+      defaultValue: DataTypes.NOW,
     },
     updated_at: {
       type: DataTypes.DATE,
@@ -48,12 +37,16 @@ const Exam = sequelize.define(
   },
   {
     tableName: "exams",
-    timestamps: true, // Bật timestamps (createdAt, updatedAt)
-    updatedAt: "updated_at", // Đặt tên tùy chỉnh cho trường updatedAt
-    createdAt: "created_at", // Đặt tên tùy chỉnh cho trường createdAt
+    timestamps: true,
+    updatedAt: "updated_at",
+    createdAt: "created_at",
   }
 );
 
+// Định nghĩa quan hệ 1-N với ExamCategory
 Exam.belongsTo(ExamCategory, { foreignKey: "category_id", as: "category" });
+
+// Quan hệ N-N với DifficultyLevel sẽ được định nghĩa ở phần dưới
+// hoặc sau khi cả hai model Exam và DifficultyLevel đã được định nghĩa.
 
 module.exports = Exam;
