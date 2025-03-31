@@ -252,56 +252,112 @@ exports.deleteExam = async (examId) => {
 // Lưu ý: Hàm này đang không nhất quán với cấu trúc model/liên kết khác
 exports.getQuestionsForExamTake = async (examId) => {
   try {
-    // Lấy thông tin các liên kết difficulty của exam này
     const difficultyLinks = await ExamDifficulty.findAll({
       where: { exam_id: examId },
     });
+
     if (!difficultyLinks || difficultyLinks.length === 0) {
-      // Hoặc lấy tất cả câu hỏi đã liên kết nếu không dùng difficulty link?
-      // throw new Error("No difficulty distribution found for this exam.");
       // Fallback: Lấy tất cả câu hỏi đã liên kết qua ExamQuestion
+      console.warn(
+        `No difficulty links found for exam ${examId}. Falling back to linked questions.`
+      );
       const examQuestions = await ExamQuestion.findAll({
         where: { exam_id: examId },
         include: [
           {
             model: Question,
             as: "question",
-            include: [{ model: Answer, as: "answers" }],
+            include: [
+              { model: Answer, as: "answers" },
+              // *** THÊM INCLUDE DifficultyLevel VÀO ĐÂY ***
+              {
+                model: DifficultyLevel,
+                as: "difficult_level", // Alias từ Question.belongsTo
+                attributes: ["difficult_level_text"], // Chỉ lấy tên độ khó
+              },
+              {
+                model: ExamCategory,
+                as: "category",
+                attributes: ["category_name"],
+              }, // Include category name
+            ],
           },
         ],
-        order: [["question_order", "ASC"]], // Sắp xếp nếu có order
+        order: [["question_order", "ASC"]],
       });
-      return examQuestions.map((eq) => eq.question); // Trả về mảng Question
+      // Map kết quả để thêm trường 'difficulty' text
+      const questionsWithDetails = examQuestions
+        .map((eq) => {
+          if (!eq.question) return null;
+          const questionJson = eq.question.toJSON(); // Lấy object thuần túy
+          // Lấy tên độ khó từ object lồng nhau
+          questionJson.difficulty = eq.question.difficult_level
+            ? eq.question.difficult_level.difficult_level_text
+            : "N/A";
+          return questionJson;
+        })
+        .filter((q) => q); // Lọc bỏ null nếu có lỗi
+
+      return questionsWithDetails;
     }
 
-    // Lấy exam category_id
+    // --- Logic lấy câu hỏi theo distribution của difficultyLinks ---
     const exam = await Exam.findByPk(examId, { attributes: ["category_id"] });
     if (!exam) {
       throw new Error("Exam not found");
     }
 
     let allQuestions = [];
+    const fetchedQuestionIds = new Set(); // Để tránh lấy trùng câu hỏi nếu có lỗi logic
 
-    // Lặp qua từng difficulty link để lấy số lượng câu hỏi tương ứng
     for (const link of difficultyLinks) {
+      if (link.question_count <= 0) continue; // Bỏ qua nếu số lượng là 0
+
       const questions = await Question.findAll({
         where: {
           category_id: exam.category_id,
-          difficult_level_id: link.difficult_level_id, // Dùng ID thay vì text
+          difficult_level_id: link.difficult_level_id,
+          question_id: { [Op.notIn]: Array.from(fetchedQuestionIds) }, // Tránh lấy lại ID đã có
         },
-        include: [{ model: Answer, as: "answers" }],
+        include: [
+          { model: Answer, as: "answers" },
+          // *** THÊM INCLUDE DifficultyLevel VÀO ĐÂY ***
+          {
+            model: DifficultyLevel,
+            as: "difficult_level", // Alias từ Question.belongsTo
+            attributes: ["difficult_level_text"], // Chỉ lấy tên độ khó
+          },
+        ],
         order: Sequelize.literal("RAND()"), // MySQL random
-        limit: link.question_count, // Lấy đúng số lượng yêu cầu
+        limit: link.question_count,
       });
-      allQuestions = allQuestions.concat(questions);
+
+      // Map kết quả để thêm trường 'difficulty' text và cập nhật Set ID đã fetch
+      const questionsWithDifficultyName = questions.map((q) => {
+        fetchedQuestionIds.add(q.question_id); // Thêm ID vào set
+        const questionJson = q.toJSON(); // Lấy object thuần túy
+        // Lấy tên độ khó từ object lồng nhau
+        questionJson.difficulty = q.difficult_level
+          ? q.difficult_level.difficult_level_text
+          : "N/A";
+        return questionJson;
+      });
+
+      allQuestions = allQuestions.concat(questionsWithDifficultyName);
     }
 
-    // Có thể cần trộn lại allQuestions lần nữa nếu muốn thứ tự hoàn toàn ngẫu nhiên
-    // return _.shuffle(allQuestions); // Nếu dùng lodash
+    // Optional: Trộn lại toàn bộ danh sách câu hỏi cuối cùng nếu cần
+    // return _.shuffle(allQuestions);
 
     return allQuestions;
   } catch (error) {
     console.error(`Error getting questions for taking exam ${examId}:`, error);
+    if (error.message.includes("is not associated")) {
+      console.error(
+        "ASSOCIATION ERROR: Check model definitions (Question, Answer, DifficultyLevel)."
+      );
+      throw new Error(`Configuration error: ${error.message}`);
+    }
     throw error;
   }
 };

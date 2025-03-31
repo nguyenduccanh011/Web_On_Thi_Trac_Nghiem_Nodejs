@@ -109,7 +109,6 @@ export default {
         this.$router.push("/exams");
         return;
       }
-
       const data = await res.json();
       this.questions = data;
     } catch (err) {
