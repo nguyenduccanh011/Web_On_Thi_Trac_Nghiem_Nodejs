@@ -250,3 +250,268 @@
     width: 100%;
   }
 }
+/* === Style cho Dropdown và nút '+' === */
+.form-group.with-add-button .select-with-button {
+  display: flex;
+  align-items: center;
+}
+
+.form-group.with-add-button .form-select {
+  flex-grow: 1; /* Select chiếm phần lớn không gian */
+  margin-right: 8px; /* Khoảng cách giữa select và nút */
+}
+
+.add-inline-btn {
+  padding: 5px 10px;
+  font-size: 1.2em;
+  line-height: 1;
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  transition: background-color 0.2s ease;
+  height: 40px; /* Điều chỉnh cho khớp chiều cao với select */
+  flex-shrink: 0; /* Ngăn nút bị co lại */
+}
+
+.add-inline-btn:hover {
+  background-color: #e0e0e0;
+}
+
+/* === Style cho Popup === */
+.popup-overlay {
+  position: fixed; /* Che phủ toàn màn hình */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Lớp nền mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Đảm bảo popup nổi lên trên */
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 400px; /* Giới hạn chiều rộng tối đa */
+}
+
+.popup-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  font-size: 1.4em;
+  color: #333;
+}
+
+.popup-form .form-group {
+  margin-bottom: 15px;
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end; /* Căn nút về bên phải */
+  gap: 10px; /* Khoảng cách giữa các nút */
+  margin-top: 20px;
+}
+
+.popup-btn {
+  padding: 8px 15px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.95em;
+}
+
+.popup-btn.submit-btn {
+  background-color: #28a745; /* Màu xanh lá */
+  color: white;
+}
+.popup-btn.submit-btn:hover {
+  background-color: #218838;
+}
+
+.popup-btn.cancel-btn {
+  background-color: #6c757d; /* Màu xám */
+  color: white;
+}
+.popup-btn.cancel-btn:hover {
+  background-color: #5a6268;
+}
+
+.small-error {
+  font-size: 0.85em;
+  margin-top: -10px; /* Kéo lên gần input hơn */
+  margin-bottom: 10px;
+}
+
+/* === Style cho Select bị disabled === */
+select:disabled {
+  background-color: #e9ecef;
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+/* Điều chỉnh style cho .half-width nếu cần */
+.form-row {
+  display: flex;
+  gap: 20px; /* Khoảng cách giữa các cột */
+  flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình nhỏ */
+}
+
+.half-width {
+  flex: 1; /* Chia đều không gian */
+  min-width: 200px; /* Chiều rộng tối thiểu trước khi xuống dòng */
+}
+
+/* Đảm bảo message lỗi/thành công hiển thị đúng */
+.success-message,
+.error-message {
+  margin-top: 15px;
+  padding: 10px 15px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+}
+.success-message {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+}
+.error-message {
+  background-color: #f8d7da;
+  color: #721c24;
+  border: 1px solid #f5c6cb;
+}
+.message-icon {
+  margin-right: 8px;
+  font-weight: bold;
+}
+
+/* Thêm style nếu file style.css chưa có */
+.form-label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+  color: #555;
+}
+.form-input,
+.form-select,
+.form-textarea {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box; /* Quan trọng để padding không làm tăng kích thước */
+  font-size: 1em;
+}
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
+  border-color: #007bff;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+/* ... Các style khác từ file public/style.css ... */
+
+/* Style để căn chỉnh select và nút + trên cùng hàng */
+.select-with-button {
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 5px; /* Khoảng cách nhỏ giữa select và button */
+}
+
+.select-with-button .form-select {
+  flex-grow: 1; /* Cho select chiếm phần lớn không gian */
+  margin-right: 0; /* Bỏ margin mặc định nếu có */
+}
+
+.add-inline-btn {
+  padding: 5px 10px; /* Điều chỉnh padding cho nút nhỏ hơn */
+  line-height: 1; /* Giảm chiều cao dòng */
+  min-width: auto; /* Bỏ min-width mặc định */
+  font-size: 1.2em; /* Làm dấu cộng to hơn chút */
+  flex-shrink: 0; /* Ngăn nút bị co lại */
+  cursor: pointer;
+  border: 1px solid #ccc;
+  background-color: #f8f8f8;
+  border-radius: 4px;
+}
+.add-inline-btn:hover {
+  background-color: #eee;
+}
+
+/* Cải thiện style cho popup */
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Nền mờ */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Đảm bảo popup nổi lên trên */
+}
+
+.popup-content {
+  background-color: #fff;
+  padding: 25px 30px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  width: 90%;
+  max-width: 450px; /* Giới hạn chiều rộng popup */
+  display: flex;
+  flex-direction: column;
+}
+
+.popup-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+  font-size: 1.4em;
+}
+
+.popup-form .form-group {
+  margin-bottom: 15px;
+}
+
+.popup-form .form-label {
+  margin-bottom: 5px;
+  display: block;
+  font-weight: 600;
+  color: #555;
+}
+.popup-form .form-textarea {
+  /* Thêm style cho textarea trong popup */
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+  min-height: 60px; /* Chiều cao tối thiểu */
+  resize: vertical; /* Cho phép thay đổi chiều cao */
+}
+
+.popup-actions {
+  display: flex;
+  justify-content: flex-end; /* Đẩy nút về bên phải */
+  gap: 10px; /* Khoảng cách giữa các nút */
+  margin-top: 20px;
+}
+
+.popup-btn {
+  padding: 8px 15px;
+}
+.small-error {
+  font-size: 0.9em; /* Lỗi trong popup nhỏ hơn chút */
+  margin-top: -10px; /* Kéo lên gần input hơn */
+  margin-bottom: 10px;
+}

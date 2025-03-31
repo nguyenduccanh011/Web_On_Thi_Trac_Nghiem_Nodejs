@@ -31,16 +31,15 @@ exports.createQuestion = async (req, res) => {
       question_text,
       correct_answer,
       category_id,
-      difficulty,
+      difficult_level_id,
       explanation,
       answers,
     } = req.body;
 
     const question = await Question.create({
       question_text,
-      correct_answer,
       category_id,
-      difficulty,
+      difficult_level_id,
       explanation,
     });
     console.log(answers);

@@ -11,26 +11,20 @@ const path = require("path");
 require("./src/models/user.model");
 require("./src/models/exam.model");
 require("./src/models/exam_category.model");
-const exam_attempt = require("./src/models/exam_attempt.model.js");
+require("./src/models/exam_attempt.model.js");
 require("./src/models/exam_question.model.js");
 require("./src/models/forum_post.model.js");
 require("./src/models/forum_topic.model.js");
 require("./src/models/leaderboard.model.js");
-const answer = require("./src/models/answer.model.js");
-const user_answer = require("./src/models/user_answer.model.js");
-const question = require("./src/models/question.model");
-
-question.hasMany(answer, { foreignKey: "question_id", as: "answers" });
-exam_attempt.hasMany(user_answer, {
-  foreignKey: "attempt_id",
-  as: "user_answers",
-});
+require("./src/models/user_answer.model.js");
+require("./src/models/question.model");
 
 // Import các routes
 const authRoutes = require("./src/routes/auth.routes");
 const examRoutes = require("./src/routes/exam.routes");
 const leaderboardRoutes = require("./src/routes/leaderboard.routes");
 const questionRoutes = require("./src/routes/question.routes");
+const difficultyLevelRoutes = require("./src/routes/difficulty_level.routes");
 const userRoutes = require("./src/routes/user.routes");
 const examAttemptRoutes = require("./src/routes/exam_attempt.routes");
 const examCategoryRoutes = require("./src/routes/exam_category.routes");
@@ -43,7 +37,6 @@ const adminExamRoutes = require("./src/routes/admin/admin_exam.routes.js");
 const adminQuestionRoutes = require("./src/routes/admin/admin_question.routes.js");
 const adminUserRoutes = require("./src/routes/admin/admin_user.routes.js");
 const adminExamCategoryRoutes = require("./src/routes/admin/admin_exam_category.routes.js");
-const e = require("express");
 
 const app = express(); // KHAI BÁO APP Ở ĐÂY
 const port = process.env.PORT || 3000;
@@ -73,6 +66,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/leaderboard", leaderboardRoutes);
 app.use("/api/questions", questionRoutes);
+app.use("/api/difficulty-level", difficultyLevelRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/attempts", examAttemptRoutes);
 app.use("/api/categories", examCategoryRoutes);
