@@ -79,6 +79,8 @@ export default {
       correctCount: 0,
       timeLeft: 10,
       timer: null,
+      startTime: null,
+      endTime: null,
     };
   },
   async mounted() {
@@ -115,6 +117,7 @@ export default {
       alert("Lỗi kết nối máy chủ.");
     } finally {
       this.loading = false;
+      this.startTime = new Date(); // Bắt đầu tính thời gian
       this.startTimer();
       window.addEventListener("beforeunload", this.handleBeforeUnload);
     }
@@ -146,25 +149,66 @@ export default {
         ? "bg-primary text-white border-primary"
         : "bg-white";
     },
-    submitAnswers() {
-      this.clearTimer();
+    async submitAnswers() {
+      try {
+        this.clearTimer();
+        this.endTime = new Date();
 
-      let correct = 0;
-      this.questions.forEach((q) => {
-        const selectedId = this.userAnswers[q.question_id];
-        const correctAnswer = q.answers.find((a) => a.is_correct);
-        if (selectedId && selectedId === correctAnswer?.answer_id) {
-          correct++;
-        }
-      });
+        let correct = 0;
+        this.questions.forEach((q) => {
+          const selectedId = this.userAnswers[q.question_id];
+          const correctAnswer = q.answers.find((a) => a.is_correct);
+          if (selectedId && selectedId === correctAnswer?.answer_id) {
+            correct++;
+          }
+        });
 
-      this.correctCount = correct;
-      this.score = Math.round((correct / this.questions.length) * 10);
-      this.submitted = true;
+        this.correctCount = correct;
+        this.score = Math.round((correct / this.questions.length) * 10);
+
+        const payload = {
+          exam_id: this.$route.params.examId,
+          start_time: formatDateTime(this.startTime),
+          end_time: formatDateTime(this.endTime),
+          score: this.score,
+          total_questions: this.questions.length,
+          correct_answers: this.correctCount,
+          incorrect_answers: this.questions.length - this.correctCount,
+          created_at: formatDateTime(new Date()),
+          updated_at: formatDateTime(new Date()),
+        };
+
+        console.log("Payload to save:", payload);
+
+        await fetch(`http://localhost:3000/api/attempts/save`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(payload),
+        });
+
+        this.submitted = true;
+      } catch (error) {
+        console.error("Lỗi trong submitAnswers:", error);
+      }
     },
     goBack() {
       this.$router.push("/");
     },
   },
 };
+function formatDateTime(date) {
+  const pad = (n) => String(n).padStart(2, "0");
+
+  return (
+    `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(
+      date.getDate()
+    )} ` +
+    `${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(
+      date.getSeconds()
+    )}`
+  );
+}
 </script>
