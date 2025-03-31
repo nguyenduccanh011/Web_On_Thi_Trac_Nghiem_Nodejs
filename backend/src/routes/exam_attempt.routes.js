@@ -1,20 +1,16 @@
 // src/routes/exam_attempt.routes.js
-const express = require('express');
-const examAttemptController = require('../controllers/exam_attempt.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
-
+const express = require("express");
+const authMiddleware = require("../middlewares/auth.middleware");
+const examAttemptController = require("../controllers/exam_attempt.controller");
 const router = express.Router();
 
-// Bắt đầu làm bài (cần xác thực)
-router.post('/start', authMiddleware, examAttemptController.startExamAttempt);
+//Lấy danh sách bài thi của một user
+router.get("/me", authMiddleware, examAttemptController.getAttempByUser);
 
-// Nộp câu trả lời (cần xác thực)
-router.post('/submit', authMiddleware, examAttemptController.submitAnswer);
+//Lấy chi tiết lần làm bài (cần xác thực)
+router.get("/:id", authMiddleware, examAttemptController.getAttemptDetails);
 
-// Kết thúc bài làm (cần xác thực)
-router.post('/end', authMiddleware, examAttemptController.endExamAttempt);
-
-// Lấy chi tiết lần làm bài (cần xác thực)
-router.get('/:id', authMiddleware, examAttemptController.getAttemptDetails);
+//Lưu kết quả bài thi (cần xác thực)
+router.post("/save", authMiddleware, examAttemptController.saveExamAttempt);
 
 module.exports = router;

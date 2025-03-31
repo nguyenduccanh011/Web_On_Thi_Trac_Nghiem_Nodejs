@@ -3,7 +3,11 @@ const Exam = require("../models/exam.model");
 const ExamQuestion = require("../models/exam_question.model");
 const Question = require("../models/question.model");
 const ExamCategory = require("../models/exam_category.model");
+const { sequelize } = require("../config/database");
 const { Sequelize } = require("sequelize");
+const DifficultyLevel = require("../models/constants/difficulty_level"); // Import DifficultyLevel từ file constants
+const e = require("express");
+const Answer = require("../models/answer.model");
 
 exports.getAllExams = async () => {
   try {
@@ -14,6 +18,27 @@ exports.getAllExams = async () => {
       ],
     });
     return exams;
+  } catch (error) {
+    throw error;
+  }
+};
+
+exports.getQuestionsByExamId = async (examId) => {
+  try {
+    const exam = await Exam.findByPk(examId, {
+      include: [
+        { model: ExamCategory, as: "category" },
+        {
+          model: Question,
+          as: "questions",
+          through: { attributes: ["question_order"] }, // Bao gồm cả thứ tự
+        },
+      ],
+    });
+    if (!exam) {
+      throw new Error("Exam not found");
+    }
+    return exam.questions;
   } catch (error) {
     throw error;
   }
@@ -146,28 +171,57 @@ exports.deleteExam = async (examId) => {
 // Hàm lấy danh sách câu hỏi theo category và difficulty, có giới hạn số lượng và random
 exports.getQuestionsForExam = async (examId) => {
   try {
-    const exam = await Exam.findById({ examId });
+    const exam = await Exam.findByPk(examId);
+    if (!exam) {
+      throw new Error("Exam not found");
+    }
 
-    const query = `
-          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = easy ORDER BY RAND() LIMIT :easyCount)
-          UNION
-          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = medium ORDER BY RAND() LIMIT :mediumCount)
-          UNION
-          (SELECT * FROM questions WHERE category_id = :categoryId AND difficulty = hard ORDER BY RAND() LIMIT :hardCount)
-        `;
-
-    const questions = await sequelize.query(query, {
-      replacements: {
-        easy: DifficultyLevel.EASY, // Assume DifficultyLevel is imported
-        medium: DifficultyLevel.MEDIUM,
-        hard: DifficultyLevel.HARD,
-        categoryId: exam.category_id,
-        easyCount: exam.easy_question_count,
-        mediumCount: exam.medium_question_count,
-        hardCount: exam.hard_question_count,
+    const easyQuestions = await Question.findAll({
+      where: {
+        category_id: exam.category_id,
+        difficulty: DifficultyLevel.EASY,
       },
-      type: Sequelize.QueryTypes.SELECT,
+      include: [
+        {
+          model: Answer,
+          as: "answers", // phải đúng alias nếu có
+        },
+      ],
+      order: Sequelize.literal("RAND()"), // chỉ dùng được với MySQL
+      limit: 1,
     });
+
+    const mediumQuestions = await Question.findAll({
+      where: {
+        category_id: exam.category_id,
+        difficulty: DifficultyLevel.MEDIUM,
+      },
+      include: [
+        {
+          model: Answer,
+          as: "answers", // phải đúng alias nếu có
+        },
+      ],
+      order: Sequelize.literal("RAND()"), // chỉ dùng được với MySQL
+      limit: 1,
+    });
+
+    const hardQuestions = await Question.findAll({
+      where: {
+        category_id: exam.category_id,
+        difficulty: DifficultyLevel.HARD,
+      },
+      include: [
+        {
+          model: Answer,
+          as: "answers", // phải đúng alias nếu có
+        },
+      ],
+      order: Sequelize.literal("RAND()"), // chỉ dùng được với MySQL
+      limit: 1,
+    });
+
+    const questions = [...easyQuestions, ...mediumQuestions, ...hardQuestions];
     return questions;
   } catch (error) {
     throw error;

@@ -89,7 +89,8 @@ app.get("/", (req, res) => {
 
 // Đồng bộ hóa models với database
 sequelize
-  .sync({ force: false }) // Thêm đoạn này
+  .sync({ force: false }) // Đặt force: false để không xóa dữ liệu trong database
+  // .sync({ alter: true}) // Thêm đoạn này để tự động cập nhật cấu trúc bảng mà không làm mất dữ liệu
   .then(() => {
     console.log("Database synced");
 
