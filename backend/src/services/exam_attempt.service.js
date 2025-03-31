@@ -7,6 +7,31 @@ const Question = require("../models/question.model");
 const { Sequelize } = require("sequelize");
 const Answer = require("../models/answer.model");
 
+// Lưu kết quả bài thi
+exports.saveExamAttempt = async (userId, result) => {
+  try {
+    // Tạo một đối tượng mới từ kết quả bài thi
+    const examAttempt = {
+      user_id: userId,
+      exam_id: result.exam_id,
+      start_time: result.start_time,
+      end_time: result.end_time,
+      score: result.score,
+      total_questions: result.total_questions,
+      correct_answers: result.correct_answers,
+      incorrect_answers: result.incorrect_answers,
+      created_at: new Date(),
+      updated_at: new Date(),
+    };
+
+    // Lưu vào cơ sở dữ liệu
+    const savedAttempt = await ExamAttempt.create(examAttempt);
+    return savedAttempt;
+  } catch (error) {
+    throw error;
+  }
+};
+
 // Lấy danh sách bài thi của một user
 exports.getAttemptsByUser = async (userId) => {
   try {

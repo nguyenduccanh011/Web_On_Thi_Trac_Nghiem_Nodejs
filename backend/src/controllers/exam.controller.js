@@ -11,6 +11,18 @@ exports.getAllExams = async (req, res) => {
   }
 };
 
+exports.taskExamByExamId = async (req, res) => {
+  try {
+    const examId = req.params.id;
+    const tasks = await examService.getQuestionsForExam(examId);
+    // Trộn câu hỏi
+    const shuffledTasks = shuffleArray.shuffle(tasks);
+    res.json(shuffledTasks); // Trả về danh sách câu hỏi đã trộn
+  } catch (error) {
+    res.status(404).json({ message: error.message }); // 404 Not Found nếu không tìm thấy
+  }
+};
+
 exports.getExamById = async (req, res) => {
   try {
     const examId = req.params.id;

@@ -1,5 +1,38 @@
 // src/controllers/exam_attempt.controller.js
 const examAttemptService = require("../services/exam_attempt.service");
+const userAnswerService = require("../services/user_answer.service");
+
+exports.saveExamAttempt = async (req, res) => {
+  try {
+    const result = req.body;
+    const userId = req.user.userId; // Lấy userId từ req.user (đã xác thực)
+
+    // Kiểm tra xem bài thi có tồn tại không
+    const exam = await examAttemptService.getAttemptById(result.exam_id);
+    if (!exam) {
+      return res.status(404).json({ message: "Exam not found" });
+    }
+
+    // Lưu kết quả bài thi
+    const attempt = await examAttemptService.saveExamAttempt(userId, result);
+    if (!attempt) {
+      return res.status(400).json({ message: "Failed to save attempt" });
+    }
+
+    // Lưu câu trả lời của người dùng
+    const answers = await userAnswerService.saveUserAnswer(
+      attempt.attempt_id,
+      result.answers
+    );
+    if (!answers) {
+      return res.status(400).json({ message: "Failed to save answers" });
+    }
+
+    await res.status(201).json({ message: "OK" }); // 201 Created nếu lưu thành công
+  } catch (error) {
+    res.status(500).json({ message: error.message }); // 500 nếu có lỗi xảy ra
+  }
+};
 
 exports.getAttempByUser = async (req, res) => {
   try {

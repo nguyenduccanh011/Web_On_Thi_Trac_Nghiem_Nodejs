@@ -11,7 +11,7 @@
           class="mb-5 p-4 border rounded shadow-sm bg-light"
         >
           <p>
-            <strong>Câu {{ index + 1 }} ({{ ua.question.difficulty }}):</strong>
+            <strong>Câu {{ index + 1 }} :</strong>
             {{ ua.question.question_text }}
           </p>
   

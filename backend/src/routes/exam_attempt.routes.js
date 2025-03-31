@@ -10,4 +10,7 @@ router.get("/me", authMiddleware, examAttemptController.getAttempByUser);
 //Lấy chi tiết lần làm bài (cần xác thực)
 router.get("/:id", authMiddleware, examAttemptController.getAttemptDetails);
 
+//Lưu kết quả bài thi (cần xác thực)
+router.post("/save", authMiddleware, examAttemptController.saveExamAttempt);
+
 module.exports = router;
