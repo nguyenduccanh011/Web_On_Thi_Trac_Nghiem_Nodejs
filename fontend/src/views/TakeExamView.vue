@@ -83,6 +83,12 @@ export default {
   },
   async mounted() {
     const token = localStorage.getItem("token");
+    if (!token) {
+      alert("Vui lòng đăng nhập để làm bài thi");
+      this.$router.push("/login");
+      return;
+    }
+
     const examId = this.$route.params.examId || 1;
 
     try {
@@ -142,7 +148,6 @@ export default {
     },
     submitAnswers() {
       this.clearTimer();
-      window.removeEventListener("beforeunload", this.handleBeforeUnload);
 
       let correct = 0;
       this.questions.forEach((q) => {
@@ -160,32 +165,6 @@ export default {
     goBack() {
       this.$router.push("/");
     },
-    handleBeforeUnload(e) {
-      if (!this.submitted) {
-        e.preventDefault();
-        e.returnValue = "";
-        this.submitAnswers();
-      }
-    },
-  },
-
-  // ✅ Nếu bạn dùng Vue 3
-  beforeUnmount() {
-    window.removeEventListener("beforeunload", this.handleBeforeUnload);
-  },
-
-  // ✅ Ngăn rời route khi chưa nộp
-  beforeRouteLeave(to, from, next) {
-    if (!this.submitted) {
-      if (confirm("Bạn có chắc muốn kết thúc bài thi? Bài sẽ được nộp ngay.")) {
-        this.submitAnswers();
-        next(); // cho phép đi tiếp
-      } else {
-        next(false); // chặn rời trang
-      }
-    } else {
-      next(); // đã nộp rồi thì cho rời
-    }
   },
 };
 </script>
