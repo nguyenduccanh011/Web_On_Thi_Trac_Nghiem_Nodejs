@@ -16,10 +16,12 @@ require("./src/models/exam_question.model.js");
 require("./src/models/forum_post.model.js");
 require("./src/models/forum_topic.model.js");
 require("./src/models/leaderboard.model.js");
-require("./src/models/user_answer.model.js");
+const UserAnswer = require("./src/models/user_answer.model.js");
 require("./src/models/question.model");
 require("./src/models/exam_difficulty.model");
 require("./src/models/exam_question.model.js");
+
+exam_attempt.hasMany(UserAnswer, { foreignKey: 'attempt_id', as: 'user_answers' });
 
 
 // Import các routes
