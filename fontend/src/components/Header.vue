@@ -12,7 +12,10 @@
 
     <div class="search-bar">
       <i class="fas fa-search"></i> 
-      <input type="text" placeholder="Tìm kiếm bài kiểm tra, chủ đề...">
+      <input type="text" ref="searchInput" placeholder="Tìm kiếm bài kiểm tra, chủ đề..." />
+      <button @click="handleSearch" class="search-button">
+        <i class="fas fa-search"></i>
+      </button>
     </div>
 
     <div class="user-info" ref="userInfo" @click.stop="toggleDropdown">
@@ -123,6 +126,49 @@ export default {
         return '/default-avatar.png';
       }
       return `${API_URL.replace('/api', '')}${profilePicture}`;
+    },
+     async handleSearch() {
+      this.searchResults = [];
+      const searchQuery = this.$refs.searchInput.value.trim();
+      if (searchQuery) {
+        try {
+          // Gọi API
+          const response = await fetch(`${API_URL}/find/search?exam_name=${encodeURIComponent(searchQuery)}`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              // Thêm header authorization nếu cần
+              // 'Authorization': `Bearer ${localStorage.getItem('token')}`
+            }
+          });
+
+          if (!response.ok) {
+            throw new Error('Search request failed');
+          }
+
+          const data = await response.json();
+          this.searchResults = data;
+          
+          // Chuyển hướng đến trang kết quả với dữ liệu
+          this.$router.push({ 
+            name: 'ExamSelection', // Tên route của trang kết quả
+            query: { 
+              exam_name: searchQuery,
+               results: JSON.stringify(data.results) // Chuyển JSON thành string để truyền qua query
+            }
+           // console.log('chạy đến đây');
+          });
+
+          // Ví dụ chuỗi JSON trả về có thể như sau:
+          console.log('Search results:', JSON.stringify(data, null, 2));
+
+        } catch (error) {
+          console.error('Error during search:', error);
+          // Có thể thêm thông báo lỗi cho người dùng
+          alert('Không tim thấy bài kiểm tra nào phù hợp với từ khóa tìm kiếm của bạn.');
+        }
+      }
+      
     }
   }
 };

@@ -35,7 +35,7 @@ const forumRoutes = require("./src/routes/forum.routes.js");
 const userProfileRoutes = require("./src/routes/user_profile.routes.js");
 const examDifficultyRoutes = require("./src/routes/exam_difficulty.routes.js");
 const examQuestionRoutes = require("./src/routes/exam_question.routes.js");
-
+const findExamRoutes = require("./src/routes/find_exam.routes.js");
 // Import admin routes
 const adminAuthRoutes = require("./src/routes/admin/admin_auth.routes.js");
 const adminExamRoutes = require("./src/routes/admin/admin_exam.routes.js");
@@ -79,7 +79,7 @@ app.use("/api/forum", forumRoutes);
 app.use("/api/profile", userProfileRoutes);
 app.use("/api/exam-difficulty", examDifficultyRoutes);
 app.use("/api/exam-questions", examQuestionRoutes);
-
+app.use("/api/find", findExamRoutes);
 // Admin routes
 app.use("/api/admin/auth", adminAuthRoutes);
 app.use("/api/admin/exams", adminExamRoutes);
@@ -96,7 +96,7 @@ app.get("/", (req, res) => {
 
 // Đồng bộ hóa models với database
 sequelize
-  .sync({ force: false }) // Đặt force: false để không xóa dữ liệu trong database
+  .sync({ force: false },{alert: true}) // Đặt force: false để không xóa dữ liệu trong database
   // .sync({ alter: true}) // Thêm đoạn này để tự động cập nhật cấu trúc bảng mà không làm mất dữ liệu
   .then(() => {
     console.log("Database synced");

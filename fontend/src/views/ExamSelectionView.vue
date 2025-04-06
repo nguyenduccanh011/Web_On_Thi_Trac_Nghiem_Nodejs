@@ -1,19 +1,19 @@
 <template>
   <div class="container mt-5">
-    <h2 class="mb-4">📚 Chọn Đề thi Thử</h2>
+    <h2 class="mb-4">📚 Chọn Đề thi Thử {{ searchQuery ? ` - Kết quả cho "${searchQuery}"` : '' }}</h2>
 
     <div v-if="isLoading" class="alert alert-info">
       Đang tải danh sách đề thi...
     </div>
     <div v-else-if="error" class="alert alert-danger">{{ error }}</div>
 
-    <div v-else-if="exams.length === 0" class="alert alert-warning">
-      Hiện chưa có đề thi nào.
+    <div v-else-if="filteredExams.length === 0" class="alert alert-warning">
+      {{ searchQuery ? `Không tìm thấy đề thi nào phù hợp với "${searchQuery}"` : 'Hiện chưa có đề thi nào.' }}
     </div>
 
     <div v-else class="list-group exam-list">
       <div
-        v-for="exam in exams"
+        v-for="exam in filteredExams"
         :key="exam.exam_id"
         class="list-group-item list-group-item-action flex-column align-items-start mb-3 p-3 border rounded shadow-sm exam-item"
       >
@@ -38,7 +38,7 @@
 </template>
 
 <script>
-import axios from "axios"; // Hoặc dùng fetch nếu bạn thích
+import axios from "axios";
 
 export default {
   name: "ExamSelectionView",
@@ -49,16 +49,39 @@ export default {
       error: null,
     };
   },
+  computed: {
+    searchQuery() {
+      return this.$route.query.exam_name || '';
+    },
+    searchResults() {
+      return this.$route.query.results ? JSON.parse(this.$route.query.results) : null;
+    },
+    filteredExams() {
+      const examList = this.searchResults || this.exams;
+      
+      if (this.searchQuery) {
+        const query = this.searchQuery.toLowerCase();
+        return examList.filter(exam => 
+          exam.exam_name.toLowerCase().includes(query)
+        );
+      }
+      // Nếu không có searchQuery, hiển thị tất cả
+      return examList;
+    }
+  },
   async mounted() {
-    await this.fetchExams();
+    if (!this.searchResults) {
+      await this.fetchExams();
+    } else {
+      this.isLoading = false;
+    }
   },
   methods: {
     async fetchExams() {
       this.isLoading = true;
       this.error = null;
       try {
-        // Gọi API lấy danh sách exams (sử dụng endpoint từ examRouter)
-        const response = await axios.get("/api/exams"); // Không cần token nếu route này public
+        const response = await axios.get("/api/exams");
         this.exams = response.data || [];
       } catch (err) {
         console.error("Lỗi khi tải danh sách đề thi:", err);
@@ -71,39 +94,35 @@ export default {
       }
     },
     startExam(examId) {
-      // Điều hướng đến trang làm bài thi với examId đã chọn
       this.$router.push({ name: "TakeExam", params: { examId: examId } });
-      // Đảm bảo bạn đã định nghĩa route với name 'TakeExam' và param 'examId' trong router
-      // Ví dụ: path: '/exams/:examId/take', name: 'TakeExam', component: TakeExamView, props: true
-    },
-  },
+    }
+  }
 };
 </script>
 
 <style scoped>
-/* Thêm CSS scoping hoặc import file CSS chung */
-@import "./../../public/style.css"; /* Đường dẫn tới file CSS */
+@import "./../../public/style.css";
 
 .exam-container {
-  max-width: 800px; /* Giới hạn chiều rộng */
+  max-width: 800px;
 }
 
 .exam-list .list-group-item {
   transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
-  cursor: default; /* Bỏ cursor pointer mặc định của list-group-item-action */
+  cursor: default;
 }
 
 .exam-list .list-group-item:hover {
   transform: translateY(-3px);
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important; /* Tăng shadow khi hover */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
 }
 
 .exam-name {
-  color: #0d6efd; /* Màu primary của Bootstrap */
+  color: #0d6efd;
 }
 
 .exam-description {
-  color: #6c757d; /* Màu secondary text */
+  color: #6c757d;
   font-size: 0.95em;
 }
 
