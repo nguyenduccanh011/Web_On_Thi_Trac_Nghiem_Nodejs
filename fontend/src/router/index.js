@@ -1,69 +1,101 @@
-import { createRouter, createWebHistory } from 'vue-router';
-import QuestionDetailView from '../views/QuestionDetailView.vue';
-import EditQuestionView from '../views/EditQuestionView.vue';
-import CreateQuestionView from '../views/CreateQuestionView.vue';
-import CreateCategoryView from '../views/CreateCategoryView.vue';
-import LoginView from '../views/LoginView.vue';
-import RegisterView from '../views/RegisterView.vue';
-import ForgotPasswordView from '../views/ForgotPasswordView.vue';
-import ResetPasswordView from '../views/ResetPasswordView.vue';
-import HomeView from '../views/HomeView.vue'; // Import
-import ProfileView from '../views/ProfileView.vue'
-
+import { createRouter, createWebHistory } from "vue-router";
+import QuestionDetailView from "../views/QuestionDetailView.vue";
+import EditQuestionView from "../views/EditQuestionView.vue";
+import CreateQuestionView from "../views/CreateQuestionView.vue";
+import CreateExamView from "../views/CreateExamView.vue";
+import LoginView from "../views/LoginView.vue";
+import RegisterView from "../views/RegisterView.vue";
+import ForgotPasswordView from "../views/ForgotPasswordView.vue";
+import ResetPasswordView from "../views/ResetPasswordView.vue";
+import HomeView from "../views/HomeView.vue"; // Import
+import ProfileView from "../views/ProfileView.vue";
+import ExamAttemptView from "../views/ExamAttemptView.vue";
+import ExamDetailView from "../views/ExamDetailView.vue";
+import TakeExamView from "../views/TakeExamView.vue";
+import ExamSelectionView from "../views/ExamSelectionView.vue";
 
 const routes = [
   {
-    path: '/',
-    name: 'Home',
+    path: "/",
+    name: "Home",
     component: HomeView,
   },
   {
-    path: '/questions/:id',
-    name: 'QuestionDetail',
+    path: "/questions/:id",
+    name: "QuestionDetail",
     component: QuestionDetailView,
   },
   {
-    path: '/questions/:id/edit',
-    name: 'EditQuestion',
+    path: "/questions/:id/edit",
+    name: "EditQuestion",
     component: EditQuestionView,
   },
   {
-    path: '/create-question',
-    name: 'CreateQuestion',
+    path: "/create-question",
+    name: "CreateQuestion",
     component: CreateQuestionView,
   },
   {
-    path: '/create-category',
-    name: 'CreateCategory',
-    component: CreateCategoryView,
+    path: "/create-exam",
+    name: "CreateExam",
+    component: CreateExamView,
   },
   {
-    path: '/login',
-    name: 'Login',
+    path: "/login",
+    name: "Login",
     component: LoginView,
   },
   {
-    path: '/register',
-    name: 'Register',
+    path: "/register",
+    name: "Register",
     component: RegisterView,
   },
   {
-    path: '/forgot-password',
-    name: 'ForgotPassword',
+    path: "/forgot-password",
+    name: "ForgotPassword",
     component: ForgotPasswordView,
   },
   {
-    path: '/reset-password',
-    name: 'ResetPassword',
+    path: "/reset-password",
+    name: "ResetPassword",
     component: ResetPasswordView,
   },
   {
-    path: '/profile',
-    name: 'profile',
-    component: ProfileView,
-    meta: { requiresAuth: true }
+    path: "/exam-attempt",
+    name: "ExamAttempt",
+    component: ExamAttemptView,
   },
-
+  {
+    path: "/exam-attempt/detail/:attemptId",
+    name: "AttemptDetail",
+    component: ExamDetailView,
+    props: true,
+  },
+  {
+    path: "/take-exam/:examId",
+    name: "TakeExam",
+    component: TakeExamView,
+    props: true,
+  },
+  {
+    path: "/profile",
+    name: "profile",
+    component: ProfileView,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: "/exams/select", // Đường dẫn để hiển thị danh sách chọn đề
+    name: "ExamSelection",
+    component: ExamSelectionView,
+    meta: { requiresAuth: true }, // Thêm nếu cần yêu cầu đăng nhập để xem danh sách
+  },
+  {
+    path: "/exams/:examId/take", // Đường dẫn để làm bài thi
+    name: "TakeExam", // Đặt tên để $router.push hoạt động
+    component: TakeExamView,
+    props: true, // Cho phép truyền route param :examId thành prop cho TakeExamView
+    meta: { requiresAuth: true }, // Yêu cầu đăng nhập để làm bài
+  },
 ];
 
 const router = createRouter({
@@ -73,25 +105,24 @@ const router = createRouter({
 
 // Thêm navigation guard
 router.beforeEach((to, from, next) => {
-  const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-  const token = localStorage.getItem('token');
-  const user = JSON.parse(localStorage.getItem('user'));
+  const isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  const token = localStorage.getItem("token");
+  const user = JSON.parse(localStorage.getItem("user"));
 
-  if (to.matched.some(record => record.meta.requiresAuth)) {
+  if (to.matched.some((record) => record.meta.requiresAuth)) {
     if (!isLoggedIn || !token || !user || !user.user_id) {
       // Lưu đường dẫn đích để chuyển hướng sau khi đăng nhập
 
       next({
-        path: '/login',
-        query: { redirect: to.fullPath }
+        path: "/login",
+        query: { redirect: to.fullPath },
       });
     } else {
       next();
     }
-  } else if (to.path === '/login' && isLoggedIn) {
+  } else if (to.path === "/login" && isLoggedIn) {
     // Nếu đã đăng nhập và cố gắng truy cập trang login, chuyển hướng về trang chủ
-    next('/');
-
+    next("/");
   } else {
     next();
   }

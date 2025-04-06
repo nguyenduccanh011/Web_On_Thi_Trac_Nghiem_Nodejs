@@ -1,185 +1,205 @@
 // src/services/exam_attempt.service.js
-const ExamAttempt = require('../models/exam_attempt.model');
-const UserAnswer = require('../models/user_answer.model');
-const Exam = require('../models/exam.model');
-const User = require('../models/user.model');
-const Question = require('../models/question.model');
-const { Sequelize } = require('sequelize');
+const ExamAttempt = require("../models/exam_attempt.model");
+const UserAnswer = require("../models/user_answer.model"); // Model này cần được tạo và định nghĩa association
+const Exam = require("../models/exam.model");
+const User = require("../models/user.model"); // Cần thiết nếu muốn include User info vào Attempt/UserAnswer
+const Question = require("../models/question.model");
+const Answer = require("../models/answer.model");
+const { Sequelize } = require("sequelize"); // Sequelize thường không cần import trực tiếp ở đây trừ khi dùng Op, literal, etc.
 
-exports.startExamAttempt = async (userId, examId) => {
-    try {
-        // Kiểm tra user và exam có tồn tại không
-        const user = await User.findByPk(userId);
-        const exam = await Exam.findByPk(examId);
+// Lưu kết quả bài thi (Phiên bản đã sửa)
+exports.saveExamAttempt = async (userId, result) => {
+  try {
+    // Tạo đối tượng ExamAttempt từ dữ liệu đầu vào
+    // Bỏ created_at, updated_at - Để Sequelize tự quản lý
+    const attemptData = {
+      user_id: userId,
+      exam_id: result.exam_id,
+      start_time: result.start_time,
+      end_time: result.end_time,
+      score: result.score,
+      total_questions: result.total_questions,
+      correct_answers: result.correct_answers,
+      incorrect_answers: result.incorrect_answers,
+      // Không cần created_at, updated_at ở đây nếu model dùng timestamps: true
+    };
 
-        if (!user) {
-            throw new Error("User not found");
-        }
-        if (!exam) {
-            throw new Error ("Exam not found");
-        }
+    // Kiểm tra các trường bắt buộc (tùy theo model)
+    if (
+      attemptData.exam_id === undefined ||
+      attemptData.user_id === undefined
+    ) {
+      throw new Error(
+        "Missing required data for saving exam attempt (exam_id, user_id)."
+      );
+    }
 
-        // Kiểm tra xem user có đang làm bài thi khác không (tùy chọn)
-        const existingAttempt = await ExamAttempt.findOne({
-            where: {
-                user_id: userId,
-                exam_id: examId,
-                end_time: null, // Kiểm tra xem có bài thi nào chưa kết thúc không
+    // Lưu vào cơ sở dữ liệu
+    const savedAttempt = await ExamAttempt.create(attemptData);
+    return savedAttempt;
+  } catch (error) {
+    console.error("Error saving exam attempt:", error);
+    // Bắt lỗi validation nếu có
+    if (error.name === "SequelizeValidationError") {
+      throw new Error(error.errors.map((e) => e.message).join(", "));
+    }
+    // Bắt lỗi khóa ngoại nếu user_id hoặc exam_id không hợp lệ
+    if (error.name === "SequelizeForeignKeyConstraintError") {
+      throw new Error(
+        `Invalid User ID (${userId}) or Exam ID (${result.exam_id}).`
+      );
+    }
+    throw error; // Ném lại các lỗi khác
+  }
+};
+
+// Lấy danh sách bài thi của một user
+exports.getAttemptsByUser = async (userId) => {
+  try {
+    const attempts = await ExamAttempt.findAll({
+      where: { user_id: userId },
+      include: [
+        {
+          model: Exam,
+          as: "exam", // Đảm bảo alias này đúng với định nghĩa trong ExamAttempt.belongsTo
+          attributes: ["exam_id", "exam_name"], // Lấy thêm ID để có thể link
+        },
+      ],
+      order: [["start_time", "DESC"]], // Sắp xếp mới nhất lên đầu
+    });
+    return attempts;
+  } catch (error) {
+    console.error(`Error fetching attempts for user ${userId}:`, error);
+    throw error;
+  }
+};
+
+// Lấy thông tin cơ bản của một lượt làm bài theo ID
+exports.getAttemptById = async (attemptId) => {
+  try {
+    const attempt = await ExamAttempt.findByPk(attemptId, {
+      include: [
+        {
+          model: Exam,
+          as: "exam", // Alias cho Exam
+          include: [
+            {
+              model: require("../models/exam_category.model"),
+              as: "category",
+              attributes: ["category_name"],
             },
-        });
-
-        if (existingAttempt) {
-            throw new Error('User already has an active attempt for this exam');
-        }
-
-        // Tạo bản ghi ExamAttempt mới
-        const newAttempt = await ExamAttempt.create({
-            user_id: userId,
-            exam_id: examId,
-            start_time: new Date(), // Hoặc Sequelize.NOW nếu bạn muốn sử dụng thời gian của server DB
-            end_time: null, // Ban đầu chưa kết thúc
-            score: 0, // Ban đầu điểm là 0
-            total_questions: 0, // Sẽ được cập nhật sau
-            correct_answers: 0,
-            incorrect_answers: 0,
-        });
-
-        // Lấy thông tin exam attempt (tùy chọn)
-        const attempt = await ExamAttempt.findByPk(newAttempt.attempt_id, {
-            include: [
-                { model: Exam, as: 'exam' },
-                { model: User, as: 'user', attributes: { exclude: ['password'] } },
-            ],
-        });
-
-        return attempt;
-    } catch (error) {
-        throw error;
+          ], // Include category của exam
+        },
+        {
+          model: User, // Include thông tin user nếu cần
+          as: "user", // Alias cho User
+          attributes: ["user_id", "username", "email"], // Chọn lọc trường user
+        },
+      ],
+    });
+    if (!attempt) {
+      // Không throw lỗi ở service, trả về null để controller xử lý 404
+      return null;
+      // throw new Error("Exam attempt not found");
     }
+    return attempt;
+  } catch (error) {
+    console.error(`Error fetching attempt by ID ${attemptId}:`, error);
+    throw error;
+  }
 };
 
-exports.submitAnswer = async (attemptId, questionId, selectedAnswer) => {
-    try {
-        // Kiểm tra xem attempt có tồn tại và thuộc về user không (quan trọng)
-        const attempt = await ExamAttempt.findByPk(attemptId);
-        if (!attempt) {
-            throw new Error('Exam attempt not found');
-        }
+// *** HÀM createExamAttempt ĐÃ BỊ LOẠI BỎ vì trùng lặp và lỗi ***
 
-        // Kiểm tra xem attempt đã kết thúc chưa
-        if (attempt.end_time !== null) {
-            throw new Error('Exam attempt has already been submitted');
-        }
-
-        // Lấy thông tin câu hỏi
-        const question = await Question.findByPk(questionId);
-        if (!question) {
-            throw new Error('Question not found');
-        }
-
-        // Kiểm tra đáp án đúng/sai
-        const isCorrect = selectedAnswer === question.correct_answer;
-
-        // Kiểm tra xem người dùng đã trả lời câu hỏi này chưa
-        const existingAnswer = await UserAnswer.findOne({
-            where: {
-                attempt_id: attemptId,
-                question_id: questionId,
-            },
-        });
-
-        if (existingAnswer) {
-            // Cập nhật câu trả lời nếu đã tồn tại
-            await existingAnswer.update({
-                selected_answer: selectedAnswer,
-                is_correct: isCorrect,
-            });
-        } else {
-            // Tạo bản ghi UserAnswer
-            await UserAnswer.create({
-                attempt_id: attemptId,
-                question_id: questionId,
-                selected_answer: selectedAnswer,
-                is_correct: isCorrect,
-            });
-        }
-
-
-        // Cập nhật thông tin attempt (số câu đúng/sai)
-        if (isCorrect) {
-            attempt.correct_answers += 1;
-        } else {
-            attempt.incorrect_answers += 1;
-        }
-        attempt.total_questions += 1; // Tăng tổng số câu hỏi đã trả lời
-        await attempt.save();
-
-        // Lấy thông tin UserAnswer với thông tin attempt và question (tùy chọn):
-        const userAnswer = await UserAnswer.findOne({
-            where: { attempt_id: attemptId, question_id: questionId },
-            include: [
-                { model: ExamAttempt, as: 'attempt' },
-                { model: Question, as: 'question' },
-            ],
-        });
-        return userAnswer; // Hoặc chỉ return { message: 'Answer submitted successfully' }
-    } catch (error) {
-        throw error;
-    }
-};
-
-exports.endExamAttempt = async (attemptId) => {
-    try {
-        // Kiểm tra xem attempt có tồn tại không
-        const attempt = await ExamAttempt.findByPk(attemptId);
-        if (!attempt) {
-            throw new Error('Exam attempt not found');
-        }
-
-        // Kiểm tra xem attempt đã kết thúc chưa
-        if (attempt.end_time !== null) {
-            throw new Error('Exam attempt has already been submitted');
-        }
-      
-        // Tính điểm
-        const totalQuestions = attempt.total_questions;
-        const correctAnswers = attempt.correct_answers;
-        const score = totalQuestions > 0 ? (correctAnswers / totalQuestions) * 100 : 0; // Tránh chia cho 0
-
-        // Cập nhật thông tin attempt (thời gian kết thúc, điểm)
-        await attempt.update({
-            end_time: new Date(),
-            score: score,
-        });
-
-        // Cập nhật bảng xếp hạng (gọi service leaderboard)
-        const { updateLeaderboard } = require('./leaderboard.service'); // Tránh circular dependency
-        await updateLeaderboard(attempt.user_id, score);
-
-        return attempt;
-    } catch (error) {
-        throw error;
-    }
-};
-
+// Lấy thông tin chi tiết của một lượt làm bài (bao gồm câu trả lời, câu hỏi)
 exports.getAttemptDetails = async (attemptId) => {
-    try {
-        const attempt = await ExamAttempt.findByPk(attemptId, {
-            include: [
-                { model: Exam, as: 'exam' },
-                { model: User, as: 'user', attributes: { exclude: ['password'] } },
+  /*
+   * LƯU Ý QUAN TRỌNG: Hàm này yêu cầu các mối quan hệ sau phải được định nghĩa đúng trong các model:
+   * 1. Trong `exam_attempt.model.js`: ExamAttempt.hasMany(UserAnswer, { foreignKey: 'attempt_id', as: 'user_answers' });
+   * 2. Trong `user_answer.model.js`: UserAnswer.belongsTo(Question, { foreignKey: 'question_id', as: 'question' });
+   * 3. Trong `question.model.js`: Question.hasMany(Answer, { foreignKey: 'question_id', as: 'answers' }); (Đã có)
+   * 4. Trong `exam_attempt.model.js`: ExamAttempt.belongsTo(Exam, { foreignKey: 'exam_id', as: 'exam' }); (Đã có)
+   * 5. (Tùy chọn) Trong `user_answer.model.js`: UserAnswer.belongsTo(Answer, { foreignKey: 'selected_answer_id', as: 'selectedAnswer' }); // Nếu muốn lấy chi tiết câu đã chọn
+   */
+  try {
+    const attempt = await ExamAttempt.findByPk(attemptId, {
+      include: [
+        {
+          model: Exam,
+          as: "exam", // Alias cho Exam
+          attributes: ["exam_id", "exam_name"], // Lấy thông tin cần thiết của Exam
+          include: [
+            {
+              model: require("../models/exam_category.model"),
+              as: "category",
+              attributes: ["category_name"],
+            },
+          ],
+        },
+        {
+          model: UserAnswer, // Model lưu câu trả lời của user cho attempt này
+          as: "user_answers", // Alias cho UserAnswer (cần định nghĩa trong ExamAttempt model)
+          include: [
+            {
+              model: Question, // Include câu hỏi tương ứng
+              as: "question", // Alias cho Question (cần định nghĩa trong UserAnswer model)
+              attributes: {
+                // Bỏ những trường không cần thiết cho việc review kết quả
+                exclude: [
+                  "category_id",
+                  "difficult_level_id",
+                  "created_at",
+                  "updated_at",
+                ],
+              },
+              include: [
                 {
-                    model: UserAnswer,
-                    as: 'userAnswers', // Đổi tên alias thành 'userAnswers'
-                    include: [{ model: Question, as: 'question' }], // Lấy thông tin câu hỏi
+                  model: Answer, // Include tất cả các lựa chọn của câu hỏi này
+                  as: "answers", // Alias cho Answer (cần định nghĩa trong Question model)
+                  // Chỉ lấy các trường cần thiết để hiển thị và kiểm tra đáp án đúng
+                  attributes: ["answer_id", "answer_text", "is_correct"],
                 },
-            ],
-        });
-        if(!attempt) {
-            throw new Error('Exam attempt not found');
-        }
-        return attempt;
-    } catch (error) {
-        throw error;
+              ],
+            },
+            // { // Tùy chọn: Include chi tiết câu trả lời đã chọn (nếu có association)
+            //   model: Answer,
+            //   as: 'selectedAnswer', // Alias nếu có UserAnswer.belongsTo(Answer, {as: 'selectedAnswer'})
+            //   attributes: ['answer_id', 'answer_text']
+            // }
+          ],
+          // Chỉ lấy các trường cần thiết của UserAnswer
+          attributes: [
+            "user_answer_id",
+            "question_id",
+            "selected_answer",
+            "is_correct",
+          ],
+        },
+      ],
+      order: [
+        // Sắp xếp câu trả lời theo thứ tự câu hỏi (nếu có)
+        // Giả sử UserAnswer có question_order hoặc dựa vào Question
+        // [{ model: UserAnswer, as: 'user_answers' }, { model: Question, as: 'question' }, 'question_order', 'ASC']
+        // Hoặc đơn giản là theo ID câu hỏi
+        [{ model: UserAnswer, as: "user_answers" }, "question_id", "ASC"],
+      ],
+    });
+
+    if (!attempt) {
+      // Không throw lỗi ở service, trả về null để controller xử lý 404
+      return null;
+      // throw new Error("Exam attempt details not found");
     }
-}
+    return attempt; // Trả về đối tượng attempt lồng nhau rất chi tiết
+  } catch (error) {
+    console.error(`Error fetching attempt details for ID ${attemptId}:`, error);
+    // Check lỗi association cụ thể nếu có thể
+    if (error.message.includes("is not associated")) {
+      console.error(
+        "ASSOCIATION ERROR: Check model definitions for ExamAttempt, UserAnswer, Question, Answer."
+      );
+      throw new Error(`Configuration error: ${error.message}`); // Ném lỗi rõ ràng hơn
+    }
+    throw error;
+  }
+};
