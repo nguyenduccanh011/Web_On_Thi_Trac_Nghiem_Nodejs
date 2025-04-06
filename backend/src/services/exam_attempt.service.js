@@ -171,7 +171,7 @@ exports.getAttemptDetails = async (attemptId) => {
           attributes: [
             "user_answer_id",
             "question_id",
-            "selected_answer_id",
+            "selected_answer",
             "is_correct",
           ],
         },
