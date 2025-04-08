@@ -438,7 +438,7 @@ export default {
     isEditing() {
       return !!this.exam.exam_id;
     },
- 
+
     // Tính toán số lượng câu hỏi thực tế cho mỗi độ khó dựa trên addedQuestions
     availableQuestionsCountByDifficulty() {
       const counts = {};
@@ -467,19 +467,18 @@ export default {
       );
     },
   },
-  
+
   async created() {
     // Đọc examId từ query parameter thay vì prop
-    if(this.examIdToEid)  {
+    if (this.examIdToEid) {
       this.exam.exam_id = this.examIdToEid;
     }
     const examId = this.$route.query.examId;
     if (examId) {
       this.exam.exam_id = examId;
-     await this.loadExamDataForEdit();
+      await this.loadExamDataForEdit();
       this.loadCategories(); // Tải danh mục ngay cả khi đang sửa
-      this.loadDifficultyLevels
-      
+      this.loadDifficultyLevels;
     }
   },
   mounted() {
@@ -523,7 +522,7 @@ export default {
         //   .map((eq) => eq.question)
         //   .filter((q) => q); // Lấy question object từ link
 
-       // 3. Fetch Difficulty Links (Giả sử có endpoint lấy ExamDifficulty links cho exam)
+        // 3. Fetch Difficulty Links (Giả sử có endpoint lấy ExamDifficulty links cho exam)
         // const difficultyRes = await axios.get(
         //   `/api/exam-difficulties/by-exam/${this.exam.exam_id}`,
         //   { headers: { Authorization: `Bearer ${token}` } }
@@ -627,9 +626,11 @@ export default {
         if (this.searchCriteria.questionId)
           params.id = this.searchCriteria.questionId; // Giả sử API hỗ trợ tìm theo ID
         if (this.searchCriteria.text) params.q = this.searchCriteria.text; // Giả sử API dùng 'q' cho tìm kiếm text
-
+        console.log(params);
         // Gọi API tìm kiếm câu hỏi (Giả sử endpoint là /api/questions/search)
-        const response = await axios.get("/api/questions/", { params });
+        const response = await axios.get("/api/questions/search-question", {
+          params,
+        });
         this.searchResults = response.data || [];
       } catch (error) {
         this.handleApiError(error, "tìm kiếm câu hỏi");

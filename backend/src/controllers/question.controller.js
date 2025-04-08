@@ -120,3 +120,32 @@ exports.getQuestion = async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 };
+exports.findQuestions = async (req, res) => {
+  console.log("*********************************88");
+  try {
+    // Lấy các tham số từ query string (req.query)
+    const { category_id, id, q } = req.query;
+    console.log(category_id + " - " + id + " - " + q);
+    // Tạo đối tượng chứa các tiêu chí lọc/tìm kiếm
+    const criteria = {};
+    if (category_id) {
+      criteria.category_id = category_id;
+    }
+    if (id) {
+      criteria.id = id;
+    }
+    if (q) {
+      criteria.q = q;
+    }
+
+    const questions = await questionService.findQuestionsByCriteria(criteria);
+
+    // Trả về kết quả
+    res.json(questions);
+  } catch (error) {
+    console.error("Error finding questions:", error); // Log lỗi để debug
+    res.status(500).json({
+      error: error.message || "An error occurred while finding questions.",
+    });
+  }
+};

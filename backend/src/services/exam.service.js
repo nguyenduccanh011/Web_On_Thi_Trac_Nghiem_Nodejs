@@ -269,7 +269,6 @@ exports.getQuestionsForExamTake = async (examId) => {
             as: "question",
             include: [
               { model: Answer, as: "answers" },
-              // *** THÊM INCLUDE DifficultyLevel VÀO ĐÂY ***
               {
                 model: DifficultyLevel,
                 as: "difficult_level", // Alias từ Question.belongsTo
