@@ -1,4 +1,3 @@
-// src/controllers/leaderboard.controller.js
 const leaderboardService = require('../services/leaderboard.service');
 
 exports.getLeaderboard = async (req, res) => {
@@ -10,4 +9,3 @@ exports.getLeaderboard = async (req, res) => {
   }
 };
 
-// Không cần controller cho updateLeaderboard vì nó được gọi từ exam_attempt.service.js

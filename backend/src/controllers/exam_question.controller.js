@@ -198,7 +198,7 @@ exports.getQuestionsForExam = async (req, res) => {
     }
 
     const questions = await examQuestionService.getQuestionsForExam(examId);
-    res.json(questions); // Trả về danh sách các bản ghi ExamQuestion kèm Question và Answer
+    res.json(questions);
   } catch (error) {
     console.error("Error in getQuestionsForExam controller:", error);
     res
@@ -207,8 +207,7 @@ exports.getQuestionsForExam = async (req, res) => {
   }
 };
 
-// 7. Lấy tất cả các bài thi sử dụng một Câu hỏi cụ thể
-// Route: GET /questions/:questionId/exams
+
 exports.getExamsForQuestion = async (req, res) => {
   try {
     const questionIdParam = req.params.questionId;
@@ -232,10 +231,7 @@ exports.getExamsForQuestion = async (req, res) => {
   }
 };
 
-// --- Bulk Operations Controllers ---
 
-// 8. Thêm nhiều câu hỏi vào một bài thi
-// Route: POST /exams/:examId/questions/bulk
 exports.addQuestionsToExam = async (req, res) => {
   try {
     const examIdParam = req.params.examId;
@@ -270,7 +266,6 @@ exports.addQuestionsToExam = async (req, res) => {
     res.status(201).json(createdLinks);
   } catch (error) {
     console.error("Error in addQuestionsToExam controller:", error);
-    // Xử lý lỗi cụ thể từ service (trùng lặp, khóa ngoại)
     if (
       error.message.includes("already exist") ||
       error.message.includes(
@@ -285,14 +280,11 @@ exports.addQuestionsToExam = async (req, res) => {
   }
 };
 
-// 9. Xóa nhiều câu hỏi khỏi một bài thi
-// Route: DELETE /exams/:examId/questions/bulk
 exports.removeQuestionsFromExam = async (req, res) => {
   try {
     const examIdParam = req.params.examId;
     const examId = parseInt(examIdParam, 10);
-    const { questionIds } = req.body; // Lấy từ body thay vì query
-
+    const { questionIds } = req.body; 
     if (isNaN(examId)) {
       return res
         .status(400)
@@ -334,8 +326,7 @@ exports.removeQuestionsFromExam = async (req, res) => {
   }
 };
 
-// 10. Cập nhật thứ tự câu hỏi cho một bài thi
-// Route: PUT /exams/:examId/questions/order
+
 exports.updateQuestionOrderForExam = async (req, res) => {
   try {
     const examIdParam = req.params.examId;
@@ -350,7 +341,6 @@ exports.updateQuestionOrderForExam = async (req, res) => {
         });
     }
     if (!Array.isArray(orderedQuestionIds)) {
-      // Cho phép mảng rỗng để xóa hết order
       return res
         .status(400)
         .json({ message: "orderedQuestionIds must be an array." });
@@ -368,10 +358,9 @@ exports.updateQuestionOrderForExam = async (req, res) => {
       examId,
       orderedQuestionIds
     );
-    res.status(200).json(result); // Trả về { success: true, message: '...' }
+    res.status(200).json(result); 
   } catch (error) {
     console.error("Error in updateQuestionOrderForExam controller:", error);
-    // Có thể bắt lỗi cụ thể nếu service ném lỗi validation (ví dụ: câu hỏi không thuộc bài thi)
     res
       .status(500)
       .json({ message: error.message || "An unexpected error occurred." });
