@@ -32,6 +32,12 @@
         >
           🚀 Bắt đầu Thi
         </button>
+        <button
+          class="btn btn-primary btn-sm start-button" style="margin-left: 10px;"
+          @click="startExamEdit(exam.exam_id)"
+        >
+          Chỉnh sửa đề thi
+        </button>
       </div>
     </div>
   </div>
@@ -95,6 +101,18 @@ export default {
     },
     startExam(examId) {
       this.$router.push({ name: "TakeExam", params: { examId: examId } });
+    },
+    // Chỉnh sửa đề thi
+    startExamEdit(examId) {
+      this.$router.push({ 
+            name: 'EditExam', // Tên route của trang kết quả
+            query: { 
+              examId: examId,
+             
+            }
+           // console.log('chạy đến đây');
+          });
+     
     }
   }
 };
