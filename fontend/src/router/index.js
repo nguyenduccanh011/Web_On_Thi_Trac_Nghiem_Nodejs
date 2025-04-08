@@ -41,6 +41,11 @@ const routes = [
     component: CreateExamView,
   },
   {
+    path: "/edit-exam",
+    name: "EditExam",
+    component: CreateExamView,
+  },
+  {
     path: "/login",
     name: "Login",
     component: LoginView,

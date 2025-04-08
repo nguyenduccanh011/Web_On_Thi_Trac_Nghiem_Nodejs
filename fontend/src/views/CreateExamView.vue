@@ -389,18 +389,11 @@ import axios from "axios";
 
 export default {
   name: "CreateExamView",
-  props: {
-    examIdToEdit: {
-      // Nhận ID nếu là chế độ chỉnh sửa
-      type: [Number, String],
-      default: null,
-    },
-  },
   data() {
     return {
       // Exam Details
       exam: {
-        exam_id: this.examIdToEdit, // ID của exam nếu đang sửa
+        exam_id: null, // ID của exam nếu đang sửa
         exam_name: "",
         description: "",
         category_id: "",
@@ -445,6 +438,7 @@ export default {
     isEditing() {
       return !!this.exam.exam_id;
     },
+ 
     // Tính toán số lượng câu hỏi thực tế cho mỗi độ khó dựa trên addedQuestions
     availableQuestionsCountByDifficulty() {
       const counts = {};
@@ -473,6 +467,21 @@ export default {
       );
     },
   },
+  
+  async created() {
+    // Đọc examId từ query parameter thay vì prop
+    if(this.examIdToEid)  {
+      this.exam.exam_id = this.examIdToEid;
+    }
+    const examId = this.$route.query.examId;
+    if (examId) {
+      this.exam.exam_id = examId;
+     await this.loadExamDataForEdit();
+      this.loadCategories(); // Tải danh mục ngay cả khi đang sửa
+      this.loadDifficultyLevels
+      
+    }
+  },
   mounted() {
     this.loadInitialData();
   },
@@ -494,27 +503,34 @@ export default {
       if (!this.exam.exam_id) return;
       this.isSaving = true; // Show loading state
       try {
+        const token = localStorage.getItem("token");
+        console.log("token", token);
+        if (!token) {
+          throw new Error("Không tìm thấy token xác thực");
+        }
         // 1. Fetch Exam Details
         const examRes = await axios.get(`/api/exams/${this.exam.exam_id}`);
         this.exam = examRes.data; // Cập nhật data exam
 
         // 2. Fetch Added Questions (Giả sử có endpoint lấy ExamQuestion links cho exam)
         // Endpoint này cần trả về danh sách ExamQuestion kèm chi tiết Question
-        const questionsRes = await axios.get(
-          `/api/exam-questions/for-exam/${this.exam.exam_id}`
-        );
-        // Cần lấy ra object Question đầy đủ từ response
-        this.addedQuestions = questionsRes.data
-          .map((eq) => eq.question)
-          .filter((q) => q); // Lấy question object từ link
+        // const questionsRes = await axios.get(
+        //   `/api/exam-questions/for-exam/${this.exam.exam_id}`,
+        //   { headers: { Authorization: `Bearer ${token}` } }
+        // );
+        // // Cần lấy ra object Question đầy đủ từ response
+        // this.addedQuestions = questionsRes.data
+        //   .map((eq) => eq.question)
+        //   .filter((q) => q); // Lấy question object từ link
 
-        // 3. Fetch Difficulty Links (Giả sử có endpoint lấy ExamDifficulty links cho exam)
-        const difficultyRes = await axios.get(
-          `/api/exam-difficulties/by-exam/${this.exam.exam_id}`
-        ); // Giả sử endpoint này tồn tại
-        this.examDifficultyLinks = difficultyRes.data || [];
+       // 3. Fetch Difficulty Links (Giả sử có endpoint lấy ExamDifficulty links cho exam)
+        // const difficultyRes = await axios.get(
+        //   `/api/exam-difficulties/by-exam/${this.exam.exam_id}`,
+        //   { headers: { Authorization: `Bearer ${token}` } }
+        // ); // Giả sử endpoint này tồn tại
+        // this.examDifficultyLinks = difficultyRes.data || [];
 
-        this.successMessage = "Đã tải dữ liệu đề thi.";
+        // this.successMessage = "Đã tải dữ liệu đề thi.";
         setTimeout(() => (this.successMessage = ""), 3000);
       } catch (error) {
         this.handleApiError(
