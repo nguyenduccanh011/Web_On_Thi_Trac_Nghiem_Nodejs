@@ -34,21 +34,6 @@
               <i class="fas fa-file-alt"></i> Tạo đề thi
             </router-link>
           </li>
-          <li>
-            <router-link to="/manage-questions">
-              <i class="fas fa-list"></i> Quản lý câu hỏi
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/manage-exams">
-              <i class="fas fa-tasks"></i> Quản lý đề thi
-            </router-link>
-          </li>
-          <li>
-            <router-link to="/manage-users">
-              <i class="fas fa-users-cog"></i> Quản lý người dùng
-            </router-link>
-          </li>
         </template>
 
         <!-- Menu cài đặt -->
