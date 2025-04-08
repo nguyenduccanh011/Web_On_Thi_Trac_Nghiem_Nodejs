@@ -1,7 +1,5 @@
-// src/controllers/exam_question.controller.js
-const examQuestionService = require("../services/exam_question.service"); // Import service tương ứng
+const examQuestionService = require("../services/exam_question.service");
 
-// 1. Lấy tất cả các liên kết Exam-Question
 exports.getAllExamQuestions = async (req, res) => {
   try {
     const examQuestions = await examQuestionService.getAllExamQuestions();
@@ -14,8 +12,7 @@ exports.getAllExamQuestions = async (req, res) => {
   }
 };
 
-// 2. Lấy một liên kết Exam-Question cụ thể bằng ID của nó (exam_question_id)
-// Route: GET /exam-questions/:id
+
 exports.getExamQuestionById = async (req, res) => {
   try {
     const idParam = req.params.id;
@@ -41,14 +38,11 @@ exports.getExamQuestionById = async (req, res) => {
   }
 };
 
-// 3. Tạo một liên kết Exam-Question mới
-// Route: POST /exam-questions
+
 exports.createExamQuestion = async (req, res) => {
   try {
-    // Dữ liệu cần thiết: exam_id, question_id, question_order (tùy chọn)
     const { exam_id, question_id, question_order } = req.body;
 
-    // Validation cơ bản
     if (exam_id === undefined || question_id === undefined) {
       return res
         .status(400)
@@ -88,7 +82,6 @@ exports.createExamQuestion = async (req, res) => {
     res.status(201).json(newExamQuestion);
   } catch (error) {
     console.error("Error in createExamQuestion controller:", error);
-    // Xử lý lỗi cụ thể từ service (trùng lặp, khóa ngoại)
     if (
       error.message.includes("already exists") ||
       error.message.includes("Invalid Exam ID or Question ID")
@@ -105,13 +98,12 @@ exports.createExamQuestion = async (req, res) => {
   }
 };
 
-// 4. Cập nhật liên kết Exam-Question (thường là question_order)
-// Route: PUT /exam-questions/:id
+
 exports.updateExamQuestion = async (req, res) => {
   try {
     const idParam = req.params.id;
     const id = parseInt(idParam, 10);
-    const { question_order } = req.body; // Chỉ lấy trường cần cập nhật
+    const { question_order } = req.body; 
 
     if (isNaN(id)) {
       return res
@@ -119,7 +111,6 @@ exports.updateExamQuestion = async (req, res) => {
         .json({ message: "Invalid parameter format: id must be an integer." });
     }
 
-    // Validation question_order (chấp nhận cả null để xóa order)
     if (
       question_order !== undefined &&
       question_order !== null &&
@@ -132,19 +123,17 @@ exports.updateExamQuestion = async (req, res) => {
             "Invalid value for question_order. It must be a non-negative integer or null.",
         });
     }
-    // Chỉ gửi question_order nếu nó thực sự tồn tại trong body
     const updateData = {};
     if (req.body.hasOwnProperty("question_order")) {
       updateData.question_order = question_order;
     } else {
-      // Nếu không có question_order trong body -> không có gì để cập nhật
-      // Có thể trả về lỗi 400 hoặc coi như thành công không thay đổi
+
       const currentLink = await examQuestionService.getExamQuestionById(id);
       if (!currentLink)
         return res
           .status(404)
           .json({ message: "Exam-Question link not found" });
-      return res.json(currentLink); // Trả về bản ghi hiện tại
+      return res.json(currentLink); 
     }
 
     const updatedExamQuestion = await examQuestionService.updateExamQuestion(
@@ -167,8 +156,7 @@ exports.updateExamQuestion = async (req, res) => {
   }
 };
 
-// 5. Xóa một liên kết Exam-Question
-// Route: DELETE /exam-questions/:id
+
 exports.deleteExamQuestion = async (req, res) => {
   try {
     const idParam = req.params.id;
@@ -183,10 +171,10 @@ exports.deleteExamQuestion = async (req, res) => {
     const result = await examQuestionService.deleteExamQuestion(id);
 
     if (!result.success) {
-      return res.status(404).json({ message: result.message }); // Not Found
+      return res.status(404).json({ message: result.message });
     }
 
-    res.status(204).send(); // No Content
+    res.status(204).send(); 
   } catch (error) {
     console.error("Error in deleteExamQuestion controller:", error);
     res
@@ -195,8 +183,7 @@ exports.deleteExamQuestion = async (req, res) => {
   }
 };
 
-// 6. Lấy tất cả câu hỏi cho một Exam cụ thể (bao gồm chi tiết câu hỏi và câu trả lời)
-// Route: GET /exams/:examId/questions
+
 exports.getQuestionsForExam = async (req, res) => {
   try {
     const examIdParam = req.params.examId;

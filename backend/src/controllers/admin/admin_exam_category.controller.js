@@ -1,4 +1,3 @@
-// src/controllers/admin/admin_exam_category.controller.js
 const adminExamCategoryService = require('../../services/admin/admin_exam_category.service');
 
 exports.getAllCategories = async (req, res) => {
@@ -16,7 +15,7 @@ exports.getCategoryById = async (req, res) => {
       const category = await adminExamCategoryService.getCategoryById(categoryId);
       res.status(200).json(category);
     } catch (error) {
-      res.status(404).json({ message: error.message }); // 404 Not Found nếu không tìm thấy
+      res.status(404).json({ message: error.message }); 
     }
 }
 

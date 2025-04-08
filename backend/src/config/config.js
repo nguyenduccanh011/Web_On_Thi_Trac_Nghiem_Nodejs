@@ -2,5 +2,5 @@
 
 module.exports = {
     jwtSecret: process.env.JWT_SECRET ,
-    jwtExpiration: process.env.JWT_EXPIRATION || '1h',//Thời gian hến hạn của token
+    jwtExpiration: process.env.JWT_EXPIRATION || '1h',
   };

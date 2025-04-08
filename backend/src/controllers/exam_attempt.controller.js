@@ -1,4 +1,3 @@
-// src/controllers/exam_attempt.controller.js
 const examAttemptService = require("../services/exam_attempt.service");
 const examService = require("../services/exam.service");
 const userAnswerService = require("../services/user_answer.service");
@@ -6,9 +5,8 @@ const userAnswerService = require("../services/user_answer.service");
 exports.saveExamAttempt = async (req, res) => {
   try {
     const result = req.body;
-    const userId = req.user.userId; // Lấy userId từ req.user (đã xác thực)
+    const userId = req.user.userId; 
 
-    // Kiểm tra xem bài thi có tồn tại không
     const exam = await examService.getExamById(result.exam_id);
     if (!exam) {
       return res.status(404).json({ message: "Exam not found" });
@@ -29,9 +27,9 @@ exports.saveExamAttempt = async (req, res) => {
       return res.status(400).json({ message: "Failed to save answers" });
     }
 
-    await res.status(201).json({ message: "OK" }); // 201 Created nếu lưu thành công
+    await res.status(201).json({ message: "OK" }); 
   } catch (error) {
-    res.status(500).json({ message: error.message }); // 500 nếu có lỗi xảy ra
+    res.status(500).json({ message: error.message }); 
   }
 };
 
@@ -41,7 +39,7 @@ exports.getAttempByUser = async (req, res) => {
     const attempts = await examAttemptService.getAttemptsByUser(userId);
     res.json(attempts);
   } catch (error) {
-    res.status(404).json({ message: error.message }); // 404 nếu không tìm thấy
+    res.status(404).json({ message: error.message }); 
   }
 };
 
@@ -51,13 +49,10 @@ exports.getAttemptDetails = async (req, res) => {
 
     const attempt = await examAttemptService.getAttemptById(attemptId);
     if (!attempt) {
-      // Nếu không tìm thấy attempt, trả về lỗi 404 (Not Found)
       return res.status(404).json({ message: "Attempt not found" });
     }
 
-    // Kiểm tra xem attempt có thuộc về user không (tùy chọn)
     if (attempt.user_id !== req.user.userId) {
-      // Nếu attempt không thuộc về user, trả về lỗi 403 (Forbidden)
       return res.status(403).json({ message: "Forbidden" });
     }
 
@@ -67,6 +62,6 @@ exports.getAttemptDetails = async (req, res) => {
 
     res.json(attemptDetails);
   } catch (error) {
-    res.status(404).json({ message: error.message }); // 404 nếu không tìm thấy
+    res.status(404).json({ message: error.message }); 
   }
 };
