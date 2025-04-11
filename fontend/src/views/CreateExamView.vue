@@ -9,7 +9,7 @@
     >
       <div class="form-row">
         <div class="form-group half-width">
-          <label for="exam_name" class="form-label">Tên đề thi:</label>
+          <label for="exam_name" class="form-label">Tên Đề Thi:</label>
           <input
             type="text"
             id="exam_name"
@@ -19,7 +19,7 @@
           />
         </div>
         <div class="form-group half-width with-add-button">
-          <label for="category_id" class="form-label">Danh mục:</label>
+          <label for="category_id" class="form-label">Danh Mục:</label>
           <div class="select-with-button">
             <select
               id="category_id"
