@@ -1,6 +1,4 @@
-// src/controllers/exam.controller.js
 const examService = require("../services/exam.service");
-// const shuffleArray = require("lodash"); // Có thể không cần shuffle ở đây nữa nếu service làm
 
 exports.getAllExams = async (req, res) => {
   try {
@@ -14,10 +12,9 @@ exports.getAllExams = async (req, res) => {
   }
 };
 
-// Đổi tên hàm này để rõ ràng hơn cho route /take-exam
 exports.getQuestionsForExamTake = async (req, res) => {
   try {
-    const examIdParam = req.params.id; // Lấy từ params cho route /:id/take-exam
+    const examIdParam = req.params.id; 
     const examId = parseInt(examIdParam, 10);
     if (isNaN(examId)) {
       return res
@@ -28,15 +25,12 @@ exports.getQuestionsForExamTake = async (req, res) => {
     }
 
     const questions = await examService.getQuestionsForExamTake(examId);
-    // Service đã random hoặc lấy theo thứ tự, không cần shuffle ở đây nữa trừ khi muốn trộn lại
-    // const shuffledTasks = shuffleArray.shuffle(tasks);
-    res.json(questions); // Trả về danh sách câu hỏi (đã bao gồm answers)
+    res.json(questions);
   } catch (error) {
     console.error(
       `Controller error getQuestionsForExamTake (examId: ${req.params.id}):`,
       error
     );
-    // Phân biệt lỗi Not Found và lỗi khác
     if (error.message.toLowerCase().includes("not found")) {
       res.status(404).json({ message: error.message });
     } else {
@@ -60,7 +54,7 @@ exports.getExamById = async (req, res) => {
           message: "Invalid parameter format: examId must be an integer.",
         });
     }
-    const exam = await examService.getExamById(examId); // Chỉ lấy thông tin cơ bản
+    const exam = await examService.getExamById(examId); 
     res.json(exam);
   } catch (error) {
     console.error(
@@ -79,19 +73,17 @@ exports.getExamById = async (req, res) => {
 
 exports.createExam = async (req, res) => {
   try {
-    const examData = req.body; // Chỉ chứa { exam_name, description, category_id }
-    // Validation cơ bản
+    const examData = req.body; 
     if (!examData.exam_name || !examData.category_id) {
       return res
         .status(400)
         .json({ message: "Exam name and category ID are required." });
     }
 
-    const newExam = await examService.createExam(examData); // Chỉ tạo exam cơ bản
-    res.status(201).json(newExam); // Trả về exam vừa tạo (chưa có questions/difficulties)
+    const newExam = await examService.createExam(examData); 
+    res.status(201).json(newExam);
   } catch (error) {
     console.error("Controller error createExam:", error);
-    // Nếu lỗi là validation từ service
     if (error.message.includes("ValidationError")) {
       res.status(400).json({ message: error.message });
     } else {
@@ -113,8 +105,7 @@ exports.updateExam = async (req, res) => {
           message: "Invalid parameter format: examId must be an integer.",
         });
     }
-    const examData = req.body; // Chỉ chứa { exam_name, description, category_id }
-    // Validation cơ bản
+    const examData = req.body; 
     if (!examData.exam_name || !examData.category_id) {
       return res
         .status(400)
@@ -123,7 +114,7 @@ exports.updateExam = async (req, res) => {
         });
     }
 
-    const updatedExam = await examService.updateExam(examId, examData); // Chỉ cập nhật cơ bản
+    const updatedExam = await examService.updateExam(examId, examData);
     res.json(updatedExam);
   } catch (error) {
     console.error(
@@ -142,10 +133,9 @@ exports.updateExam = async (req, res) => {
   }
 };
 
-// *** CONTROLLER MỚI: Thiết lập/thay thế câu hỏi cho exam ***
 exports.setExamQuestions = async (req, res) => {
   try {
-    const examIdParam = req.params.examId; // Lấy từ param của route mới
+    const examIdParam = req.params.examId; 
     const examId = parseInt(examIdParam, 10);
     if (isNaN(examId)) {
       return res
@@ -155,13 +145,10 @@ exports.setExamQuestions = async (req, res) => {
         });
     }
 
-    const { questionIds } = req.body; // Lấy mảng ID từ body
-
-    // Validation mảng questionIds
+    const { questionIds } = req.body; 
     if (!Array.isArray(questionIds)) {
       return res.status(400).json({ message: "questionIds must be an array." });
     }
-    // Cho phép mảng rỗng, nhưng nếu không rỗng thì phải là số nguyên dương
     if (
       questionIds.length > 0 &&
       !questionIds.every((id) => Number.isInteger(id) && id > 0)
@@ -195,10 +182,9 @@ exports.setExamQuestions = async (req, res) => {
   }
 };
 
-// *** CONTROLLER MỚI: Thiết lập/thay thế liên kết độ khó cho exam ***
 exports.setExamDifficultyLinks = async (req, res) => {
   try {
-    const examIdParam = req.params.examId; // Lấy từ param của route mới
+    const examIdParam = req.params.examId;
     const examId = parseInt(examIdParam, 10);
     if (isNaN(examId)) {
       return res
@@ -208,13 +194,11 @@ exports.setExamDifficultyLinks = async (req, res) => {
         });
     }
 
-    const { links } = req.body; // Lấy mảng links từ body [{ difficult_level_id, question_count }]
+    const { links } = req.body; 
 
-    // Validation mảng links
     if (!Array.isArray(links)) {
       return res.status(400).json({ message: "links must be an array." });
     }
-    // Kiểm tra cấu trúc từng link (có thể làm kỹ hơn)
     if (
       links.length > 0 &&
       !links.every(
@@ -230,10 +214,9 @@ exports.setExamDifficultyLinks = async (req, res) => {
             "Each link object must have difficult_level_id and question_count properties.",
         });
     }
-    // Validation kiểu dữ liệu trong service sẽ chặt chẽ hơn
 
     const result = await examService.setExamDifficultyLinks(examId, links);
-    res.status(200).json(result); // Trả về { success: true, message: '...' }
+    res.status(200).json(result); 
   } catch (error) {
     console.error(
       `Controller error setExamDifficultyLinks (examId: ${req.params.examId}):`,

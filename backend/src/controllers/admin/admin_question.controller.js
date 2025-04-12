@@ -1,8 +1,5 @@
-// src/controllers/admin/admin_question.controller.js
 const adminQuestionService = require('../../services/admin/admin_question.service');
 
-// Các hàm CRUD cho Question, tương tự như question.controller.js
-// ...
 exports.getAllQuestions = async (req, res) => {
     try {
         const questions = await adminQuestionService.getAllQuestions();
@@ -18,7 +15,7 @@ exports.getQuestionById = async (req, res) => {
       const question = await adminQuestionService.getQuestionById(questionId);
       res.status(200).json(question);
     } catch (error) {
-      res.status(404).json({ message: error.message }); // 404 Not Found nếu không tìm thấy
+      res.status(404).json({ message: error.message }); 
     }
 }
 

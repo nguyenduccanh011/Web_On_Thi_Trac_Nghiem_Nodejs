@@ -25,7 +25,6 @@ exports.getDifficultyLevelById = async (req, res) => {
   }
 };
 
-// Create a new difficultyLevel with answers
 exports.createDifficultyLevel = async (req, res) => {
   try {
     const { difficult_level_text } = req.body;
@@ -46,7 +45,7 @@ exports.updateDifficultyLevel = async (req, res) => {
       req.body
     );
     if (!difficultyLevel) {
-      return res.status(404).json({ message: "Difficulty Level not found" }); // Hoặc xử lý tùy theo logic của bạn
+      return res.status(404).json({ message: "Difficulty Level not found" });
     }
     res.json(difficultyLevel);
   } catch (error) {
@@ -62,7 +61,7 @@ exports.deleteDifficultyLevel = async (req, res) => {
     if (result.message === "Difficulty Level not found") {
       return res.status(404).json({ message: result.message });
     }
-    res.status(204).send(); // 204 No Content (thành công, không có nội dung trả về)
+    res.status(204).send();
   } catch (error) {
     if (
       error.message ===
@@ -86,7 +85,6 @@ exports.searchDifficultyLevels = async (req, res) => {
   }
 };
 
-// Get a difficultyLevel with its answers
 exports.getDifficultyLevel = async (req, res) => {
   try {
     const difficultyLevel = await DifficultyLevel.findByPk(req.params.id, {

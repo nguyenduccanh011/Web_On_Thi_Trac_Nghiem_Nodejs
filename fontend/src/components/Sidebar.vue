@@ -2,67 +2,53 @@
   <aside class="sidebar">
     <nav>
       <ul>
+        <!-- Menu chung cho tất cả người dùng -->
         <li>
-          <router-link to="/"
-            ><i class="fas fa-tachometer-alt"></i> Trang chủ</router-link
-          >
+          <router-link to="/">
+            <i class="fas fa-home"></i> Trang chủ
+          </router-link>
         </li>
         <li>
-          <router-link to="/create-question"
-            ><i class="fas fa-book"></i> Tạo câu hỏi mới</router-link
-          >
+          <router-link to="/exams/select">
+            <i class="fas fa-clipboard-list"></i> Thi thử
+          </router-link>
         </li>
         <li>
-          <router-link to="/create-exam"
-            ><i class="fas fa-stethoscope"></i> Tạo đề thi mới</router-link
-          >
+          <router-link to="/exam-attempt">
+            <i class="fas fa-history"></i> Lịch sử thi
+          </router-link>
+        </li>
+
+        <!-- Menu chỉ dành cho admin -->
+        <template v-if="isAdmin">
+          <li class="menu-divider">
+            <span>Quản lý</span>
+          </li>
+          <li>
+            <router-link to="/create-question">
+              <i class="fas fa-plus-circle"></i> Tạo câu hỏi
+            </router-link>
+          </li>
+          <li>
+            <router-link to="/create-exam">
+              <i class="fas fa-file-alt"></i> Tạo đề thi
+            </router-link>
+          </li>
+        </template>
+
+        <!-- Menu cài đặt -->
+        <li class="menu-divider">
+          <span>Cài đặt</span>
         </li>
         <li>
-          <router-link to="/exam-attempt"
-            ><i class="fas fa-clipboard-list"></i> Lịch sử thi</router-link
-          >
+          <router-link to="/profile">
+            <i class="fas fa-user"></i> Hồ sơ
+          </router-link>
         </li>
         <li>
-          <router-link to="/exams/select"
-            ><i class="fas fa-users"></i> Thi thử (Đề mẫu)</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/support"
-            ><i class="fas fa-chalkboard-teacher"></i> Tutor
-            Support</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/criteria"
-            ><i class="fas fa-check-circle"></i> Eligibility
-            Criteria</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/help"
-            ><i class="fas fa-question-circle"></i> Help</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/settings"
-            ><i class="fas fa-cogs"></i> Setting</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/support"
-            ><i class="fas fa-headset"></i> Support</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/library"
-            ><i class="fas fa-book-open"></i> Library</router-link
-          >
-        </li>
-        <li>
-          <router-link to="/messages"
-            ><i class="fas fa-envelope"></i> Message</router-link
-          >
+          <router-link to="/settings">
+            <i class="fas fa-cog"></i> Cài đặt
+          </router-link>
         </li>
       </ul>
     </nav>
@@ -72,6 +58,18 @@
 <script>
 export default {
   name: "AppSidebar",
+  computed: {
+    isAdmin() {
+      try {
+        const user = JSON.parse(localStorage.getItem('user') || '{}');
+        console.log('User role:', user.role); // Thêm log để debug
+        return user.role === 'admin';
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        return false;
+      }
+    }
+  }
 };
 </script>
 
@@ -132,13 +130,29 @@ export default {
   color: #3498db;
 }
 
+.menu-divider {
+  padding: 10px 25px;
+  color: #95a5a6;
+  font-size: 0.8em;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 15px;
+  border-top: 1px solid #34495e;
+}
+
+.menu-divider:first-child {
+  border-top: none;
+  margin-top: 0;
+}
+
 /* Responsive design */
 @media (max-width: 992px) {
   .sidebar {
     width: 80px;
   }
 
-  .sidebar nav li a span {
+  .sidebar nav li a span,
+  .sidebar nav li.menu-divider {
     display: none;
   }
 
@@ -163,7 +177,8 @@ export default {
     background-color: #34495e;
   }
 
-  .sidebar nav li a span {
+  .sidebar nav li a span,
+  .sidebar nav li.menu-divider {
     display: inline;
   }
 

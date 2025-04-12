@@ -1,7 +1,6 @@
-// src/controllers/admin/admin_user.controller.js
 const adminUserService = require('../../services/admin/admin_user.service');
 
-// Các hàm quản lý người dùng (phân quyền, ...)
+// Các hàm quản lý người dùng
 exports.getAllUsers = async (req, res) => {
     try {
       const users = await adminUserService.getAllUsers();

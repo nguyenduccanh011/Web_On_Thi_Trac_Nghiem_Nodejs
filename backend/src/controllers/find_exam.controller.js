@@ -1,4 +1,3 @@
-// controllers/examconst { Op } = require("sequelize");.controller.js
 const find_examService = require("../services/find_exam.service");
 
 

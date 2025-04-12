@@ -1,4 +1,3 @@
-// src/controllers/exam_category.controller.js
 const examCategoryService = require('../services/exam_category.service');
 
 exports.getAllCategories = async (req, res) => {

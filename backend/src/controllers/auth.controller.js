@@ -5,13 +5,13 @@ const jwt = require('jsonwebtoken');
 exports.register = async (req, res) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log('Validation errors:', errors.array()); // Log validation errors
+    console.log('Validation errors:', errors.array()); 
     return res.status(400).json({ errors: errors.array() });
   }
 
   try {
     const { username, email, password, fullname } = req.body;
-    console.log('Registering user:', { username, email, fullname }); // Log request data
+    console.log('Registering user:', { username, email, fullname }); 
     const newUser = await authService.registerUser(username, email, password, fullname);
     res.status(201).json({ message: 'User registered successfully', user: newUser });
   } catch (error) {
