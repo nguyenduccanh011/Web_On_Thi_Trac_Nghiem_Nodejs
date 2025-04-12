@@ -1,8 +1,4 @@
-// const DifficultyLevel = Object.freeze({
-//   EASY: "easy",
-//   MEDIUM: "medium",
-//   HARD: "hard",
-// });
+
 
 const { DataTypes } = require("sequelize");
 const { sequelize } = require("../config/database");
